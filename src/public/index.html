@@ -20,7 +20,6 @@
 </head>
 
 <body>
-  <div>
     <div id="login">
       <div class="flex h-screen">
         <div class="m-auto">
@@ -34,13 +33,240 @@
       </div>
     </div>
 
-    <div id="loggedin">
-      <div class="flex h-screen">
-        <div class="m-auto">
-          <h1 class="text-4xl pb-4">Welcome <span id="display_name"></span>!</h1>
-          <p class="text-xl">Your user ID is: <span id="user_id"></span></p>
+
+  <div id="loggedin">
+    <div class="fixed flex w-full h-full">
+      <!-- sidebar -->
+      <div class="sidebar bg-gray-100 w-64 space-y-2 py-7 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
+        <div class="flex items-center space-x-4 p-2 mb-5">
+          <img class="h-12 rounded-full" src="images/user_avatar_placeholder.png" alt="User avatar">
+          <div>
+            <h4 class="font-semibold text-lg text-gray-700 capitalize font-poppins tracking-wide"><span id="display_name"></span></h4>
+            <span class="text-sm tracking-wide flex items-center space-x-1">
+              <span class="text-gray-600">ID: <span id="user_id"></span></span>
+            </span>
+          </div>
         </div>
+
+        <ul class="space-y-2 text-sm p-2">
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 bg-gray-200 focus:shadow-outline">
+              <span class="text-gray-600">
+                <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span class="text-gray-600">
+                <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              <span>My profile</span>
+            </a>
+          </li>
+          <li>
+              <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+                  <span class="text-gray-600">
+                      <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                      </svg>
+                  </span>
+                  <span>Settings</span>
+              </a>
+          </li>
+            <li>
+                <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+                    <span class="text-gray-600">
+                        <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+
+        <span class="flex text-black p-2 border-b-2">Select a playlist</span>
+
+        <ul class="space-y-2 text-sm p-2">
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span>Playlist</span>
+            </a>
+          </li>
+        </ul>
       </div>
+
+      <!-- content -->
+      <div class="flex-1 p-10 text-2xl font-bold">
+        Content
+      </div>
+
     </div>
   </div>
 
