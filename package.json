@@ -6,8 +6,5 @@
     "express": "^4.17.2",
     "querystring": "^0.2.1",
     "request": "^2.88.2"
-  },
-  "devDependencies": {
-    "tailwindcss": "^3.0.12"
   }
 }
