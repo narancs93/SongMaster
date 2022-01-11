@@ -50,9 +50,15 @@
               playlists.map(function(playlist) {
 
                 if (playlist.name !== '') {
+                  const params = new URLSearchParams({
+                    access_token: access_token,
+                    refresh_token: refresh_token
+                  });
+                  const queryString = params.toString();
+
                   var element = `
                   <li>
-                    <a href="#" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+                    <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
                       <span>${playlist.name}</span>
                     </a>
                   </li>`
@@ -77,6 +83,6 @@
 })();
 
 
-$(document).on("click", ".playlist", function(e){
+$(document).on("click", ".playlist", function(e) {
   $("#content").text($(this).text());
 });
