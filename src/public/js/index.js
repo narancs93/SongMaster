@@ -1,18 +1,19 @@
-(function() {
-  /**
-   * Obtains parameters from the hash of the URL
-   * @return Object
-   */
-  function getHashParams() {
-    var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-    while (e = r.exec(q)) {
-      hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
-    return hashParams;
+/**
+ * Obtains parameters from the hash of the URL
+ * @return Object
+ */
+function getHashParams() {
+  var hashParams = {};
+  var e, r = /([^&;=]+)=?([^&;]*)/g,
+    q = window.location.hash.substring(1);
+  while (e = r.exec(q)) {
+    hashParams[e[1]] = decodeURIComponent(e[2]);
   }
+  return hashParams;
+}
 
+
+$(document).ready(function() {
   var params = getHashParams();
 
   var access_token = params.access_token,
@@ -33,8 +34,8 @@
           const display_name = response.display_name;
           const user_id = response.id;
 
-          document.getElementById("display_name").innerText = display_name;
-          document.getElementById("user_id").innerText = user_id;
+          $("#display_name").text(display_name);
+          $("#user_id").text(user_id);
 
           $('#login').hide();
           $('#loggedin').show();
@@ -80,8 +81,7 @@
     }
 
   }
-})();
-
+});
 
 $(document).on("click", ".playlist", function(e) {
   $("#content").text($(this).text());
