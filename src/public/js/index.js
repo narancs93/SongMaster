@@ -13,6 +13,27 @@ function getHashParams() {
 }
 
 
+function readHtmlIntoElement(htmlFile, element, templateValues) {
+  var reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
+
+
+
+  reader.open('get', htmlFile, true);
+  reader.onreadystatechange = function() {
+    if (reader.readyState == 4) {
+      var htmlText = reader.responseText;
+
+      for (const key in templateValues) {
+        htmlText = htmlText.replace(`{{${key}}}`, `${templateValues[key]}`.trim());
+      }
+
+      $(element).html(htmlText);
+    }
+  };
+  reader.send(null);
+}
+
+
 $(document).ready(function() {
   var params = getHashParams();
 
@@ -59,7 +80,7 @@ $(document).ready(function() {
 
                   var element = `
                   <li>
-                    <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+                    <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}">
                       <span>${playlist.name}</span>
                     </a>
                   </li>`
@@ -84,5 +105,57 @@ $(document).ready(function() {
 });
 
 $(document).on("click", ".playlist", function(e) {
-  $("#content").text($(this).text());
+  const templateValues = {
+    playlist_selected: $(this).text(),
+    playlist_id: $(this).data("playlist-id"),
+  };
+
+  readHtmlIntoElement("game_modes.html", "#content", templateValues);
 });
+
+
+$(document).on("click", "#play_button", function() {
+  const playlist_id = $(this).data("playlist-id");
+
+  // Count down from 5 seconds
+  $("#content").html(5);
+  var counter = 4;
+
+  var interval = setInterval(function() {
+    if (counter > 0) {
+      $("#content").html(counter);
+    }
+    counter--;
+
+    // Get a random song
+    if (counter === -1) {
+      clearInterval(interval);
+
+      var params = getHashParams();
+      var access_token = params.access_token,
+        refresh_token = params.refresh_token,
+        error = params.error;
+
+      // Get playlist items
+      $.ajax({
+        url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+        headers: {
+          'Authorization': 'Bearer ' + access_token
+        },
+        success: function(response) {
+          var playlist_items = response["items"];
+          const randIndex = Math.floor(Math.random() * playlist_items.length);
+          const track_name = playlist_items[randIndex]["track"]["name"];
+
+          $("#content").text(track_name);
+        },
+        error: function() {
+          console.log("Error occurred while getting playlists.");
+        }
+      });
+    }
+  }, 1000);
+
+
+
+})
