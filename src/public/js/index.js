@@ -16,8 +16,6 @@ function getHashParams() {
 function readHtmlIntoElement(htmlFile, element, templateValues) {
   var reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
 
-
-
   reader.open('get', htmlFile, true);
   reader.onreadystatechange = function() {
     if (reader.readyState == 4) {
@@ -37,35 +35,35 @@ function readHtmlIntoElement(htmlFile, element, templateValues) {
 $(document).ready(function() {
   var params = getHashParams();
 
-  var access_token = params.access_token,
-    refresh_token = params.refresh_token,
+  var accessToken = params.accessToken,
+    refreshToken = params.refreshToken,
     error = params.error;
 
   if (error) {
     alert('There was an error during the authentication');
   } else {
-    if (access_token) {
+    if (accessToken) {
       // Get the users profile
       $.ajax({
         url: 'https://api.spotify.com/v1/me',
         headers: {
-          'Authorization': 'Bearer ' + access_token
+          'Authorization': 'Bearer ' + accessToken
         },
         success: function(response) {
-          const display_name = response.display_name;
-          const user_id = response.id;
+          const displayName = response.display_name;
+          const userId = response.id;
 
-          $("#display_name").text(display_name);
-          $("#user_id").text(user_id);
+          $("#displayName").text(displayName);
+          $("#userId").text(userId);
 
           $('#login').hide();
           $('#loggedin').show();
 
           // Get playlists
           $.ajax({
-            url: `https://api.spotify.com/v1/users/${user_id}/playlists`,
+            url: `https://api.spotify.com/v1/users/${userId}/playlists`,
             headers: {
-              'Authorization': 'Bearer ' + access_token
+              'Authorization': 'Bearer ' + accessToken
             },
             success: function(data) {
               var playlists = data["items"];
@@ -73,8 +71,8 @@ $(document).ready(function() {
 
                 if (playlist.name !== '') {
                   const params = new URLSearchParams({
-                    access_token: access_token,
-                    refresh_token: refresh_token
+                    accessToken: accessToken,
+                    refreshToken: refreshToken
                   });
                   const queryString = params.toString();
 
@@ -106,56 +104,199 @@ $(document).ready(function() {
 
 $(document).on("click", ".playlist", function(e) {
   const templateValues = {
-    playlist_selected: $(this).text(),
-    playlist_id: $(this).data("playlist-id"),
+    playlistSelected: $(this).text(),
+    playlistId: $(this).data("playlist-id"),
   };
 
   readHtmlIntoElement("game_modes.html", "#content", templateValues);
+
+  var params = getHashParams();
+
+  var accessToken = params.accessToken,
+    refreshToken = params.refreshToken,
+    error = params.error;
+
+  // Stop current playback
+  $.ajax({
+    url: `https://api.spotify.com/v1/me/player/pause`,
+    type: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken
+    },
+    success: function(data1, textStatus1, xhr1) {
+      console.log(xhr1.status);
+    },
+    error: function(resp) {
+      var errorMessage = resp.responseText;
+      if(!errorMessage.includes("No active device found")) {
+        console.log(`Error while pausing playback: ${errorMessage}`)
+      }
+    }
+  });
 });
 
 
-$(document).on("click", "#play_button", function() {
-  const playlist_id = $(this).data("playlist-id");
+window.onSpotifyWebPlaybackSDKReady = () => {
+  var params = getHashParams();
 
-  // Count down from 5 seconds
-  $("#content").html(5);
-  var counter = 4;
+  var accessToken = params.accessToken,
+    refreshToken = params.refreshToken,
+    error = params.error;
 
-  var interval = setInterval(function() {
-    if (counter > 0) {
-      $("#content").html(counter);
-    }
-    counter--;
+  const playerName = 'Web player';
 
-    // Get a random song
-    if (counter === -1) {
-      clearInterval(interval);
+  const player = new Spotify.Player({
+    name: playerName,
+    getOAuthToken: cb => {
+      cb(accessToken);
+    },
+    volume: 0.2
+  });
 
-      var params = getHashParams();
-      var access_token = params.access_token,
-        refresh_token = params.refresh_token,
-        error = params.error;
+  // Ready
+  player.addListener('ready', ({
+    device_id
+  }) => {
+    console.log('Ready with Device ID', device_id);
+  });
 
-      // Get playlist items
-      $.ajax({
-        url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          var playlist_items = response["items"];
-          const randIndex = Math.floor(Math.random() * playlist_items.length);
-          const track_name = playlist_items[randIndex]["track"]["name"];
+  // Not Ready
+  player.addListener('not_ready', ({
+    device_id
+  }) => {
+    console.log('Device ID has gone offline', device_id);
+  });
 
-          $("#content").text(track_name);
-        },
-        error: function() {
-          console.log("Error occurred while getting playlists.");
+  player.addListener('initialization_error', ({
+    message
+  }) => {
+    console.error(message);
+  });
+
+  player.addListener('authentication_error', ({
+    message
+  }) => {
+    console.error(message);
+  });
+
+  player.addListener('account_error', ({
+    message
+  }) => {
+    console.error(message);
+  });
+
+  player.connect();
+
+
+  function startPlaylistOnWebPlayer(playlistId) {
+    var params = getHashParams();
+    var accessToken = params.accessToken,
+      refreshToken = params.refreshToken,
+      error = params.error;
+
+    // Get devices
+    $.ajax({
+      url: `https://api.spotify.com/v1/me/player/devices`,
+      headers: {
+        'Authorization': 'Bearer ' + accessToken
+      },
+      success: function(response) {
+        const devices = response["devices"];
+        var webPlayerId = null;
+
+        for (var i = 0; i < devices.length; i++) {
+          if (devices[i]["name"] === playerName) {
+            webPlayerId = devices[i]["id"];
+          }
         }
-      });
-    }
-  }, 1000);
+
+        // Transfer playback to Web player
+        var data = {
+          "device_ids": [
+            webPlayerId
+          ],
+          "play": true
+        };
+
+        $.ajax({
+          url: `https://api.spotify.com/v1/me/player`,
+          type: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + accessToken
+          },
+          data: JSON.stringify(data),
+          success: function(data, textStatus, xhr) {
+            if (xhr.status === 204) {
+              console.log("Playback transferred");
+
+              //Play a song
+              var dataObject = {
+                "device_id": webPlayerId,
+                "context_uri": `spotify:playlist:${playlistId}`,
+                "offset": {
+                  "position": 5
+                },
+                "position_ms": 0
+              };
+
+              $.ajax({
+                url: `https://api.spotify.com/v1/me/player/play`,
+                type: 'PUT',
+                headers: {
+                  'Authorization': 'Bearer ' + accessToken
+                },
+                data: JSON.stringify(dataObject),
+                dataType: 'json',
+                success: function(data1, textStatus1, xhr1) {
+                  console.log(xhr1.status);
+                },
+                error: function() {
+                  console.log("Error occurred while getting playlists.");
+                }
+              });
+
+            }
+          },
+          error: function() {
+            console.log("Error occurred while getting playlists.");
+          }
+        });
 
 
+      },
+      error: function() {
+        console.log("Error occurred while getting playlists.");
+      }
+    });
 
-})
+    player.togglePlay();
+  };
+
+
+  $(document).on("click", "#play_button", function() {
+    const playlistId = $(this).data("playlist-id");
+
+    // Count down from 5 seconds
+    $("#content").html(5);
+    var counter = 4;
+
+    var interval = setInterval(function() {
+      if (counter > 0) {
+        $("#content").html(counter);
+      }
+      counter--;
+
+      if (counter === -1) {
+        clearInterval(interval);
+        $("#content").text("Guess the song");
+
+        var params = getHashParams();
+        var accessToken = params.accessToken,
+          refreshToken = params.refreshToken,
+          error = params.error;
+
+        startPlaylistOnWebPlayer(playlistId);
+      }
+    }, 1000);
+  })
+}

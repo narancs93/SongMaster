@@ -8,18 +8,18 @@
 </head>
 
 <body>
-    <div id="login">
-      <div class="flex h-screen">
-        <div class="m-auto">
-          <div class="p-60 shadow-lg rounded-xl text-center bg-slate-100">
-            <h1 class="text-4xl pb-20 font-bold text-cyan-500">Welcome to Song Master</h1>
-            <a href="/login" class="text-2xl p-4 border-2 rounded-md bg-spotify">Login with Spotify
-              <span><img id="login_spotify_logo" src="images/spotify_logo.png" alt=""></span>
-            </a>
-          </div>
+  <div id="login">
+    <div class="flex h-screen">
+      <div class="m-auto">
+        <div class="p-60 shadow-lg rounded-xl text-center bg-slate-100">
+          <h1 class="text-4xl pb-20 font-bold text-cyan-500">Welcome to Song Master</h1>
+          <a href="/login" class="text-2xl p-4 border-2 rounded-md bg-spotify">Login with Spotify
+            <span><img id="login_spotify_logo" src="images/spotify_logo.png" alt=""></span>
+          </a>
         </div>
       </div>
     </div>
+  </div>
 
 
   <div id="loggedin">
@@ -29,9 +29,9 @@
         <div class="flex items-center space-x-4 p-2 mb-5">
           <img class="h-12 rounded-full" src="images/user_avatar_placeholder.png" alt="User avatar">
           <div>
-            <h4 class="font-semibold text-lg text-gray-700 capitalize font-poppins tracking-wide"><span id="display_name"></span></h4>
+            <h4 class="font-semibold text-lg text-gray-700 capitalize font-poppins tracking-wide"><span id="displayName"></span></h4>
             <span class="text-sm tracking-wide flex items-center space-x-1">
-              <span class="text-gray-600">ID: <span id="user_id"></span></span>
+              <span class="text-gray-600">ID: <span id="userId"></span></span>
             </span>
           </div>
         </div>
@@ -58,25 +58,25 @@
             </a>
           </li>
           <li>
-              <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
-                  <span class="text-gray-600">
-                      <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                      </svg>
-                  </span>
-                  <span>Settings</span>
-              </a>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span class="text-gray-600">
+                <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                </svg>
+              </span>
+              <span>Settings</span>
+            </a>
           </li>
-            <li>
-                <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
-                    <span class="text-gray-600">
-                        <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                    </span>
-                    <span>Logout</span>
-                </a>
-            </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline">
+              <span class="text-gray-600">
+                <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </span>
+              <span>Logout</span>
+            </a>
+          </li>
         </ul>
 
         <span class="flex text-black p-2 border-b-2">Select a playlist</span>
@@ -117,7 +117,11 @@
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script src="js/index.js" charset="utf-8"></script>
+  <script>
+
+  </script>
 </body>
 
 </html>

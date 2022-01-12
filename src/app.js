@@ -39,7 +39,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email playlist-read-private';
+  var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -82,12 +82,12 @@ app.get('/callback', function(req, res) {
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
-        var access_token = body.access_token,
-            refresh_token = body.refresh_token;
+        var accessToken = body.access_token,
+            refreshToken = body.refresh_token;
 
         var options = {
           url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + access_token },
+          headers: { 'Authorization': 'Bearer ' + accessToken },
           json: true
         };
 
@@ -99,8 +99,8 @@ app.get('/callback', function(req, res) {
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
           querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
+            accessToken: accessToken,
+            refreshToken: refreshToken
           }));
       } else {
         res.redirect('/#' +
@@ -112,25 +112,25 @@ app.get('/callback', function(req, res) {
   }
 });
 
-app.get('/refresh_token', function(req, res) {
+app.get('/refreshToken', function(req, res) {
 
   // requesting access token from refresh token
-  var refresh_token = req.query.refresh_token;
+  var refreshToken = req.query.refreshToken;
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
     headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
     form: {
-      grant_type: 'refresh_token',
-      refresh_token: refresh_token
+      grant_type: 'refreshToken',
+      refreshToken: refreshToken
     },
     json: true
   };
 
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      var access_token = body.access_token;
+      var accessToken = body.accessToken;
       res.send({
-        'access_token': access_token
+        'accessToken': accessToken
       });
     }
   });
