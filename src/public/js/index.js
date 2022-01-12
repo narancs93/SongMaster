@@ -33,6 +33,7 @@ function readHtmlIntoElement(htmlFile, element, templateValues) {
 
 
 $(document).ready(function() {
+  var spotifyApi = null;
   var params = getHashParams();
 
   var accessToken = params.accessToken,
@@ -43,15 +44,15 @@ $(document).ready(function() {
     alert('There was an error during the authentication');
   } else {
     if (accessToken) {
+      spotifyApi = new SpotifyWebApi();
+      spotifyApi.setAccessToken(accessToken);
+
       // Get the users profile
-      $.ajax({
-        url: 'https://api.spotify.com/v1/me',
-        headers: {
-          'Authorization': 'Bearer ' + accessToken
-        },
-        success: function(response) {
-          const displayName = response.display_name;
-          const userId = response.id;
+      spotifyApi.getMe(function(getMeError, getMeResult) {
+        if (getMeError) console.error("Error occurred while getting user info", getMeError);
+        else {
+          const displayName = getMeResult.display_name;
+          const userId = getMeResult.id;
 
           $("#displayName").text(displayName);
           $("#userId").text(userId);
@@ -60,15 +61,11 @@ $(document).ready(function() {
           $('#loggedin').show();
 
           // Get playlists
-          $.ajax({
-            url: `https://api.spotify.com/v1/users/${userId}/playlists`,
-            headers: {
-              'Authorization': 'Bearer ' + accessToken
-            },
-            success: function(data) {
-              var playlists = data["items"];
+          spotifyApi.getUserPlaylists(userId, function(getUserPlaylistsError, getUserPlaylistsResult) {
+            if (getUserPlaylistsError) console.error("Error occurred while getting playlists.", getUserPlaylistsError);
+            else {
+              var playlists = getUserPlaylistsResult["items"];
               playlists.map(function(playlist) {
-
                 if (playlist.name !== '') {
                   const params = new URLSearchParams({
                     accessToken: accessToken,
@@ -86,19 +83,15 @@ $(document).ready(function() {
                   $("#playlists").append(element);
                 }
               });
-            },
-            error: function() {
-              console.log("Error occurred while getting playlists.");
             }
           });
         }
-      });
+      })
     } else {
       // render initial screen
       $('#login').show();
       $('#loggedin').hide();
     }
-
   }
 });
 
@@ -128,7 +121,7 @@ $(document).on("click", ".playlist", function(e) {
     },
     error: function(resp) {
       var errorMessage = resp.responseText;
-      if(!errorMessage.includes("No active device found")) {
+      if (!errorMessage.includes("No active device found")) {
         console.log(`Error while pausing playback: ${errorMessage}`)
       }
     }
