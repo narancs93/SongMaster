@@ -208,7 +208,7 @@ $(document).ready(function() {
                   }
                 }
               );
-            // transferMyPlayback end
+              // transferMyPlayback end
             }
           });
 
@@ -272,7 +272,7 @@ $(document).ready(function() {
                   // Show the choices in the content div element
                   const templateValues = {};
 
-                  for(var i = 0; i < choices.length; i++) {
+                  for (var i = 0; i < choices.length; i++) {
                     templateValues[`track${i+1}Id`] = choices[i].trackId;
                     templateValues[`track${i+1}Name`] = choices[i].trackName;
                   }
@@ -290,6 +290,16 @@ $(document).ready(function() {
                   const trackOffset = offset + trackIndexInResults;
 
                   startPlaylistOnWebPlayer(playlistId, trackOffset);
+
+                  $(document).on("click", ".track-choice-button", function() {
+                    const clickedTrackId = $(this).data("track-id");
+
+                    if (clickedTrackId === correctTrackId) {
+                      $("#content").text("Correct answer.");
+                    } else {
+                      $("#content").text("Wrong answer.");
+                    }
+                  });
                 }
               });
               // getPlaylistTracks end
