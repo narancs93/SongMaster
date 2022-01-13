@@ -1,5 +1,4 @@
 /* ID selectors */
-
 #login,
 #loggedin {
   display: none;
@@ -12,7 +11,6 @@
 }
 
 /* Class selectors */
-
 .bg-spotify {
   background-color: rgb(30 215 96);
 }
@@ -22,4 +20,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 500px;
+}
+
+.track-choice {
+  width: 50%;
+  height: 50%;
+  float: left;
+}
+
+.track-choice-button {
+  width: 90%;
+  height: 90%;
 }

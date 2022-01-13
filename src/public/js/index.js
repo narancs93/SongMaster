@@ -32,6 +32,17 @@ function readHtmlIntoElement(htmlFile, element, templateValues) {
 }
 
 
+// https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/sampleSize.md
+const sampleSize = ([...arr], n = 1) => {
+  let m = arr.length;
+  while (m) {
+    const i = Math.floor(Math.random() * m--);
+    [arr[m], arr[i]] = [arr[i], arr[m]];
+  }
+  return arr.slice(0, n);
+};
+
+
 $(document).ready(function() {
   var spotifyApi = null;
   var params = getHashParams();
@@ -75,7 +86,7 @@ $(document).ready(function() {
 
                   var element = `
                   <li>
-                    <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}">
+                    <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
                       <span>${playlist.name}</span>
                     </a>
                   </li>`;
@@ -94,6 +105,7 @@ $(document).ready(function() {
         const templateValues = {
           playlistSelected: $(this).text(),
           playlistId: $(this).data("playlist-id"),
+          numOfTracks: $(this).data("num-of-tracks")
         };
 
         readHtmlIntoElement("game_modes.html", "#content", templateValues);
@@ -156,7 +168,7 @@ $(document).ready(function() {
         player.connect();
 
 
-        function startPlaylistOnWebPlayer(playlistId) {
+        function startPlaylistOnWebPlayer(playlistId, offset) {
           // Get devices
           spotifyApi.getMyDevices(function(getMyDevicesError, getMyDevicesResult) {
             if (getMyDevicesError) console.error("Error occurred while getting devices.", getMyDevicesError);
@@ -185,7 +197,7 @@ $(document).ready(function() {
                       "device_id": webPlayerId,
                       "context_uri": `spotify:playlist:${playlistId}`,
                       "offset": {
-                        "position": 5
+                        "position": offset
                       },
                       "position_ms": 0
                     };
@@ -207,6 +219,7 @@ $(document).ready(function() {
 
         $(document).on("click", "#play_button", function() {
           const playlistId = $(this).data("playlist-id");
+          const numOfTracks = $(this).data("num-of-tracks");
 
           // Count down from 5 seconds
           $("#content").html(5);
@@ -220,9 +233,66 @@ $(document).ready(function() {
 
             if (counter === -1) {
               clearInterval(interval);
-              $("#content").text("Guess the song");
 
-              startPlaylistOnWebPlayer(playlistId);
+              // Set random offset based on number of tracks in playlist
+              // 100 tracks are returned by the API
+              var offset = 0;
+              if (numOfTracks > 100) {
+                offset = Math.floor(Math.random() * (numOfTracks - 100));
+              }
+
+              const options = {
+                offset: offset
+              }
+
+              spotifyApi.getPlaylistTracks(playlistId, options, function(getPlaylistTracksError, getPlaylistTracksResult) {
+                if (getPlaylistTracksError) console.error(getPlaylistTracksError);
+                else {
+                  var playlistTracks = getPlaylistTracksResult["items"];
+
+                  // Select 4 distinct random tracks from the 100 results for 4 answers
+                  const randomTracks = sampleSize(playlistTracks, 4);
+
+                  // Extract the required data from the results returned by API
+                  var choices = [];
+
+                  for (var i = 0; i < randomTracks.length; i++) {
+                    var trackData = randomTracks[i]["track"];
+                    var trackId = trackData["id"];
+                    var artists = trackData["artists"];
+                    var trackName = trackData["name"];
+
+                    choices.push({
+                      trackId: trackId,
+                      artists: artists,
+                      trackName: trackName
+                    });
+                  }
+
+                  // Show the choices in the content div element
+                  const templateValues = {};
+
+                  for(var i = 0; i < choices.length; i++) {
+                    templateValues[`track${i+1}Id`] = choices[i].trackId;
+                    templateValues[`track${i+1}Name`] = choices[i].trackName;
+                  }
+
+                  readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
+
+                  // Randomly select which of the 4 songs will be the correct answer
+                  var correctAnswerIndex = Math.floor(Math.random() * 4);
+                  const correctTrackId = choices[correctAnswerIndex].trackId;
+
+                  // Spotify play API is not accepting track URI, only album/playlist
+                  // To play a specific song, need to pass an album/playlist with correct offset
+                  // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
+                  const trackIndexInResults = playlistTracks.indexOf(randomTracks[correctAnswerIndex]);
+                  const trackOffset = offset + trackIndexInResults;
+
+                  startPlaylistOnWebPlayer(playlistId, trackOffset);
+                }
+              });
+              // getPlaylistTracks end
             }
           }, 1000);
         })
