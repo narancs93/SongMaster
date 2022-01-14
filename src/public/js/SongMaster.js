@@ -181,41 +181,40 @@ class SongMaster {
 
 
   startPlaylistOnWebPlayer(playlistId, offset) {
-    const thisObject = this;
     // Get devices
-    thisObject.getDevice("Web player", function(webPlayer) {
+    this.getDevice("Web player", (webPlayer) => {
       const webPlayerId = webPlayer["id"];
 
-      thisObject.transferPlayback(webPlayerId, function() {
-        thisObject.playSong(webPlayerId, playlistId, offset);
+      this.transferPlayback(webPlayerId, () => {
+        this.playSong(webPlayerId, playlistId, offset);
       })
     });
 
-    thisObject.player.togglePlay();
+    this.player.togglePlay();
   };
 
 
   startGame(callback) {
     const thisObject = this;
 
-    const playlist = thisObject._songQuiz.playlist;
+    const playlist = this._songQuiz.playlist;
     const numOfTracks = playlist.numOfTracks;
 
     // Set random offset based on number of tracks in playlist
     // 100 tracks are returned by the API
     var offset = 0;
     if (numOfTracks > 100) {
-      thisObject._songQuiz.offset = Math.floor(Math.random() * (numOfTracks - 100));
+      this._songQuiz.offset = Math.floor(Math.random() * (numOfTracks - 100));
     }
 
     const options = {
-      offset: thisObject._songQuiz.offset
+      offset: this._songQuiz.offset
     }
     // Count down from 5 seconds
     $("#content").html(5);
     var counter = 4;
 
-    var interval = setInterval(function() {
+    var interval = setInterval(() => {
       if (counter > 0) {
         $("#content").html(counter);
       }
@@ -224,10 +223,10 @@ class SongMaster {
       if (counter === -1) {
         clearInterval(interval);
 
-        thisObject.getPlaylistTracks(playlist.id, options, function(getPlaylistTracksResult) {
-          thisObject._songQuiz.playlistTracksData = getPlaylistTracksResult;
-          thisObject._songQuiz.showQuestion(function(trackOffset) {
-            thisObject.startPlaylistOnWebPlayer(playlist.id, trackOffset);
+        this.getPlaylistTracks(playlist.id, options, (getPlaylistTracksResult) => {
+          this._songQuiz.playlistTracksData = getPlaylistTracksResult;
+          this._songQuiz.showQuestion((trackOffset) => {
+            this.startPlaylistOnWebPlayer(playlist.id, trackOffset);
           });
 
         })
