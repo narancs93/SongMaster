@@ -121,9 +121,8 @@ $(document).ready(function() {
         $('#login').hide();
         $('#loggedin').show();
 
-        songMaster.getPlaylists(function(playlistsData) {
-          songMaster.user.playlists = playlistsData;
-          var playlists = songMaster.user.playlists["items"];
+        songMaster.getPlaylists(function() {
+          var playlists = songMaster.user.playlists;
 
           playlists.map(function(playlist) {
             if (playlist.name !== '') {

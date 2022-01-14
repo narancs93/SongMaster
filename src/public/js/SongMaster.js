@@ -48,12 +48,40 @@ class SongMaster {
     });
   }
 
-  getPlaylists(callback) {
-    this._spotifyApi.getUserPlaylists(this._user.id, function(getUserPlaylistsError, getUserPlaylistsResult) {
+  getPlaylists(options, callback) {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; ++i) {
+      args[i] = arguments[i];
+    };
+
+    if (typeof args[args.length - 1] === 'function') {
+      callback = args.pop();
+    }
+
+    if (args.length > 0) options = args.shift();
+    else options = {
+      limit: 50,
+      offset: 0
+    };
+
+    if(!this.user.playlists) {
+      this.user.playlists = [];
+    }
+
+    // Get all playlists for user
+    this._spotifyApi.getUserPlaylists(options, (getUserPlaylistsError, getUserPlaylistsResult) => {
       if (getUserPlaylistsError) console.error("Error occurred while getting playlists.", getUserPlaylistsError);
       else {
-        if (typeof callback == 'function') {
-          callback(getUserPlaylistsResult);
+        this.user.playlistsData = getUserPlaylistsResult;
+        Array.prototype.push.apply(this.user.playlists, this.user.playlistsData.items);
+
+        if (this.user.playlistsData.next) {
+          options.offset += options.limit;
+          this.getPlaylists(options, callback);
+        } else {
+          if (typeof callback == 'function') {
+            callback();
+          }
         }
       }
     });
