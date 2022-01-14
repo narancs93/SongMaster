@@ -185,9 +185,13 @@ class SongMaster {
     this.getDevice("Web player", (webPlayer) => {
       const webPlayerId = webPlayer["id"];
 
-      this.transferPlayback(webPlayerId, () => {
+      const options = {
+        play: true
+      }
+
+      this.transferPlayback(webPlayerId, options, () => {
         this.playSong(webPlayerId, playlistId, offset);
-      })
+      });
     });
 
     this.player.togglePlay();
@@ -202,7 +206,7 @@ class SongMaster {
 
     // Set random offset based on number of tracks in playlist
     // 100 tracks are returned by the API
-    var offset = 0;
+    this._songQuiz.offset = 0;
     if (numOfTracks > 100) {
       this._songQuiz.offset = Math.floor(Math.random() * (numOfTracks - 100));
     }
@@ -228,8 +232,7 @@ class SongMaster {
           this._songQuiz.showQuestion((trackOffset) => {
             this.startPlaylistOnWebPlayer(playlist.id, trackOffset);
           });
-
-        })
+        });
       }
     }, 1000);
   }
