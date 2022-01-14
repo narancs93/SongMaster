@@ -30,8 +30,8 @@ var stateKey = 'spotify_auth_state';
 var app = express();
 
 app.use(express.static(path.join(__dirname, 'public')))
-   .use(cors())
-   .use(cookieParser());
+  .use(cors())
+  .use(cookieParser());
 
 app.get('/login', function(req, res) {
 
@@ -39,7 +39,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private';
+  var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -83,11 +83,13 @@ app.get('/callback', function(req, res) {
       if (!error && response.statusCode === 200) {
 
         var accessToken = body.access_token,
-            refreshToken = body.refresh_token;
+          refreshToken = body.refresh_token;
 
         var options = {
           url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + accessToken },
+          headers: {
+            'Authorization': 'Bearer ' + accessToken
+          },
           json: true
         };
 
@@ -113,7 +115,9 @@ app.get('/refreshToken', function(req, res) {
   var refreshToken = req.query.refreshToken;
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
-    headers: { 'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret, 'utf-8').toString('base64') },
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret, 'utf-8').toString('base64')
+    },
     form: {
       grant_type: 'refreshToken',
       refreshToken: refreshToken
