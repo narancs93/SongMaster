@@ -124,7 +124,6 @@ class SongQuiz {
           progress(this._secondsToGuess, this._secondsToGuess, progressBar);
         });
 
-
         var songTimerCount = this._secondsToGuess;
         this._songTimer = setInterval(() => {
           if (songTimerCount === this._secondsToGuess) {
@@ -133,16 +132,14 @@ class SongQuiz {
           if (songTimerCount === 0) {
             clearInterval(this._songTimer);
             this._songMaster.pause();
-            this.nextQuestion();
+            if (this.currentQuestion !== this.answerTracks.length) {
+              this.nextQuestion();
+            }
           }
           songTimerCount -= 1;
         }, 1000);
 
         this.currentQuestion += 1;
-
-        if (this.currentQuestion === this.answerTracks.length) {
-          clearInterval(this._songTimer);
-        }
       }
     }, 1000);
 
@@ -150,7 +147,7 @@ class SongQuiz {
       const clickedTrackId = $(evt.target).data('track-id')
 
       $("#header").hide();
-      
+
       if (clickedTrackId === this._correctTrackId) {
         $("#choices").text("Correct answer.");
       } else {

@@ -1,8 +1,13 @@
 class SongMaster {
-  constructor(user = null, spotifyApi = null) {
-    this._user = user;
-    this._spotifyApi = spotifyApi;
+  constructor(accessToken, refreshToken) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+
     this._songQuiz = new SongQuiz(this);
+    this.spotifyApi = new SpotifyWebApi();
+    this.spotifyApi.setAccessToken(this.accessToken);
+
+    this.initializePlayer("Web player");
   }
 
   get user() {
@@ -191,4 +196,104 @@ class SongMaster {
     this._songQuiz.start();
   }
 
+  initializePlayer(playerName) {
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      this.player = new Spotify.Player({
+        name: playerName,
+        getOAuthToken: cb => {
+          cb(this.accessToken);
+        },
+        volume: 0.2
+      });
+
+      this.player.playerName = playerName;
+
+      // Ready
+      this.player.addListener('ready', ({
+        device_id
+      }) => {
+        this.player.deviceId = device_id;
+        this.onPlayerReady();
+      });
+
+      // Not Ready
+      this.player.addListener('not_ready', ({
+        device_id
+      }) => {
+        console.log('Device ID has gone offline', device_id);
+      });
+
+      this.player.addListener('initialization_error', ({
+        message
+      }) => {
+        console.error(message);
+      });
+
+      this.player.addListener('authentication_error', ({
+        message
+      }) => {
+        console.error(message);
+      });
+
+      this.player.addListener('account_error', ({
+        message
+      }) => {
+        console.error(message);
+      });
+
+      this.player.connect();
+    }
+  }
+
+  onPlayerReady() {
+    console.log('Ready with Device ID', this.player.deviceId);
+
+    this.getDevice(this.player.playerName, (webPlayer) => {
+      this.webPlayerId = webPlayer["id"];
+
+      const options = {
+        play: true
+      }
+
+      this.transferPlayback(this.webPlayerId, options);
+
+      this.getUser((user) => {
+        this.user = user;
+        this.showUserDetails();
+      });
+    });
+  }
+
+  showUserDetails() {
+    $("#displayName").text(this.user.display_name);
+    $("#userId").text(this.user.id);
+
+    $('#login').hide();
+    $('#loggedin').show();
+
+    this.getPlaylists(() => {
+      this.showUserPlaylists();
+    });
+  }
+
+  showUserPlaylists() {
+    this.user.playlists.map((playlist) => {
+      if (playlist.name !== '') {
+        const params = new URLSearchParams({
+          accessToken: this.accessToken,
+          refreshToken: this.refreshToken
+        });
+        const queryString = params.toString();
+
+        var element = `
+        <li>
+          <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
+            <span>${playlist.name}</span>
+          </a>
+        </li>`;
+
+        $("#playlists").append(element);
+      }
+    });
+  }
 }

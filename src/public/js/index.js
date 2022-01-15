@@ -1,3 +1,4 @@
+// https://github.com/spotify/web-api-auth-examples/blob/master/authorization_code/public/index.html
 /**
  * Obtains parameters from the hash of the URL
  * @return Object
@@ -13,6 +14,7 @@ function getHashParams() {
 }
 
 
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
@@ -34,6 +36,7 @@ function shuffle(array) {
 }
 
 
+// https://stackoverflow.com/questions/13709482/how-to-read-text-file-in-javascript
 function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   var reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
 
@@ -56,13 +59,10 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   }
 }
 
-
+// https://stackoverflow.com/questions/34038464/jquery-looping-progress-bar
 function progress(timeleft, timetotal, element) {
   var element = $(element.selector);
   var progressBarWidth = timeleft * element.width() / timetotal;
-  // element.find('div').animate({
-  //   width: progressBarWidth
-  // }, 500).html(timeleft);
   element.find('div').animate({
     width: progressBarWidth
   }, timeleft == timetotal ? 0 : 1000, "linear");
@@ -87,115 +87,18 @@ const sampleSize = ([...arr], n = 1) => {
 
 
 $(document).ready(function() {
-  var spotifyApi = null;
-  var songMaster = new SongMaster();
-
   var params = getHashParams();
-
-  var accessToken = params.accessToken,
-    refreshToken = params.refreshToken,
-    error = params.error;
+  var [accessToken, refreshToken, error] = [
+    params.accessToken,
+    params.refreshToken,
+    params.error
+  ];
 
   if (error) {
     alert('There was an error during the authentication');
   } else {
     if (accessToken) {
-
-      var player = null;
-
-      window.onSpotifyWebPlaybackSDKReady = () => {
-        const playerName = 'Web player';
-
-        player = new Spotify.Player({
-          name: playerName,
-          getOAuthToken: cb => {
-            cb(accessToken);
-          },
-          volume: 0.2
-        });
-        songMaster.player = player;
-
-        // Ready
-        player.addListener('ready', ({
-          device_id
-        }) => {
-          console.log('Ready with Device ID', device_id);
-
-          spotifyApi = new SpotifyWebApi();
-          spotifyApi.setAccessToken(accessToken);
-
-          songMaster.spotifyApi = spotifyApi;
-          songMaster.getDevice("Web player", (webPlayer) => {
-            songMaster.webPlayerId = webPlayer["id"];
-
-            const options = {
-              play: true
-            }
-
-            songMaster.transferPlayback(songMaster.webPlayerId, options);
-
-            songMaster.getUser((user) => {
-              songMaster.user = user;
-
-              $("#displayName").text(songMaster.user.name);
-              $("#userId").text(songMaster.user.id);
-
-              $('#login').hide();
-              $('#loggedin').show();
-
-              songMaster.getPlaylists(function() {
-                var playlists = songMaster.user.playlists;
-
-                playlists.map(function(playlist) {
-                  if (playlist.name !== '') {
-                    const params = new URLSearchParams({
-                      accessToken: accessToken,
-                      refreshToken: refreshToken
-                    });
-                    const queryString = params.toString();
-
-                    var element = `
-                    <li>
-                      <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
-                        <span>${playlist.name}</span>
-                      </a>
-                    </li>`;
-
-                    $("#playlists").append(element);
-                  }
-                });
-              });
-            });
-          });
-        });
-
-        // Not Ready
-        player.addListener('not_ready', ({
-          device_id
-        }) => {
-          console.log('Device ID has gone offline', device_id);
-        });
-
-        player.addListener('initialization_error', ({
-          message
-        }) => {
-          console.error(message);
-        });
-
-        player.addListener('authentication_error', ({
-          message
-        }) => {
-          console.error(message);
-        });
-
-        player.addListener('account_error', ({
-          message
-        }) => {
-          console.error(message);
-        });
-
-        player.connect();
-      }
+      var songMaster = new SongMaster(accessToken, refreshToken);
 
       $(document).on("click", ".playlist", function(e) {
         const templateValues = {
@@ -210,7 +113,6 @@ $(document).ready(function() {
         songMaster.pause();
       });
 
-
       $(document).on("click", "#play_button", function() {
         const playlistId = $(this).data("playlist-id");
         const numOfTracks = $(this).data("num-of-tracks");
@@ -224,7 +126,7 @@ $(document).ready(function() {
         songMaster.startGame();
       });
     } else {
-      // render initial screen
+      // render login screen
       $('#login').show();
       $('#loggedin').hide();
     }
