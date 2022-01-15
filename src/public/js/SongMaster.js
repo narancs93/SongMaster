@@ -148,7 +148,6 @@ class SongMaster {
   }
 
   playSong(webPlayerId, playlistId, offset, callback) {
-    //Play a song
     var options = {
       "device_id": webPlayerId,
       "context_uri": `spotify:playlist:${playlistId}`,
@@ -181,20 +180,7 @@ class SongMaster {
 
 
   startPlaylistOnWebPlayer(playlistId, offset, callback) {
-    // Get devices
-    this.getDevice("Web player", (webPlayer) => {
-      const webPlayerId = webPlayer["id"];
-
-      const options = {
-        play: true
-      }
-
-      this.transferPlayback(webPlayerId, options, () => {
-        this.playSong(webPlayerId, playlistId, offset);
-      });
-    });
-
-    this.player.togglePlay();
+    this.playSong(this.webPlayerId, playlistId, offset);
 
     if (typeof callback == 'function') {
       callback();

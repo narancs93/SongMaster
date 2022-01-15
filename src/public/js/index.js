@@ -63,7 +63,9 @@ function progress(timeleft, timetotal, element) {
   // element.find('div').animate({
   //   width: progressBarWidth
   // }, 500).html(timeleft);
-  element.find('div').animate({ width: progressBarWidth }, timeleft == timetotal ? 0 : 1000, "linear");
+  element.find('div').animate({
+    width: progressBarWidth
+  }, timeleft == timetotal ? 0 : 1000, "linear");
 
   if (timeleft > 0) {
     setTimeout(function() {
@@ -118,6 +120,53 @@ $(document).ready(function() {
           device_id
         }) => {
           console.log('Ready with Device ID', device_id);
+
+          spotifyApi = new SpotifyWebApi();
+          spotifyApi.setAccessToken(accessToken);
+
+          songMaster.spotifyApi = spotifyApi;
+          songMaster.getDevice("Web player", (webPlayer) => {
+            songMaster.webPlayerId = webPlayer["id"];
+
+            const options = {
+              play: true
+            }
+
+            songMaster.transferPlayback(songMaster.webPlayerId, options);
+
+            songMaster.getUser((user) => {
+              songMaster.user = user;
+
+              $("#displayName").text(songMaster.user.name);
+              $("#userId").text(songMaster.user.id);
+
+              $('#login').hide();
+              $('#loggedin').show();
+
+              songMaster.getPlaylists(function() {
+                var playlists = songMaster.user.playlists;
+
+                playlists.map(function(playlist) {
+                  if (playlist.name !== '') {
+                    const params = new URLSearchParams({
+                      accessToken: accessToken,
+                      refreshToken: refreshToken
+                    });
+                    const queryString = params.toString();
+
+                    var element = `
+                    <li>
+                      <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
+                        <span>${playlist.name}</span>
+                      </a>
+                    </li>`;
+
+                    $("#playlists").append(element);
+                  }
+                });
+              });
+            });
+          });
         });
 
         // Not Ready
@@ -147,45 +196,6 @@ $(document).ready(function() {
 
         player.connect();
       }
-
-      spotifyApi = new SpotifyWebApi();
-      spotifyApi.setAccessToken(accessToken);
-
-      songMaster.spotifyApi = spotifyApi;
-
-      songMaster.getUser(function(user) {
-        songMaster.user = user;
-
-        $("#displayName").text(songMaster.user.name);
-        $("#userId").text(songMaster.user.id);
-
-        $('#login').hide();
-        $('#loggedin').show();
-
-        songMaster.getPlaylists(function() {
-          var playlists = songMaster.user.playlists;
-
-          playlists.map(function(playlist) {
-            if (playlist.name !== '') {
-              const params = new URLSearchParams({
-                accessToken: accessToken,
-                refreshToken: refreshToken
-              });
-              const queryString = params.toString();
-
-              var element = `
-              <li>
-                <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
-                  <span>${playlist.name}</span>
-                </a>
-              </li>`;
-
-              $("#playlists").append(element);
-            }
-          });
-        });
-      });
-
 
       $(document).on("click", ".playlist", function(e) {
         const templateValues = {
