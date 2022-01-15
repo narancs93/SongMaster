@@ -10,6 +10,19 @@
   margin-top: -4px;
 }
 
+#progressBar {
+  width: 100%;
+}
+
+#progressBar div {
+  height: 100%;
+  text-align: right;
+  padding: 0 0;
+  line-height: 40px; /* same as #progressBar height if we want text middle aligned */
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Class selectors */
 .bg-spotify {
   background-color: rgb(30 215 96);

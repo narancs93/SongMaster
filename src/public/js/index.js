@@ -13,7 +13,28 @@ function getHashParams() {
 }
 
 
-function readHtmlIntoElement(htmlFile, element, templateValues) {
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]
+    ];
+  }
+
+  return array;
+}
+
+
+function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   var reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
 
   reader.open('get', htmlFile, true);
@@ -29,7 +50,27 @@ function readHtmlIntoElement(htmlFile, element, templateValues) {
     }
   };
   reader.send(null);
+
+  if (typeof callback == 'function') {
+    callback();
+  }
 }
+
+
+function progress(timeleft, timetotal, element) {
+  var element = $(element.selector);
+  var progressBarWidth = timeleft * element.width() / timetotal;
+  // element.find('div').animate({
+  //   width: progressBarWidth
+  // }, 500).html(timeleft);
+  element.find('div').animate({ width: progressBarWidth }, timeleft == timetotal ? 0 : 1000, "linear");
+
+  if (timeleft > 0) {
+    setTimeout(function() {
+      progress(timeleft - 1, timetotal, element);
+    }, 1000);
+  }
+};
 
 
 // https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/sampleSize.md

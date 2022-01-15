@@ -2,7 +2,7 @@ class SongMaster {
   constructor(user = null, spotifyApi = null) {
     this._user = user;
     this._spotifyApi = spotifyApi;
-    this._songQuiz = new SongQuiz();
+    this._songQuiz = new SongQuiz(this);
   }
 
   get user() {
@@ -64,7 +64,7 @@ class SongMaster {
       offset: 0
     };
 
-    if(!this.user.playlists) {
+    if (!this.user.playlists) {
       this.user.playlists = [];
     }
 
@@ -180,7 +180,7 @@ class SongMaster {
   }
 
 
-  startPlaylistOnWebPlayer(playlistId, offset) {
+  startPlaylistOnWebPlayer(playlistId, offset, callback) {
     // Get devices
     this.getDevice("Web player", (webPlayer) => {
       const webPlayerId = webPlayer["id"];
@@ -195,46 +195,14 @@ class SongMaster {
     });
 
     this.player.togglePlay();
+
+    if (typeof callback == 'function') {
+      callback();
+    }
   };
 
-
   startGame(callback) {
-    const thisObject = this;
-
-    const playlist = this._songQuiz.playlist;
-    const numOfTracks = playlist.numOfTracks;
-
-    // Set random offset based on number of tracks in playlist
-    // 100 tracks are returned by the API
-    this._songQuiz.offset = 0;
-    if (numOfTracks > 100) {
-      this._songQuiz.offset = Math.floor(Math.random() * (numOfTracks - 100));
-    }
-
-    const options = {
-      offset: this._songQuiz.offset
-    }
-    // Count down from 5 seconds
-    $("#content").html(5);
-    var counter = 4;
-
-    var interval = setInterval(() => {
-      if (counter > 0) {
-        $("#content").html(counter);
-      }
-      counter--;
-
-      if (counter === -1) {
-        clearInterval(interval);
-
-        this.getPlaylistTracks(playlist.id, options, (getPlaylistTracksResult) => {
-          this._songQuiz.playlistTracksData = getPlaylistTracksResult;
-          this._songQuiz.showQuestion((trackOffset) => {
-            this.startPlaylistOnWebPlayer(playlist.id, trackOffset);
-          });
-        });
-      }
-    }, 1000);
+    this._songQuiz.start();
   }
 
 }

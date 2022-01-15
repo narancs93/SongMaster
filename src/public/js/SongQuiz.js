@@ -1,6 +1,7 @@
 class SongQuiz {
-  constructor(playlist = null) {
-    this._playlist = playlist;
+  constructor(songMaster = null) {
+    this._songMaster = songMaster;
+    this._secondsToGuess = 20;
   }
 
   get playlist() {
@@ -43,61 +44,123 @@ class SongQuiz {
     this._correctTrackId = newCorrectTrackId;
   }
 
-  showQuestion(callback) {
-    const thisOjbect = this;
-    const playlistTracks = thisOjbect.playlistTracksData["items"];
+  setRandomPlaylistOffset() {
+    // Set random offset based on number of tracks in playlist
+    // 100 tracks are returned by the API
+    const numOfTracks = this.playlist.numOfTracks;
 
-    // Select 4 distinct random tracks from the 100 results for 4 answers
-    const randomTracks = sampleSize(playlistTracks, 4);
+    this.playlistOffset = 0;
+    if (numOfTracks > 100) {
+      this.offset = Math.floor(Math.random() * (numOfTracks - 100));
+    }
+  }
 
-    // Extract the required data from the results returned by API
-    thisOjbect._choices = [];
+  generateChoices() {
+    const playlist = this.playlist;
+    const track = this.answerTracks[this.currentQuestion];
 
-    for (var i = 0; i < randomTracks.length; i++) {
-      var trackData = randomTracks[i]["track"];
-      var trackId = trackData["id"];
-      var artists = trackData["artists"];
-      var trackName = trackData["name"];
+    this._correctTrackId = track.track.id;
 
-      thisOjbect._choices.push({
-        trackId: trackId,
-        artists: artists,
-        trackName: trackName
-      });
+    const wrongAnswerPool = this.playlistTracks.filter(e => e !== track);
+    const wrongAnswers = sampleSize(wrongAnswerPool, 3);
+
+    // Create array for the 4 choices
+    this._choices = [track]
+    Array.prototype.push.apply(this._choices, wrongAnswers);
+
+    // Make order random
+    shuffle(this._choices);
+  }
+
+  start() {
+    this.setRandomPlaylistOffset();
+
+    const options = {
+      offset: this.offset
     }
 
-    // Randomly select which of the 4 songs will be the correct answer
-    var correctAnswerIndex = Math.floor(Math.random() * 4);
-    thisOjbect._correctTrackId = thisOjbect._choices[correctAnswerIndex].trackId;
+    this._songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
+      this.playlistTracks = getPlaylistTracksResult["items"];
+      this.answerTracks = sampleSize(this.playlistTracks, 10);
+      this.currentQuestion = 0;
 
-    // Show the choices in the content div element
-    const templateValues = {};
+      this.nextQuestion();
+    });
+  }
 
-    for (var i = 0; i < thisOjbect._choices.length; i++) {
-      templateValues[`track${i+1}Id`] = thisOjbect._choices[i].trackId;
-      templateValues[`track${i+1}Name`] = thisOjbect._choices[i].trackName;
-    }
-
-    readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
+  nextQuestion(callback) {
+    this.generateChoices();
 
     // Spotify play API is not accepting track URI, only album/playlist
     // To play a specific song, need to pass an album/playlist with correct offset
     // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
-    const trackIndexInResults = playlistTracks.indexOf(randomTracks[correctAnswerIndex]);
-    const trackOffset = thisOjbect.offset + trackIndexInResults;
+    const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestion]);
+    const trackOffset = this.offset + trackIndexInResults;
 
-    $(document).on("click", ".track-choice-button", function() {
-      const clickedTrackId = $(this).data("track-id");
+    // Count down from 5 seconds
+    $("#content").html(5);
+    var counter = 4;
 
-      if (clickedTrackId === thisOjbect._correctTrackId) {
-        $("#content").text("Correct answer.");
+    var interval = setInterval(() => {
+      if (counter > 0) {
+        $("#content").html(counter);
+      }
+      counter--;
+
+      if (counter === -1) {
+        clearInterval(interval);
+
+        const templateValues = {
+          timeLeft: this._secondsToGuess
+        };
+
+        for (var i = 0; i < this._choices.length; i++) {
+          templateValues[`track${i+1}Id`] = this._choices[i].track.id;
+          templateValues[`track${i+1}Name`] = this._choices[i].track.name;
+        }
+
+        readHtmlIntoElement("guess_the_song.html", "#content", templateValues, () => {
+          var progressBar = $("#progressBar");
+          progress(this._secondsToGuess, this._secondsToGuess, progressBar);
+        });
+
+
+        var songTimerCount = this._secondsToGuess;
+        this._songTimer = setInterval(() => {
+          if (songTimerCount === this._secondsToGuess) {
+            this._songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
+          }
+          if (songTimerCount === 0) {
+            clearInterval(this._songTimer);
+            this._songMaster.pause();
+            this.nextQuestion();
+          }
+          songTimerCount -= 1;
+        }, 1000);
+
+        this.currentQuestion += 1;
+
+        if (this.currentQuestion === this.answerTracks.length) {
+          clearInterval(this._songTimer);
+        }
+      }
+    }, 1000);
+
+    $(document).on("click", ".track-choice-button", (evt) => {
+      const clickedTrackId = $(evt.target).data('track-id')
+
+      $("#header").hide();
+      
+      if (clickedTrackId === this._correctTrackId) {
+        $("#choices").text("Correct answer.");
       } else {
-        $("#content").text("Wrong answer.");
+        $("#choices").text("Wrong answer.");
       }
     });
 
     if (typeof callback == 'function') {
-      callback(trackOffset);
+      callback();
     }
+
   }
 }
