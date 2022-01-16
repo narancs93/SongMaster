@@ -2,6 +2,9 @@ class SongQuiz {
   constructor(songMaster = null) {
     this._songMaster = songMaster;
     this._secondsToGuess = 20;
+
+    $("#playerScore").hide();
+    $("#progressBar").hide();
   }
 
   get playlist() {
@@ -73,6 +76,11 @@ class SongQuiz {
   }
 
   start() {
+    this.score = 0;
+    this.displayScore();
+    $("#playerScore").show();
+    $("#progressBar").show();
+
     this.setRandomPlaylistOffset();
 
     const options = {
@@ -130,6 +138,13 @@ class SongQuiz {
             this._songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
           }
           if (songTimerCount === 0) {
+            // Check whether the chosen answer was correct
+            const chosenAnswer = $(".chosen-answer").text().trim();
+            const correctAnswer = this.answerTracks[this.currentQuestion - 1].track.name;
+            this.checkAnswer(correctAnswer, chosenAnswer, () => {
+              this.displayScore();
+            });
+
             clearInterval(this._songTimer);
             this._songMaster.pause();
             if (this.currentQuestion !== this.answerTracks.length) {
@@ -144,20 +159,25 @@ class SongQuiz {
     }, 1000);
 
     $(document).on("click", ".track-choice-button", (evt) => {
-      const clickedTrackId = $(evt.target).data('track-id')
-
-      $("#header").hide();
-
-      if (clickedTrackId === this._correctTrackId) {
-        $("#choices").text("Correct answer.");
-      } else {
-        $("#choices").text("Wrong answer.");
-      }
+      // Add class to the selected answer and change its color
+      $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
+      $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
     });
 
     if (typeof callback == 'function') {
       callback();
     }
+  }
 
+  checkAnswer(correctAnswer, chosenAnswer, callback) {
+    if(correctAnswer === chosenAnswer) {
+      this.score += 1;
+    }
+
+    callback();
+  }
+
+  displayScore() {
+    $("#playerScore").text(`Score: ${this.score}/10`)
   }
 }
