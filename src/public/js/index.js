@@ -5,10 +5,13 @@
  */
 function getHashParams() {
   let hashParams = {};
-  let e, r = /([^&;=]+)=?([^&;]*)/g,
-    q = window.location.hash.substring(1);
-  while (e = r.exec(q)) {
-    hashParams[e[1]] = decodeURIComponent(e[2]);
+  let keyValuePair,
+    regex = /([^&;=]+)=?([^&;]*)/g,
+    queryString = window.location.hash.substring(1);
+  while (keyValuePair = regex.exec(queryString)) {
+    let key = keyValuePair[1];
+    let value = keyValuePair[2];
+    hashParams[key] = decodeURIComponent(value);
   }
   return hashParams;
 }
