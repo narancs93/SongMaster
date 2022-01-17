@@ -107,9 +107,9 @@ class SongQuiz {
 
     // Count down from 5 seconds
     $("#content").html(5);
-    var counter = 4;
+    let counter = 4;
 
-    var interval = setInterval(() => {
+    let interval = setInterval(() => {
       if (counter > 0) {
         $("#content").html(counter);
       }
@@ -122,17 +122,17 @@ class SongQuiz {
           timeLeft: this._secondsToGuess
         };
 
-        for (var i = 0; i < this._choices.length; i++) {
+        for (let i = 0; i < this._choices.length; i++) {
           templateValues[`track${i+1}Id`] = this._choices[i].track.id;
           templateValues[`track${i+1}Name`] = this._choices[i].track.name;
         }
 
         readHtmlIntoElement("guess_the_song.html", "#content", templateValues, () => {
-          var progressBar = $("#progressBar");
+          let progressBar = $("#progressBar");
           progress(this._secondsToGuess, this._secondsToGuess, progressBar);
         });
 
-        var songTimerCount = this._secondsToGuess;
+        let songTimerCount = this._secondsToGuess;
         this._songTimer = setInterval(() => {
           if (songTimerCount === this._secondsToGuess) {
             this._songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);

@@ -4,8 +4,8 @@
  * @return Object
  */
 function getHashParams() {
-  var hashParams = {};
-  var e, r = /([^&;=]+)=?([^&;]*)/g,
+  let hashParams = {};
+  let e, r = /([^&;=]+)=?([^&;]*)/g,
     q = window.location.hash.substring(1);
   while (e = r.exec(q)) {
     hashParams[e[1]] = decodeURIComponent(e[2]);
@@ -38,12 +38,12 @@ function shuffle(array) {
 
 // https://stackoverflow.com/questions/13709482/how-to-read-text-file-in-javascript
 function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
-  var reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
+  let reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
 
   reader.open('get', htmlFile, true);
   reader.onreadystatechange = function() {
     if (reader.readyState == 4) {
-      var htmlText = reader.responseText;
+      let htmlText = reader.responseText;
 
       for (const key in templateValues) {
         htmlText = htmlText.replace(`{{${key}}}`, `${templateValues[key]}`.trim());
@@ -61,8 +61,8 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
 
 // https://stackoverflow.com/questions/34038464/jquery-looping-progress-bar
 function progress(timeleft, timetotal, element) {
-  var element = $(element.selector);
-  var progressBarWidth = timeleft * element.width() / timetotal;
+  element = $(element.selector);
+  let progressBarWidth = timeleft * element.width() / timetotal;
   element.find('div').animate({
     width: progressBarWidth
   }, timeleft == timetotal ? 0 : 1000, "linear");
@@ -87,8 +87,8 @@ const sampleSize = ([...arr], n = 1) => {
 
 
 $(document).ready(function() {
-  var params = getHashParams();
-  var [accessToken, refreshToken, error] = [
+  let params = getHashParams();
+  let [accessToken, refreshToken, error] = [
     params.accessToken,
     params.refreshToken,
     params.error
@@ -98,7 +98,7 @@ $(document).ready(function() {
     alert('There was an error during the authentication');
   } else {
     if (accessToken) {
-      var songMaster = new SongMaster(accessToken, refreshToken);
+      let songMaster = new SongMaster(accessToken, refreshToken);
 
       $(document).on("click", ".playlist", function(e) {
         const templateValues = {

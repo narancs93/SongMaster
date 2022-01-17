@@ -54,8 +54,8 @@ class SongMaster {
   }
 
   getPlaylists(options, callback) {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; ++i) {
+    let args = new Array(arguments.length);
+    for (let i = 0; i < args.length; ++i) {
       args[i] = arguments[i];
     };
 
@@ -117,7 +117,7 @@ class SongMaster {
 
   getDevice(deviceName, callback) {
     this.getDevices(function(devices) {
-      for (var i = 0; i < devices.length; i++) {
+      for (let i = 0; i < devices.length; i++) {
         if (devices[i]["name"] === deviceName) {
           if (typeof callback == 'function') {
             callback(devices[i]);
@@ -128,8 +128,8 @@ class SongMaster {
   }
 
   transferPlayback(playerId, options, callback) {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; ++i) {
+    let args = new Array(arguments.length);
+    for (let i = 0; i < args.length; ++i) {
       args[i] = arguments[i];
     };
 
@@ -153,7 +153,7 @@ class SongMaster {
   }
 
   playSong(webPlayerId, playlistId, offset, callback) {
-    var options = {
+    let options = {
       "device_id": webPlayerId,
       "context_uri": `spotify:playlist:${playlistId}`,
       "offset": {
@@ -285,7 +285,7 @@ class SongMaster {
         });
         const queryString = params.toString();
 
-        var element = `
+        let element = `
         <li>
           <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
             <span>${playlist.name}</span>
