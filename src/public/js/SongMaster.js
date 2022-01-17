@@ -3,11 +3,27 @@ class SongMaster {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
 
-    this._songQuiz = new SongQuiz(this);
+    this.songQuiz = new SongQuiz(this);
     this.spotifyApi = new SpotifyWebApi();
     this.spotifyApi.setAccessToken(this.accessToken);
 
-    this.initializePlayer("Web player");
+    this.initSpotifyPlayer("Web player");
+  }
+
+  get accessToken() {
+    return this._accessToken;
+  }
+
+  set accessToken(newAccessToken) {
+    this._accessToken = newAccessToken;
+  }
+
+  get refreshToken() {
+    return this._refreshToken;
+  }
+
+  set refreshToken(newRefreshToken) {
+    this._refreshToken = newRefreshToken;
   }
 
   get user() {
@@ -26,12 +42,12 @@ class SongMaster {
     this._spotifyApi = newSpotifyApi;
   }
 
-  get player() {
-    return this._player;
+  get spotifyPlayer() {
+    return this._spotifyPlayer;
   }
 
-  set player(newPlayer) {
-    this._player = newPlayer;
+  set spotifyPlayer(newSpotifyPlayer) {
+    this._spotifyPlayer = newSpotifyPlayer;
   }
 
   get songQuiz() {
@@ -41,6 +57,7 @@ class SongMaster {
   set songQuiz(newSongQuiz) {
     this._songQuiz = newSongQuiz;
   }
+
 
   getUser(callback) {
     this._spotifyApi.getMe(function(getMeError, getMeResult) {
@@ -52,6 +69,7 @@ class SongMaster {
       }
     });
   }
+
 
   getPlaylists(options, callback) {
     let args = new Array(arguments.length);
@@ -92,6 +110,7 @@ class SongMaster {
     });
   }
 
+
   pause() {
     this._spotifyApi.pause(function(pauseError, pauseResult) {
       if (pauseError) {
@@ -104,6 +123,7 @@ class SongMaster {
     });
   }
 
+
   getDevices(callback) {
     this._spotifyApi.getMyDevices(function(getMyDevicesError, getMyDevicesResult) {
       if (getMyDevicesError) console.error("Error occurred while getting devices.", getMyDevicesError);
@@ -114,6 +134,7 @@ class SongMaster {
       }
     });
   }
+
 
   getDevice(deviceName, callback) {
     this.getDevices(function(devices) {
@@ -127,13 +148,14 @@ class SongMaster {
     });
   }
 
-  transferPlayback(playerId, options, callback) {
+
+  transferPlayback(spotifyPlayerId, options, callback) {
     let args = new Array(arguments.length);
     for (let i = 0; i < args.length; ++i) {
       args[i] = arguments[i];
     };
 
-    playerId = args.shift();
+    spotifyPlayerId = args.shift();
 
     if (typeof args[args.length - 1] === 'function') {
       callback = args.pop();
@@ -142,7 +164,7 @@ class SongMaster {
     if (args.length > 0) options = args.shift();
     else options = {};
 
-    this._spotifyApi.transferMyPlayback([playerId], options, function(transferMyPlaybackError, transferMyPlaybackResult) {
+    this._spotifyApi.transferMyPlayback([spotifyPlayerId], options, function(transferMyPlaybackError, transferMyPlaybackResult) {
       if (transferMyPlaybackError) console.error(transferMyPlaybackError);
       else {
         if (typeof callback == 'function') {
@@ -152,9 +174,10 @@ class SongMaster {
     });
   }
 
-  playSong(webPlayerId, playlistId, offset, callback) {
+
+  playSong(spotifyPlayerId, playlistId, offset, callback) {
     let options = {
-      "device_id": webPlayerId,
+      "device_id": spotifyPlayerId,
       "context_uri": `spotify:playlist:${playlistId}`,
       "offset": {
         "position": offset
@@ -172,6 +195,7 @@ class SongMaster {
     });
   }
 
+
   getPlaylistTracks(playlistId, options, callback) {
     this._spotifyApi.getPlaylistTracks(playlistId, options, function(getPlaylistTracksError, getPlaylistTracksResult) {
       if (getPlaylistTracksError) console.error(getPlaylistTracksError);
@@ -185,20 +209,22 @@ class SongMaster {
 
 
   startPlaylistOnWebPlayer(playlistId, offset, callback) {
-    this.playSong(this.webPlayerId, playlistId, offset);
+    this.playSong(this.spotifyPlayerId, playlistId, offset);
 
     if (typeof callback == 'function') {
       callback();
     }
   };
 
+
   startGame(callback) {
     this._songQuiz.start();
   }
 
-  initializePlayer(playerName) {
+
+  initSpotifyPlayer(playerName) {
     window.onSpotifyWebPlaybackSDKReady = () => {
-      this.player = new Spotify.Player({
+      this.spotifyPlayer = new Spotify.Player({
         name: playerName,
         getOAuthToken: cb => {
           cb(this.accessToken);
@@ -206,56 +232,57 @@ class SongMaster {
         volume: 0.2
       });
 
-      this.player.playerName = playerName;
+      this.spotifyPlayer.name = playerName;
 
       // Ready
-      this.player.addListener('ready', ({
+      this.spotifyPlayer.addListener('ready', ({
         device_id
       }) => {
-        this.player.deviceId = device_id;
+        this.spotifyPlayer.deviceId = device_id;
         this.onPlayerReady();
       });
 
       // Not Ready
-      this.player.addListener('not_ready', ({
+      this.spotifyPlayer.addListener('not_ready', ({
         device_id
       }) => {
         console.log('Device ID has gone offline', device_id);
       });
 
-      this.player.addListener('initialization_error', ({
+      this.spotifyPlayer.addListener('initialization_error', ({
         message
       }) => {
         console.error(message);
       });
 
-      this.player.addListener('authentication_error', ({
+      this.spotifyPlayer.addListener('authentication_error', ({
         message
       }) => {
         console.error(message);
       });
 
-      this.player.addListener('account_error', ({
+      this.spotifyPlayer.addListener('account_error', ({
         message
       }) => {
         console.error(message);
       });
 
-      this.player.connect();
+      this.spotifyPlayer.connect();
     }
   }
 
-  onPlayerReady() {
-    console.log('Ready with Device ID', this.player.deviceId);
 
-    this.getDevice(this.player.playerName, (webPlayer) => {
-      this.webPlayerId = webPlayer["id"];
+  onPlayerReady() {
+    console.log('Ready with Device ID', this.spotifyPlayer.deviceId);
+
+    this.getDevice(this.spotifyPlayer.name, (spotifyPlayer) => {
+      this.spotifyPlayerId = spotifyPlayer["id"];
 
       const options = {
         play: true
       }
 
-      this.transferPlayback(this.webPlayerId, options);
+      this.transferPlayback(this.spotifyPlayerId, options);
 
       this.getUser((user) => {
         this.user = user;
@@ -263,6 +290,7 @@ class SongMaster {
       });
     });
   }
+
 
   showUserDetails() {
     $("#displayName").text(this.user.display_name);
@@ -275,6 +303,7 @@ class SongMaster {
       this.showUserPlaylists();
     });
   }
+
 
   showUserPlaylists() {
     this.user.playlists.map((playlist) => {

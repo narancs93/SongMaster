@@ -62,6 +62,7 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   }
 }
 
+
 // https://stackoverflow.com/questions/34038464/jquery-looping-progress-bar
 function progress(timeleft, timetotal, element) {
   element = $(element.selector);
