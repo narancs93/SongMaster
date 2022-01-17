@@ -1,10 +1,26 @@
 class SongQuiz {
   constructor(songMaster = null) {
     this._songMaster = songMaster;
-    this._secondsToGuess = 20;
+    this._secondsToGuess = 10;
 
     $("#playerScore").hide();
     $("#progressBar").hide();
+  }
+
+  get songMaster() {
+    return this._songMaster;
+  }
+
+  set songMaster(newSongMaster) {
+    this._songMaster = newSongMaster;
+  }
+
+  get secondsToGuess() {
+    return this._secondsToGuess;
+  }
+
+  set secondsToGuess(newSecondsToGuess) {
+    this._secondsToGuess = newSecondsToGuess;
   }
 
   get playlist() {
@@ -15,6 +31,14 @@ class SongQuiz {
     this._playlist = newPlaylist;
   }
 
+  get playlistOffset() {
+    return this._playlistOffset;
+  }
+
+  set playlistOffset(newPlaylistOffset) {
+    this._playlistOffset = newPlaylistOffset;
+  }
+
   get offset() {
     return this._offset;
   }
@@ -23,12 +47,12 @@ class SongQuiz {
     this._offset = newOffset;
   }
 
-  get playlistTracksData() {
-    return this._playlistTracksData;
+  get playlistTracks() {
+    return this._playlistTracks;
   }
 
-  set playlistTracksData(newPlaylistTracksData) {
-    this._playlistTracksData = newPlaylistTracksData;
+  set playlistTracks(newplaylistTracks) {
+    this._playlistTracks = newplaylistTracks;
   }
 
   get choices() {
@@ -47,9 +71,57 @@ class SongQuiz {
     this._correctTrackId = newCorrectTrackId;
   }
 
+  get answerTracks() {
+    return this._answerTracks;
+  }
+
+  set answerTracks(newAnswerTracks) {
+    this._answerTracks = newAnswerTracks;
+  }
+
+  get currentQuestionIndex() {
+    return this._currentQuestionIndex;
+  }
+
+  set currentQuestionIndex(newCurrentQuestionIndex) {
+    this._currentQuestionIndex = newCurrentQuestionIndex;
+  }
+
+  get score() {
+    return this._score;
+  }
+
+  set score(newScore) {
+    this._score = newScore;
+  }
+
+  get secondsToWait() {
+    return this._secondsToWait;
+  }
+
+  set secondsToWait(newSecondsToWait) {
+    this._secondsToWait = newSecondsToWait;
+  }
+
+  get intervalBetweenQuestions() {
+    return this._intervalBetweenQuestions;
+  }
+
+  set intervalBetweenQuestions(newIntervalBetweenQuestions) {
+    this._intervalBetweenQuestions = newIntervalBetweenQuestions;
+  }
+
+  get intervalDuringQuestion() {
+    return this._intervalDuringQuestion;
+  }
+
+  set intervalDuringQuestion(newIntervalDuringQuestions) {
+    this._intervalDuringQuestion = newIntervalDuringQuestions;
+  }
+
   setRandomPlaylistOffset() {
     // Set random offset based on number of tracks in playlist
-    // 100 tracks are returned by the API
+    // Maximum of 100 tracks are returned by the API
     const numOfTracks = this.playlist.numOfTracks;
 
     this.playlistOffset = 0;
@@ -59,20 +131,19 @@ class SongQuiz {
   }
 
   generateChoices() {
-    const playlist = this.playlist;
-    const track = this.answerTracks[this.currentQuestion];
+    const track = this.answerTracks[this.currentQuestionIndex];
 
-    this._correctTrackId = track.track.id;
+    this.correctTrackId = track.track.id;
 
     const wrongAnswerPool = this.playlistTracks.filter(e => e !== track);
     const wrongAnswers = sampleSize(wrongAnswerPool, 3);
 
     // Create array for the 4 choices
-    this._choices = [track]
-    Array.prototype.push.apply(this._choices, wrongAnswers);
+    this.choices = [track]
+    Array.prototype.push.apply(this.choices, wrongAnswers);
 
     // Make order random
-    shuffle(this._choices);
+    shuffle(this.choices);
   }
 
   start() {
@@ -87,10 +158,10 @@ class SongQuiz {
       offset: this.offset
     }
 
-    this._songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
+    this.songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
       this.playlistTracks = getPlaylistTracksResult["items"];
       this.answerTracks = sampleSize(this.playlistTracks, 10);
-      this.currentQuestion = 0;
+      this.currentQuestionIndex = 0;
 
       this.nextQuestion();
     });
@@ -102,75 +173,84 @@ class SongQuiz {
     // Spotify play API is not accepting track URI, only album/playlist
     // To play a specific song, need to pass an album/playlist with correct offset
     // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
-    const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestion]);
+    const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestionIndex]);
     const trackOffset = this.offset + trackIndexInResults;
 
     // Count down from 5 seconds
-    $("#content").html(5);
-    let counter = 4;
+    this.secondsToWait = 5;
+    $("#content").html(this.secondsToWait);
 
-    let interval = setInterval(() => {
-      if (counter > 0) {
-        $("#content").html(counter);
-      }
-      counter--;
-
-      if (counter === -1) {
-        clearInterval(interval);
-
-        const templateValues = {
-          timeLeft: this._secondsToGuess
-        };
-
-        for (let i = 0; i < this._choices.length; i++) {
-          templateValues[`track${i+1}Id`] = this._choices[i].track.id;
-          templateValues[`track${i+1}Name`] = this._choices[i].track.name;
-        }
-
-        readHtmlIntoElement("guess_the_song.html", "#content", templateValues, () => {
-          let progressBar = $("#progressBar");
-          progress(this._secondsToGuess, this._secondsToGuess, progressBar);
-        });
-
-        let songTimerCount = this._secondsToGuess;
-        this._songTimer = setInterval(() => {
-          if (songTimerCount === this._secondsToGuess) {
-            this._songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
-          }
-          if (songTimerCount === 0) {
-            // Check whether the chosen answer was correct
-            const chosenAnswer = $(".chosen-answer").text().trim();
-            const correctAnswer = this.answerTracks[this.currentQuestion - 1].track.name;
-            this.checkAnswer(correctAnswer, chosenAnswer, () => {
-              this.displayScore();
-            });
-
-            clearInterval(this._songTimer);
-            this._songMaster.pause();
-            if (this.currentQuestion !== this.answerTracks.length) {
-              this.nextQuestion();
-            }
-          }
-          songTimerCount -= 1;
-        }, 1000);
-
-        this.currentQuestion += 1;
-      }
+    this.intervalBetweenQuestions = setInterval(() => {
+      this.countdownBeforeNextSong(trackOffset);
     }, 1000);
-
-    $(document).on("click", ".track-choice-button", (evt) => {
-      // Add class to the selected answer and change its color
-      $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
-      $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
-    });
 
     if (typeof callback == 'function') {
       callback();
     }
   }
 
+  countdownBeforeNextSong(trackOffset) {
+    this.secondsToWait--;
+    if (this.secondsToWait > 0) {
+      $("#content").html(this.secondsToWait);
+    }
+
+    if (this.secondsToWait === 0) {
+      clearInterval(this.intervalBetweenQuestions);
+
+      this.displayChoices();
+
+      this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
+
+      let songTimerCount = this.secondsToGuess;
+      this.intervalDuringQuestion = setInterval(() => {
+        if (songTimerCount === 0) {
+          clearInterval(this.intervalDuringQuestion);
+          this.songMaster.pause();
+
+          // Check whether the chosen answer was correct
+          const chosenAnswer = $(".chosen-answer").text().trim();
+          const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].track.name;
+          this.checkAnswer(correctAnswer, chosenAnswer, () => {
+            this.displayScore();
+          });
+
+          if (this.currentQuestionIndex < this.answerTracks.length) {
+            this.nextQuestion();
+          } else {
+            this.displayResults();
+          }
+        }
+        songTimerCount -= 1;
+      }, 1000);
+
+      this.currentQuestionIndex += 1;
+    }
+  }
+
+  displayChoices() {
+    const templateValues = {
+      timeLeft: this.secondsToGuess
+    };
+
+    for (let i = 0; i < this.choices.length; i++) {
+      templateValues[`track${i+1}Id`] = this.choices[i].track.id;
+      templateValues[`track${i+1}Name`] = this.choices[i].track.name;
+    }
+
+    readHtmlIntoElement("guess_the_song.html", "#content", templateValues, () => {
+      let progressBar = $("#progressBar");
+      progress(this.secondsToGuess, this.secondsToGuess, progressBar);
+    });
+  }
+
+  displayResults() {
+    console.log("DisplayResults");
+    $("#content").text(`${this.score}/10`);
+  }
+
   checkAnswer(correctAnswer, chosenAnswer, callback) {
-    if(correctAnswer === chosenAnswer) {
+    if (correctAnswer === chosenAnswer) {
       this.score += 1;
     }
 
