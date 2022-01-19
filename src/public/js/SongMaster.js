@@ -3,7 +3,12 @@ class SongMaster {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
 
-    this.songQuiz = new SongQuiz(this);
+    const songQuizOptions = {
+      songMaster: this,
+      timeToWait: 3,
+      timeToGuess: 10
+    }
+    this.songQuiz = new SongQuiz(songQuizOptions);
     this.spotifyApi = new SpotifyWebApi();
     this.spotifyApi.setAccessToken(this.accessToken);
 

@@ -1,7 +1,12 @@
 class SongQuiz {
-  constructor(songMaster = null) {
-    this._songMaster = songMaster;
-    this._secondsToGuess = 10;
+  constructor(options) {
+    ({
+      songMaster: this._songMaster,
+      timeToWait: this._timeToWait,
+      timeToGuess: this._timeToGuess
+    } = options);
+    this._timeToWait = (this._timeToWait === undefined) ? 3 : this._timeToWait;
+    this._timeToGuess = (this._timeToGuess === undefined) ? 10 : this._timeToGuess;
 
     $("#playerScore").hide();
     $("#progressBar").hide();
@@ -13,6 +18,30 @@ class SongQuiz {
 
   set songMaster(newSongMaster) {
     this._songMaster = newSongMaster;
+  }
+
+  get timeToWait() {
+    return this._timeToWait;
+  }
+
+  set timeToWait(newTimeToWait) {
+    this._timeToWait = newTimeToWait;
+  }
+
+  get timeToGuess() {
+    return this._timeToGuess;
+  }
+
+  set timeToGuess(newTimeToGuess) {
+    this._timeToGuess = newTimeToGuess;
+  }
+
+  get secondsToWait() {
+    return this._secondsToWait;
+  }
+
+  set secondsToWait(newSecondsToWait) {
+    this._secondsToWait = newSecondsToWait;
   }
 
   get secondsToGuess() {
@@ -95,14 +124,6 @@ class SongQuiz {
     this._score = newScore;
   }
 
-  get secondsToWait() {
-    return this._secondsToWait;
-  }
-
-  set secondsToWait(newSecondsToWait) {
-    this._secondsToWait = newSecondsToWait;
-  }
-
   get intervalBetweenQuestions() {
     return this._intervalBetweenQuestions;
   }
@@ -177,7 +198,7 @@ class SongQuiz {
     const trackOffset = this.offset + trackIndexInResults;
 
     // Count down from 5 seconds
-    this.secondsToWait = 5;
+    this.secondsToWait = this.timeToWait;
     $("#content").html(this.secondsToWait);
 
     this.intervalBetweenQuestions = setInterval(() => {
@@ -197,14 +218,13 @@ class SongQuiz {
 
     if (this.secondsToWait === 0) {
       clearInterval(this.intervalBetweenQuestions);
-
+      this.secondsToGuess = this.timeToGuess;
       this.displayChoices();
 
       this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
 
-      let songTimerCount = this.secondsToGuess;
       this.intervalDuringQuestion = setInterval(() => {
-        if (songTimerCount === 0) {
+        if (this.secondsToGuess === 0) {
           clearInterval(this.intervalDuringQuestion);
           this.songMaster.pause();
 
@@ -221,7 +241,7 @@ class SongQuiz {
             this.displayResults();
           }
         }
-        songTimerCount -= 1;
+        this.secondsToGuess -= 1;
       }, 1000);
 
       this.currentQuestionIndex += 1;
