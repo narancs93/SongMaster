@@ -6,7 +6,8 @@ class SongMaster {
     const songQuizOptions = {
       songMaster: this,
       timeToWait: 3,
-      timeToGuess: 10
+      timeToGuess: 10,
+      numOfQuestions: 10
     }
     this.songQuiz = new SongQuiz(songQuizOptions);
     this.spotifyApi = new SpotifyWebApi();

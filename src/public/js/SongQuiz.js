@@ -3,10 +3,12 @@ class SongQuiz {
     ({
       songMaster: this._songMaster,
       timeToWait: this._timeToWait,
-      timeToGuess: this._timeToGuess
+      timeToGuess: this._timeToGuess,
+      numOfQuestions: this._numOfQuestions
     } = options);
     this._timeToWait = (this._timeToWait === undefined) ? 3 : this._timeToWait;
     this._timeToGuess = (this._timeToGuess === undefined) ? 10 : this._timeToGuess;
+    this._numOfQuestions = (this._numOfQuestions === undefined) ? 10 : this._numOfQuestions;
 
     $("#playerScore").hide();
     $("#progressBar").hide();
@@ -50,6 +52,14 @@ class SongQuiz {
 
   set secondsToGuess(newSecondsToGuess) {
     this._secondsToGuess = newSecondsToGuess;
+  }
+
+  get numOfQuestions() {
+    return this._numOfQuestions;
+  }
+
+  set numOfQuestions(newNumOfQuestions) {
+    this._numOfQuestions = newNumOfQuestions;
   }
 
   get playlist() {
@@ -181,7 +191,7 @@ class SongQuiz {
 
     this.songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
       this.playlistTracks = getPlaylistTracksResult["items"];
-      this.answerTracks = sampleSize(this.playlistTracks, 10);
+      this.answerTracks = sampleSize(this.playlistTracks, this.numOfQuestions);
       this.currentQuestionIndex = 0;
 
       this.nextQuestion();
@@ -265,8 +275,7 @@ class SongQuiz {
   }
 
   displayResults() {
-    console.log("DisplayResults");
-    $("#content").text(`${this.score}/10`);
+    $("#content").text(`${this.score}/${this.numOfQuestions}`);
   }
 
   checkAnswer(correctAnswer, chosenAnswer, callback) {
@@ -278,6 +287,6 @@ class SongQuiz {
   }
 
   displayScore() {
-    $("#playerScore").text(`Score: ${this.score}/10`)
+    $("#playerScore").text(`Score: ${this.score}/${this.numOfQuestions}`)
   }
 }
