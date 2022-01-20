@@ -1,14 +1,13 @@
 class SongMaster {
-  constructor(accessToken, refreshToken) {
+  constructor(accessToken, refreshToken, songQuizOptions) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
 
-    const songQuizOptions = {
-      songMaster: this,
-      timeToWait: 3,
-      timeToGuess: 10,
-      numOfQuestions: 10
-    }
+    songQuizOptions.songMaster = this;
+    songQuizOptions.timeToWait = songQuizOptions.timeToWait || 3;
+    songQuizOptions.timeToGuess = songQuizOptions.timeToGuess || 10;
+    songQuizOptions.numOfQuestions = songQuizOptions.numOfQuestions || 10;
+
     this.songQuiz = new SongQuiz(songQuizOptions);
     this.spotifyApi = new SpotifyWebApi();
     this.spotifyApi.setAccessToken(this.accessToken);

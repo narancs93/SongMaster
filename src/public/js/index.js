@@ -102,7 +102,14 @@ $(document).ready(function() {
     alert('There was an error during the authentication');
   } else {
     if (accessToken) {
-      let songMaster = new SongMaster(accessToken, refreshToken);
+
+      const songQuizOptions = {
+        timeToWait: 3,
+        timeToGuess: 10,
+        numOfQuestions: 10
+      };
+
+      let songMaster = new SongMaster(accessToken, refreshToken, songQuizOptions);
 
       $(document).on("click", ".playlist", function(e) {
         const templateValues = {
