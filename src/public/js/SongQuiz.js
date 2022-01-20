@@ -210,7 +210,6 @@ class SongQuiz {
     const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestionIndex]);
     const trackOffset = this.playlistOffset + trackIndexInResults;
 
-    // Count down from 5 seconds
     this.secondsToWait = this.timeToWait;
     $("#content").html(this.secondsToWait);
 
@@ -227,12 +226,14 @@ class SongQuiz {
     this.secondsToWait--;
     if (this.secondsToWait > 0) {
       $("#content").html(this.secondsToWait);
-    }
-
-    if (this.secondsToWait === 0) {
+    } else {
       clearInterval(this.intervalBetweenQuestions);
       this.secondsToGuess = this.timeToGuess;
-      this.displayChoices();
+
+      this.displayChoices(() => {
+        let progressBar = $("#progressBar");
+        progress(this.secondsToGuess, this.secondsToGuess, progressBar, this.songMaster);
+      });
 
       this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
 
@@ -261,7 +262,7 @@ class SongQuiz {
     }
   }
 
-  displayChoices() {
+  displayChoices(callback) {
     const templateValues = {
       timeLeft: this.secondsToGuess
     };
@@ -271,10 +272,11 @@ class SongQuiz {
       templateValues[`track${i+1}Name`] = this.choices[i].track.name;
     }
 
-    readHtmlIntoElement("guess_the_song.html", "#content", templateValues, () => {
-      let progressBar = $("#progressBar");
-      progress(this.secondsToGuess, this.secondsToGuess, progressBar, this.songMaster);
-    });
+    readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
+
+    if (typeof callback == 'function') {
+      callback();
+    }
   }
 
   displayResults() {
