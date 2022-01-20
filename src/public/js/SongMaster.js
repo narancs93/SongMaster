@@ -223,8 +223,12 @@ class SongMaster {
   };
 
 
-  startGame(callback) {
-    this._songQuiz.start();
+  startGame() {
+    this.songQuiz.start();
+  }
+
+  stopGame() {
+    this.songQuiz.stop();
   }
 
 

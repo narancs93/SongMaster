@@ -64,17 +64,17 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
 
 
 // https://stackoverflow.com/questions/34038464/jquery-looping-progress-bar
-function progress(timeleft, timetotal, element) {
+function progress(timeleft, timetotal, element, songMaster) {
   element = $(element.selector);
   let progressBarWidth = timeleft * element.width() / timetotal;
   element.find('div').animate({
     width: progressBarWidth
-  }, timeleft == timetotal ? 0 : 1000, "linear");
+  }, timeleft == timetotal ? 0 : 100, "linear");
 
-  if (timeleft > 0) {
+  if (timeleft > 0 && !songMaster.stopProgressBar) {
     setTimeout(function() {
-      progress(timeleft - 1, timetotal, element);
-    }, 1000);
+      progress(timeleft - 0.1, timetotal, element, songMaster);
+    }, 100);
   }
 };
 
@@ -113,8 +113,8 @@ $(document).ready(function() {
 
         readHtmlIntoElement("game_modes.html", "#content", templateValues);
 
-        // Stop current playback
-        songMaster.pause();
+        // Stop current songQuiz
+        songMaster.stopGame();
       });
 
       $(document).on("click", "#play_button", function() {

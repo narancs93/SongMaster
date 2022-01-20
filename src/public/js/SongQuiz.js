@@ -179,6 +179,7 @@ class SongQuiz {
 
   start() {
     this.score = 0;
+    this.songMaster.stopProgressBar = false;
     this.displayScore();
     $("#playerScore").show();
     $("#progressBar").show();
@@ -196,6 +197,18 @@ class SongQuiz {
 
       this.nextQuestion();
     });
+  }
+
+  stop() {
+    try {
+      clearInterval(this.intervalBetweenQuestions);
+      clearInterval(this.intervalDuringQuestion);
+    } catch {
+      ;
+    } finally {
+      this.songMaster.stopProgressBar = true;
+      this.songMaster.pause();
+    }
   }
 
   nextQuestion(callback) {
@@ -270,7 +283,7 @@ class SongQuiz {
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues, () => {
       let progressBar = $("#progressBar");
-      progress(this.secondsToGuess, this.secondsToGuess, progressBar);
+      progress(this.secondsToGuess, this.secondsToGuess, progressBar, this.songMaster);
     });
   }
 
