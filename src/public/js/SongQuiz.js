@@ -145,11 +145,9 @@ class SongQuiz {
   setRandomPlaylistOffset() {
     // Set random offset based on number of tracks in playlist
     // Maximum of 100 tracks are returned by the API
-    const numOfTracks = this.playlist.numOfTracks;
-
     this.playlistOffset = 0;
-    if (numOfTracks > 100) {
-      this.playlistOffset = Math.floor(Math.random() * (numOfTracks - 100));
+    if (this.playlist.numOfTracks > 100) {
+      this.playlistOffset = Math.floor(Math.random() * (this.playlist.numOfTracks - 100));
     }
   }
 
