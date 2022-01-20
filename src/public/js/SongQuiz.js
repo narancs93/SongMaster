@@ -78,14 +78,6 @@ class SongQuiz {
     this._playlistOffset = newPlaylistOffset;
   }
 
-  get offset() {
-    return this._offset;
-  }
-
-  set offset(newOffset) {
-    this._offset = newOffset;
-  }
-
   get playlistTracks() {
     return this._playlistTracks;
   }
@@ -157,7 +149,7 @@ class SongQuiz {
 
     this.playlistOffset = 0;
     if (numOfTracks > 100) {
-      this.offset = Math.floor(Math.random() * (numOfTracks - 100));
+      this.playlistOffset = Math.floor(Math.random() * (numOfTracks - 100));
     }
   }
 
@@ -187,7 +179,7 @@ class SongQuiz {
     this.setRandomPlaylistOffset();
 
     const options = {
-      offset: this.offset
+      offset: this.playlistOffset
     }
 
     this.songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
@@ -218,7 +210,7 @@ class SongQuiz {
     // To play a specific song, need to pass an album/playlist with correct offset
     // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
     const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestionIndex]);
-    const trackOffset = this.offset + trackIndexInResults;
+    const trackOffset = this.playlistOffset + trackIndexInResults;
 
     // Count down from 5 seconds
     this.secondsToWait = this.timeToWait;
