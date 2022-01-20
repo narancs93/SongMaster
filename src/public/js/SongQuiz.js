@@ -174,6 +174,10 @@ class SongQuiz {
     $("#playerScore").show();
     $("#progressBar").show();
 
+    this.nextQuestion();
+  }
+
+  getPlaylistTracks(callback) {
     this.setRandomPlaylistOffset();
 
     const options = {
@@ -185,7 +189,9 @@ class SongQuiz {
       this.answerTracks = sampleSize(this.playlistTracks, this.numOfQuestions);
       this.currentQuestionIndex = 0;
 
-      this.nextQuestion();
+      if (typeof callback == 'function') {
+        callback();
+      }
     });
   }
 

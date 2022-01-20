@@ -112,6 +112,17 @@ $(document).ready(function() {
       let songMaster = new SongMaster(accessToken, refreshToken, songQuizOptions);
 
       $(document).on("click", ".playlist", function(e) {
+        const playlistId = $(this).data("playlist-id");
+        const numOfTracks = $(this).data("num-of-tracks");
+
+        const playlist = {
+          id: playlistId,
+          numOfTracks: numOfTracks
+        }
+
+        songMaster.songQuiz.playlist = playlist;
+        songMaster.songQuiz.getPlaylistTracks();
+
         const templateValues = {
           playlistSelected: $(this).text(),
           playlistId: $(this).data("playlist-id"),
@@ -125,15 +136,6 @@ $(document).ready(function() {
       });
 
       $(document).on("click", "#play_button", function() {
-        const playlistId = $(this).data("playlist-id");
-        const numOfTracks = $(this).data("num-of-tracks");
-
-        const playlist = {
-          id: playlistId,
-          numOfTracks: numOfTracks
-        }
-
-        songMaster.songQuiz.playlist = playlist;
         songMaster.startGame();
       });
     } else {
