@@ -10,8 +10,8 @@ class SongQuiz {
     this._timeToGuess = (this._timeToGuess === undefined) ? 10 : this._timeToGuess;
     this._numOfQuestions = (this._numOfQuestions === undefined) ? 10 : this._numOfQuestions;
 
-    $("#playerScore").hide();
-    $("#progressBar").hide();
+    $("#playerScoreContainer").hide();
+    $("#progressBarContainer").hide();
   }
 
   get songMaster() {
@@ -175,8 +175,8 @@ class SongQuiz {
     this.currentQuestionIndex = 0;
     this.songMaster.stopProgressBar = false;
     this.displayScore();
-    $("#playerScore").show();
-    $("#progressBar").show();
+    $("#playerScoreContainer").show();
+    $("#progressBarContainer").show();
 
     this.nextQuestion();
   }
@@ -336,8 +336,8 @@ class SongQuiz {
   }
 
   displayResults() {
-    $("#playerScore").hide();
-    $("#progressBar").hide();
+    $("#playerScoreContainer").hide();
+    $("#progressBarContainer").hide();
     let htmlContent = `
     <div class="flex flex-col mt-auto mb-auto">
       <div class="text-center p-6">

@@ -47,7 +47,7 @@
       <div class="flex flex-1 flex-col text-2xl font-bold">
 
         <!-- score -->
-        <div class="flex basis-1/12 bg-white">
+        <div id="playerScoreContainer" class="flex basis-1/12 bg-white">
           <div class="flex items-center max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="relative flex items-center justify-between">
               <div class=" text-3xl justify-center items-center text-center w-full">
@@ -58,7 +58,7 @@
         </div>
 
         <!-- progressbar timer -->
-        <div class="flex basis-1/12 bg-white">
+        <div id="progressBarContainer" class="flex basis-1/12 bg-white">
           <div class="flex basis-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="relative flex basis-full items-center justify-between h-16">
               <div id="progressBar" class="text-base justify-center items-center text-center w-full border-2 border-teal-700">
@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <div id="content" class="flex flex-auto justify-center items-center h-screen">
+        <div id="content" class="flex flex-auto justify-center items-center h-screen overflow-auto">
           Select a playlist from the list to start playing
         </div>
 
