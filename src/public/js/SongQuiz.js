@@ -153,11 +153,14 @@ class SongQuiz {
 
   generateChoices() {
     const track = this.answerTracks[this.currentQuestionIndex];
+    this.correctTrackId = track.trackId;
 
-    this.correctTrackId = track.track.id;
-
-    const wrongAnswerPool = this.playlistTracks.filter(e => e !== track);
+    const wrongAnswerPool = this.playlistTracks.filter(e => e.track.id !== this.correctTrackId);
     const wrongAnswers = sampleSize(wrongAnswerPool, 3);
+
+    for (let i = 0; i < wrongAnswers.length; i++) {
+      wrongAnswers[i] = this.extractTrackData(wrongAnswers[i]);
+    }
 
     // Create array for the 4 choices
     this.choices = [track]
@@ -169,6 +172,7 @@ class SongQuiz {
 
   start() {
     this.score = 0;
+    this.currentQuestionIndex = 0;
     this.songMaster.stopProgressBar = false;
     this.displayScore();
     $("#playerScore").show();
@@ -186,13 +190,47 @@ class SongQuiz {
 
     this.songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
       this.playlistTracks = getPlaylistTracksResult["items"];
-      this.answerTracks = sampleSize(this.playlistTracks, this.numOfQuestions);
-      this.currentQuestionIndex = 0;
 
       if (typeof callback == 'function') {
         callback();
       }
     });
+  }
+
+  generateAnswers(callback) {
+    const tracks = sampleSize(this.playlistTracks, this.numOfQuestions);
+
+    this.answerTracks = [];
+
+    for (let i = 0; i < tracks.length; i++) {
+      let newAnswer = this.extractTrackData(tracks[i]);
+
+      this.answerTracks.push(newAnswer);
+    }
+
+    if (typeof callback == 'function') {
+      callback();
+    }
+  }
+
+  extractTrackData(track) {
+    let trackData = {};
+
+    let trackId = track.track.id;
+    let trackName = track.track.name;
+    let trackArtistArray = track.track.artists;
+
+    let trackArtistNames = [];
+    for (let j = 0; j < trackArtistArray.length; j++) {
+      trackArtistNames.push(trackArtistArray[j].name);
+    }
+    let trackArtists = trackArtistNames.join(' & ');
+
+    trackData['trackId'] = trackId;
+    trackData['trackName'] = trackName;
+    trackData['trackArtists'] = trackArtists;
+
+    return trackData;
   }
 
   stop() {
@@ -213,8 +251,9 @@ class SongQuiz {
     // Spotify play API is not accepting track URI, only album/playlist
     // To play a specific song, need to pass an album/playlist with correct offset
     // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
-    const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestionIndex]);
-    const trackOffset = this.playlistOffset + trackIndexInResults;
+    //const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestionIndex]);
+    const trackIndex = this.getTrackIndex();
+    const trackOffset = this.playlistOffset + trackIndex;
 
     this.secondsToWait = this.timeToWait;
     $("#content").html(this.secondsToWait);
@@ -225,6 +264,15 @@ class SongQuiz {
 
     if (typeof callback == 'function') {
       callback();
+    }
+  }
+
+  getTrackIndex() {
+    let index = null;
+    for (let i = 0; i < this.playlistTracks.length; i++) {
+      if (this.playlistTracks[i].track.id === this.answerTracks[this.currentQuestionIndex].trackId) {
+        return i;
+      }
     }
   }
 
@@ -242,6 +290,7 @@ class SongQuiz {
       });
 
       this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
+      this.answerTracks[this.currentQuestionIndex].startTime = new Date();
 
       this.intervalDuringQuestion = setInterval(() => {
         if (this.secondsToGuess === 0) {
@@ -250,7 +299,7 @@ class SongQuiz {
 
           // Check whether the chosen answer was correct
           const chosenAnswer = $(".chosen-answer").text().trim();
-          const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].track.name;
+          const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackName;
           this.checkAnswer(correctAnswer, chosenAnswer, () => {
             this.displayScore();
           });
@@ -274,8 +323,8 @@ class SongQuiz {
     };
 
     for (let i = 0; i < this.choices.length; i++) {
-      templateValues[`track${i+1}Id`] = this.choices[i].track.id;
-      templateValues[`track${i+1}Name`] = this.choices[i].track.name;
+      templateValues[`track${i+1}Id`] = this.choices[i].trackId;
+      templateValues[`track${i+1}Name`] = this.choices[i].trackName;
     }
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
@@ -286,18 +335,69 @@ class SongQuiz {
   }
 
   displayResults() {
-    $("#content").text(`${this.score}/${this.numOfQuestions}`);
+    let htmlContent = `
+      <table class="border-collapse table-auto text-base">
+        <thead>
+          <tr>
+            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Artist</th>
+            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Title</th>
+            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Guess time</th>
+            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Is correct?</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-slate-800">
+    `
+
+    for (let i = 0; i < this.answerTracks.length; i++) {
+      let track = this.answerTracks[i];
+      let start = track.startTime;
+      let end = track.answerTime;
+      let guessTimeInSec = (end - start) / 1000;
+      guessTimeInSec = isNaN(guessTimeInSec) ? 'Not answered' : guessTimeInSec;
+
+      let tmp = {
+        'artist': track.trackArtists,
+        'name': track.trackName,
+        'guessTime': guessTimeInSec,
+        'guessedCorrectly': (track.guessedCorrectly) ? 'Yes' : 'No'
+      }
+
+      const tableRowHtml = `
+        <tr>
+          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.artist}</td>
+          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.name}</td>
+          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.guessTime}</td>
+          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.guessedCorrectly}</td>
+        </tr>
+      `
+
+      htmlContent += tableRowHtml;
+    }
+
+    htmlContent += `
+        </tbody>
+      </table>
+    `
+    $("#content").html(htmlContent);
+    //$("#content").text(`${this.score}/${this.numOfQuestions}`);
   }
 
   checkAnswer(correctAnswer, chosenAnswer, callback) {
     if (correctAnswer === chosenAnswer) {
       this.score += 1;
+      this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = true;
+    } else {
+      this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = false;
     }
 
     callback();
   }
 
   displayScore() {
-    $("#playerScore").text(`Score: ${this.score}/${this.numOfQuestions}`)
+    $("#playerScore").text(`Score: ${this.score}/${this.currentQuestionIndex}`)
+  }
+
+  setAnswerTime() {
+    this.answerTracks[this.currentQuestionIndex - 1].answerTime = new Date();
   }
 }
