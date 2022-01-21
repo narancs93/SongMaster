@@ -336,17 +336,25 @@ class SongQuiz {
   }
 
   displayResults() {
+    $("#playerScore").hide();
+    $("#progressBar").hide();
     let htmlContent = `
-      <table class="border-collapse table-auto text-base">
-        <thead>
-          <tr>
-            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Artist</th>
-            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Title</th>
-            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Guess time</th>
-            <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Is correct?</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white dark:bg-slate-800">
+    <div class="flex flex-col mt-auto mb-auto">
+      <div class="text-center p-6">
+        <h1 class="text-2xl">Result</h1>
+        <h2 class="text-lg">Correct answers: ${this.score}/${this.numOfQuestions}</h2>
+      </div>
+      <div>
+          <table class="border-collapse table-auto text-base">
+            <thead>
+              <tr>
+                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Artist</th>
+                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Title</th>
+                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Guess time</th>
+                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Is correct?</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-slate-800">
     `
 
     for (let i = 0; i < this.answerTracks.length; i++) {
@@ -376,8 +384,10 @@ class SongQuiz {
     }
 
     htmlContent += `
-        </tbody>
-      </table>
+            </tbody>
+          </table>
+        </div>
+      </div>
     `
     $("#content").html(htmlContent);
     //$("#content").text(`${this.score}/${this.numOfQuestions}`);
