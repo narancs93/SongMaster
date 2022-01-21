@@ -338,6 +338,10 @@ class SongQuiz {
   displayResults() {
     $("#playerScoreContainer").hide();
     $("#progressBarContainer").hide();
+
+    let rowColorSuccessClass = 'bg-lime-500';
+    let rowColorFailClass = 'bg-red-500';
+
     let htmlContent = `
     <div class="flex flex-col mt-auto mb-auto">
       <div class="text-center p-6">
@@ -351,7 +355,6 @@ class SongQuiz {
                 <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Artist</th>
                 <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Title</th>
                 <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Guess time</th>
-                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Is correct?</th>
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-slate-800">
@@ -364,19 +367,19 @@ class SongQuiz {
       let guessTimeInSec = (end - start) / 1000;
       guessTimeInSec = isNaN(guessTimeInSec) ? 'Not answered' : guessTimeInSec;
 
+
       let tmp = {
         'artist': track.trackArtists,
         'name': track.trackName,
         'guessTime': guessTimeInSec,
-        'guessedCorrectly': (track.guessedCorrectly) ? 'Yes' : 'No'
+        'rowColorClass': (track.guessedCorrectly) ? 'bg-lime-500' : 'bg-red-500'
       }
 
       const tableRowHtml = `
-        <tr>
+        <tr class="${tmp.rowColorClass}">
           <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.artist}</td>
           <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.name}</td>
           <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.guessTime}</td>
-          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.guessedCorrectly}</td>
         </tr>
       `
 
