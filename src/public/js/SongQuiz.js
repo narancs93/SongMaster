@@ -284,36 +284,37 @@ class SongQuiz {
       clearInterval(this.intervalBetweenQuestions);
       this.secondsToGuess = this.timeToGuess;
 
-      this.displayChoices(() => {
+      this.displayChoices();
+
+      this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset, () => {
         let progressBar = $("#progressBar");
         progress(this.secondsToGuess, this.secondsToGuess, progressBar, this.songMaster);
-      });
 
-      this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
-      this.answerTracks[this.currentQuestionIndex].startTime = new Date();
+        this.answerTracks[this.currentQuestionIndex].startTime = new Date();
 
-      this.intervalDuringQuestion = setInterval(() => {
-        if (this.secondsToGuess === 0) {
-          clearInterval(this.intervalDuringQuestion);
-          this.songMaster.pause();
+        this.intervalDuringQuestion = setInterval(() => {
+          if (this.secondsToGuess === 0) {
+            clearInterval(this.intervalDuringQuestion);
+            this.songMaster.pause();
 
-          // Check whether the chosen answer was correct
-          const chosenAnswer = $(".chosen-answer").text().trim();
-          const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackName;
-          this.checkAnswer(correctAnswer, chosenAnswer, () => {
-            this.displayScore();
-          });
+            // Check whether the chosen answer was correct
+            const chosenAnswer = $(".chosen-answer").text().trim();
+            const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackName;
+            this.checkAnswer(correctAnswer, chosenAnswer, () => {
+              this.displayScore();
+            });
 
-          if (this.currentQuestionIndex < this.answerTracks.length) {
-            this.nextQuestion();
-          } else {
-            this.displayResults();
+            if (this.currentQuestionIndex < this.answerTracks.length) {
+              this.nextQuestion();
+            } else {
+              this.displayResults();
+            }
           }
-        }
-        this.secondsToGuess -= 1;
-      }, 1000);
+          this.secondsToGuess -= 1;
+        }, 1000);
 
-      this.currentQuestionIndex += 1;
+        this.currentQuestionIndex += 1;
+      });
     }
   }
 

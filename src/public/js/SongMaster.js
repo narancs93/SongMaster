@@ -214,11 +214,7 @@ class SongMaster {
 
 
   startPlaylistOnWebPlayer(playlistId, offset, callback) {
-    this.playSong(this.spotifyPlayerId, playlistId, offset);
-
-    if (typeof callback == 'function') {
-      callback();
-    }
+    this.playSong(this.spotifyPlayerId, playlistId, offset, callback);
   };
 
 
