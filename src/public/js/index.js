@@ -118,7 +118,13 @@ const sampleSize = ([...arr], n = 1) => {
 function updateTokenExpiry(validUntil) {
   let currentTime = new Date().getTime() / 1000;
   let secondsLeft = Math.round(validUntil - currentTime);
-  $("#tokenExpiry").text(secondsLeft);
+
+  if (secondsLeft > 0) {
+    $("#tokenExpiry").text(secondsLeft);
+  } else {
+    $("#tokenExpiry").parent('div').html("The access token has expired.");
+  }
+
 
   if (secondsLeft < 300) {
     $("#tokenExpiry").parent('div').addClass("bg-red-300");
