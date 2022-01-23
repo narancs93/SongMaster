@@ -41,9 +41,9 @@ function shuffle(array) {
 
 // https://stackoverflow.com/questions/13709482/how-to-read-text-file-in-javascript
 function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
-  let reader = new XMLHttpRequest() || new ActiveXObject('MSXML2.XMLHTTP');
+  let reader = new XMLHttpRequest() || new ActiveXObject("MSXML2.XMLHTTP");
 
-  reader.open('get', htmlFile, true);
+  reader.open("get", htmlFile, true);
   reader.onreadystatechange = function() {
     if (reader.readyState == 4) {
       let htmlText = reader.responseText;
@@ -57,7 +57,7 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   };
   reader.send(null);
 
-  if (typeof callback == 'function') {
+  if (typeof callback == "function") {
     callback();
   }
 }
@@ -87,9 +87,9 @@ $(document).on("click", "#obtainNewToken", function(e) {
 
   if (refreshToken) {
     $.ajax({
-      url: '/refreshToken',
+      url: "/refreshToken",
       data: {
-        'refreshToken': refreshToken
+        "refreshToken": refreshToken
       }
     }).done(function(data) {
       var params = new URLSearchParams({
@@ -121,11 +121,11 @@ function updateTokenExpiry(validUntil) {
   $("#tokenExpiry").text(secondsLeft);
 
   if (secondsLeft < 300) {
-    $("#tokenExpiry").parent('div').addClass('bg-red-300');
-    $("#refreshTokenButton").removeClass('bg-gray-200 hover:bg-gray-200').addClass('bg-blue-300 hover:bg-blue-200');
+    $("#tokenExpiry").parent('div').addClass("bg-red-300");
+    $("#refreshTokenButton").removeClass("bg-gray-200 hover:bg-gray-200").addClass("bg-blue-300 hover:bg-blue-200");
   } else if (secondsLeft < 900) {
-    $("#tokenExpiry").parent('div').addClass('bg-yellow-300');
-    $("#refreshTokenButton").removeClass('bg-gray-200 hover:bg-gray-200').addClass('bg-blue-300 hover:bg-blue-200');
+    $("#tokenExpiry").parent("div").addClass("bg-yellow-300");
+    $("#refreshTokenButton").removeClass("bg-gray-200 hover:bg-gray-200").addClass("bg-blue-300 hover:bg-blue-200");
   }
 }
 
@@ -144,7 +144,7 @@ $(document).ready(function() {
   }, 1000)
 
   if (error) {
-    alert('There was an error during the authentication');
+    alert("There was an error during the authentication");
   } else {
     if (accessToken) {
 
@@ -185,7 +185,7 @@ $(document).ready(function() {
       $(document).on("click", ".play-button", function(e) {
         //songMaster.startGame();
         let clickedButton = $(this);
-        let gameMode = clickedButton.data('game-mode');
+        let gameMode = clickedButton.data("game-mode");
         songMaster.startGame(gameMode);
       });
 
@@ -198,8 +198,8 @@ $(document).ready(function() {
       });
     } else {
       // render login screen
-      $('#login').show();
-      $('#loggedin').hide();
+      $("#login").show();
+      $("#loggedin").hide();
     }
   }
 });

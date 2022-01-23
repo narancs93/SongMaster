@@ -192,7 +192,7 @@ class SongQuiz {
     this.songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
       this.playlistTracks = getPlaylistTracksResult["items"];
 
-      if (typeof callback == 'function') {
+      if (typeof callback == "function") {
         callback();
       }
     });
@@ -209,7 +209,7 @@ class SongQuiz {
       this.answerTracks.push(newAnswer);
     }
 
-    if (typeof callback == 'function') {
+    if (typeof callback == "function") {
       callback();
     }
   }
@@ -225,11 +225,11 @@ class SongQuiz {
     for (let j = 0; j < trackArtistArray.length; j++) {
       trackArtistNames.push(trackArtistArray[j].name);
     }
-    let trackArtists = trackArtistNames.join(' & ');
+    let trackArtists = trackArtistNames.join(" & ");
 
-    trackData['trackId'] = trackId;
-    trackData['trackName'] = trackName;
-    trackData['trackArtists'] = trackArtists;
+    trackData["trackId"] = trackId;
+    trackData["trackName"] = trackName;
+    trackData["trackArtists"] = trackArtists;
 
     return trackData;
   }
@@ -263,7 +263,7 @@ class SongQuiz {
       this.countdownBeforeNextSong(trackOffset);
     }, 1000);
 
-    if (typeof callback == 'function') {
+    if (typeof callback == "function") {
       callback();
     }
   }
@@ -310,7 +310,7 @@ class SongQuiz {
             this.songMaster.pause();
 
             // Check whether the chosen answer was correct
-            const chosenAnswer = $(".chosen-answer").data('track-id');
+            const chosenAnswer = $(".chosen-answer").data("track-id");
             const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackId;
             this.checkAnswer(correctAnswer, chosenAnswer, () => {
               this.displayScore();
@@ -342,7 +342,7 @@ class SongQuiz {
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
 
-    if (typeof callback == 'function') {
+    if (typeof callback == "function") {
       callback();
     }
   }
@@ -351,8 +351,8 @@ class SongQuiz {
     $("#playerScoreContainer").hide();
     $("#progressBarContainer").hide();
 
-    let rowColorSuccessClass = 'bg-lime-500';
-    let rowColorFailClass = 'bg-red-500';
+    let rowColorSuccessClass = "bg-lime-500";
+    let rowColorFailClass = "bg-red-500";
 
     let htmlContent = `
     <div class="flex flex-col mt-auto mb-auto">
@@ -377,14 +377,14 @@ class SongQuiz {
       let start = track.startTime;
       let end = track.answerTime;
       let guessTimeInSec = (end - start) / 1000;
-      guessTimeInSec = isNaN(guessTimeInSec) ? 'Not answered' : guessTimeInSec;
+      guessTimeInSec = isNaN(guessTimeInSec) ? "Not answered" : guessTimeInSec;
 
 
       let tmp = {
-        'artist': track.trackArtists,
-        'name': track.trackName,
-        'guessTime': guessTimeInSec,
-        'rowColorClass': (track.guessedCorrectly) ? 'bg-lime-500' : 'bg-red-500'
+        "artist": track.trackArtists,
+        "name": track.trackName,
+        "guessTime": guessTimeInSec,
+        "rowColorClass": (track.guessedCorrectly) ? "bg-lime-500" : "bg-red-500"
       }
 
       const tableRowHtml = `

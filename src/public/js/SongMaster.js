@@ -68,7 +68,7 @@ class SongMaster {
     this._spotifyApi.getMe(function(getMeError, getMeResult) {
       if (getMeError) console.error("Error occurred while getting user info", getMeError);
       else {
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback(getMeResult);
         }
       }
@@ -82,7 +82,7 @@ class SongMaster {
       args[i] = arguments[i];
     };
 
-    if (typeof args[args.length - 1] === 'function') {
+    if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
     }
 
@@ -107,7 +107,7 @@ class SongMaster {
           options.offset += options.limit;
           this.getPlaylists(options, callback);
         } else {
-          if (typeof callback == 'function') {
+          if (typeof callback == "function") {
             callback();
           }
         }
@@ -133,7 +133,7 @@ class SongMaster {
     this._spotifyApi.getMyDevices(function(getMyDevicesError, getMyDevicesResult) {
       if (getMyDevicesError) console.error("Error occurred while getting devices.", getMyDevicesError);
       else {
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback(getMyDevicesResult["devices"]);
         }
       }
@@ -145,7 +145,7 @@ class SongMaster {
     this.getDevices(function(devices) {
       for (let i = 0; i < devices.length; i++) {
         if (devices[i]["name"] === deviceName) {
-          if (typeof callback == 'function') {
+          if (typeof callback == "function") {
             callback(devices[i]);
           }
         }
@@ -162,7 +162,7 @@ class SongMaster {
 
     spotifyPlayerId = args.shift();
 
-    if (typeof args[args.length - 1] === 'function') {
+    if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
     }
 
@@ -172,7 +172,7 @@ class SongMaster {
     this._spotifyApi.transferMyPlayback([spotifyPlayerId], options, function(transferMyPlaybackError, transferMyPlaybackResult) {
       if (transferMyPlaybackError) console.error(transferMyPlaybackError);
       else {
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback();
         }
       }
@@ -193,7 +193,7 @@ class SongMaster {
     this._spotifyApi.play(options, function(playError, playResult) {
       if (playError) console.error("Error occurred while starting play.", playError);
       else {
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback();
         }
       }
@@ -205,7 +205,7 @@ class SongMaster {
     this._spotifyApi.getPlaylistTracks(playlistId, options, function(getPlaylistTracksError, getPlaylistTracksResult) {
       if (getPlaylistTracksError) console.error(getPlaylistTracksError);
       else {
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback(getPlaylistTracksResult);
         }
       }
@@ -240,7 +240,7 @@ class SongMaster {
       this.spotifyPlayer.name = playerName;
 
       // Ready
-      this.spotifyPlayer.addListener('ready', ({
+      this.spotifyPlayer.addListener("ready", ({
         device_id
       }) => {
         this.spotifyPlayer.deviceId = device_id;
@@ -248,25 +248,25 @@ class SongMaster {
       });
 
       // Not Ready
-      this.spotifyPlayer.addListener('not_ready', ({
+      this.spotifyPlayer.addListener("not_ready", ({
         device_id
       }) => {
-        console.log('Device ID has gone offline', device_id);
+        console.log("Device ID has gone offline", device_id);
       });
 
-      this.spotifyPlayer.addListener('initialization_error', ({
+      this.spotifyPlayer.addListener("initialization_error", ({
         message
       }) => {
         console.error(message);
       });
 
-      this.spotifyPlayer.addListener('authentication_error', ({
+      this.spotifyPlayer.addListener("authentication_error", ({
         message
       }) => {
         console.error(message);
       });
 
-      this.spotifyPlayer.addListener('account_error', ({
+      this.spotifyPlayer.addListener("account_error", ({
         message
       }) => {
         console.error(message);
@@ -278,7 +278,7 @@ class SongMaster {
 
 
   onPlayerReady() {
-    console.log('Ready with Device ID', this.spotifyPlayer.deviceId);
+    console.log("Ready with Device ID", this.spotifyPlayer.deviceId);
 
     this.getDevice(this.spotifyPlayer.name, (spotifyPlayer) => {
       this.spotifyPlayerId = spotifyPlayer["id"];
@@ -301,8 +301,8 @@ class SongMaster {
     $("#displayName").text(this.user.display_name);
     $("#userId").text(this.user.id);
 
-    $('#login').hide();
-    $('#loggedin').show();
+    $("#login").hide();
+    $("#loggedin").show();
 
     this.getPlaylists(() => {
       this.showUserPlaylists();

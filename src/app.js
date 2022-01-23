@@ -16,8 +16,8 @@ const redirect_uri = process.env.REDIRECT_URI;
  * @return {string} The generated string
  */
 var generateRandomString = function(length) {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   for (var i = 0; i < length; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -25,23 +25,23 @@ var generateRandomString = function(length) {
   return text;
 };
 
-var stateKey = 'spotify_auth_state';
+var stateKey = "spotify_auth_state";
 
 var app = express();
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, "public")))
   .use(cors())
   .use(cookieParser());
 
-app.get('/login', function(req, res) {
+app.get("/login", function(req, res) {
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private';
-  res.redirect('https://accounts.spotify.com/authorize?' +
+  var scope = "user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private";
+  res.redirect("https://accounts.spotify.com/authorize?" +
     querystring.stringify({
-      response_type: 'code',
+      response_type: "code",
       client_id: client_id,
       scope: scope,
       redirect_uri: redirect_uri,
@@ -49,27 +49,27 @@ app.get('/login', function(req, res) {
     }));
 });
 
-app.get('/callback', function(req, res) {
+app.get("/callback", function(req, res) {
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
 
   if (state === null || state !== storedState) {
-    res.redirect('/#' +
+    res.redirect("/#" +
       querystring.stringify({
-        error: 'state_mismatch'
+        error: "state_mismatch"
       }));
   } else {
     res.clearCookie(stateKey);
     var authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
+      url: "https://accounts.spotify.com/api/token",
       form: {
         code: code,
         redirect_uri: redirect_uri,
-        grant_type: 'authorization_code'
+        grant_type: "authorization_code"
       },
       headers: {
-        'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret, 'utf-8').toString('base64')
+        "Authorization": "Basic " + Buffer.from(client_id + ":" + client_secret, "utf-8").toString("base64")
       },
       json: true
     };
@@ -81,32 +81,32 @@ app.get('/callback', function(req, res) {
           refreshToken = body.refresh_token,
           validUntil = new Date().getTime() / 1000 + body.expires_in;
 
-        res.redirect('/#' +
+        res.redirect("/#" +
           querystring.stringify({
             accessToken: accessToken,
             refreshToken: refreshToken,
             validUntil: validUntil
           }));
       } else {
-        res.redirect('/#' +
+        res.redirect("/#" +
           querystring.stringify({
-            error: 'invalid_token'
+            error: "invalid_token"
           }));
       }
     });
   }
 });
 
-app.get('/refreshToken', function(req, res) {
+app.get("/refreshToken", function(req, res) {
   // requesting access token from refresh token
   var refreshToken = req.query.refreshToken;
   var authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
+    url: "https://accounts.spotify.com/api/token",
     headers: {
-      'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret, 'utf-8').toString('base64')
+      "Authorization": "Basic " + Buffer.from(client_id + ":" + client_secret, "utf-8").toString("base64")
     },
     form: {
-      grant_type: 'refresh_token',
+      grant_type: "refresh_token",
       refresh_token: refreshToken
     },
     json: true
@@ -118,13 +118,13 @@ app.get('/refreshToken', function(req, res) {
         validUntil = new Date().getTime() / 1000 + body.expires_in;
 
         res.send({
-        'accessToken': accessToken,
-        'refreshToken': refreshToken,
-        'validUntil': validUntil
+        "accessToken": accessToken,
+        "refreshToken": refreshToken,
+        "validUntil": validUntil
       });
     }
   });
 });
 
-console.log('Listening on 8888');
+console.log("Listening on 8888");
 app.listen(8888);
