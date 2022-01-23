@@ -311,11 +311,19 @@ class SongMaster {
 
 
   showUserPlaylists() {
+    let hashParams = getHashParams();
+    let {
+      accessToken,
+      refreshToken,
+      validUntil
+    } = hashParams;
+
     this.user.playlists.map((playlist) => {
       if (playlist.name !== '') {
         const params = new URLSearchParams({
-          accessToken: this.accessToken,
-          refreshToken: this.refreshToken
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          validUntil: validUntil
         });
         const queryString = params.toString();
 

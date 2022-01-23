@@ -78,6 +78,32 @@ function progress(timeleft, timetotal, element, songMaster) {
   }
 };
 
+$(document).on("click", "#obtainNewToken", function(e) {
+  let params = getHashParams();
+  let {
+    refreshToken,
+    error
+  } = params;
+
+  if (refreshToken) {
+    $.ajax({
+      url: '/refreshToken',
+      data: {
+        'refreshToken': refreshToken
+      }
+    }).done(function(data) {
+      var params = new URLSearchParams({
+        accessToken: data.accessToken,
+        refreshToken: refreshToken,
+        validUntil: data.validUntil
+      });
+
+      window.location.href = `/#${params.toString()}`;
+      window.location.reload(true);
+    });
+  }
+});
+
 
 // https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/sampleSize.md
 const sampleSize = ([...arr], n = 1) => {
@@ -89,14 +115,33 @@ const sampleSize = ([...arr], n = 1) => {
   return arr.slice(0, n);
 };
 
+function updateTokenExpiry(validUntil) {
+  let currentTime = new Date().getTime() / 1000;
+  let secondsLeft = Math.round(validUntil - currentTime);
+  $("#tokenExpiry").text(secondsLeft);
+
+  if (secondsLeft < 300) {
+    $("#tokenExpiry").parent('div').addClass('bg-red-300');
+    $("#refreshTokenButton").removeClass('bg-gray-200 hover:bg-gray-200').addClass('bg-blue-300 hover:bg-blue-200');
+  } else if (secondsLeft < 900) {
+    $("#tokenExpiry").parent('div').addClass('bg-yellow-300');
+    $("#refreshTokenButton").removeClass('bg-gray-200 hover:bg-gray-200').addClass('bg-blue-300 hover:bg-blue-200');
+  }
+}
+
 
 $(document).ready(function() {
   let params = getHashParams();
-  let [accessToken, refreshToken, error] = [
-    params.accessToken,
-    params.refreshToken,
-    params.error
-  ];
+  let {
+    accessToken,
+    refreshToken,
+    validUntil,
+    error
+  } = params;
+
+  setInterval(function() {
+    updateTokenExpiry(validUntil);
+  }, 1000)
 
   if (error) {
     alert('There was an error during the authentication');

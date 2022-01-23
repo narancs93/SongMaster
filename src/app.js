@@ -38,7 +38,6 @@ app.get('/login', function(req, res) {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  // your application requests authorization
   var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
@@ -51,10 +50,6 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', function(req, res) {
-
-  // your application requests refresh and access tokens
-  // after checking the state parameter
-
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -83,21 +78,14 @@ app.get('/callback', function(req, res) {
       if (!error && response.statusCode === 200) {
 
         var accessToken = body.access_token,
-          refreshToken = body.refresh_token;
+          refreshToken = body.refresh_token,
+          validUntil = new Date().getTime() / 1000 + body.expires_in;
 
-        var options = {
-          url: 'https://api.spotify.com/v1/me',
-          headers: {
-            'Authorization': 'Bearer ' + accessToken
-          },
-          json: true
-        };
-
-        // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
           querystring.stringify({
             accessToken: accessToken,
-            refreshToken: refreshToken
+            refreshToken: refreshToken,
+            validUntil: validUntil
           }));
       } else {
         res.redirect('/#' +
@@ -110,7 +98,6 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/refreshToken', function(req, res) {
-
   // requesting access token from refresh token
   var refreshToken = req.query.refreshToken;
   var authOptions = {
@@ -119,17 +106,21 @@ app.get('/refreshToken', function(req, res) {
       'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret, 'utf-8').toString('base64')
     },
     form: {
-      grant_type: 'refreshToken',
-      refreshToken: refreshToken
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken
     },
     json: true
   };
 
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      var accessToken = body.accessToken;
-      res.send({
-        'accessToken': accessToken
+      var accessToken = body.access_token,
+        validUntil = new Date().getTime() / 1000 + body.expires_in;
+
+        res.send({
+        'accessToken': accessToken,
+        'refreshToken': refreshToken,
+        'validUntil': validUntil
       });
     }
   });
