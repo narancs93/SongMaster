@@ -2,13 +2,21 @@ const express = require('express');
 const request = require('request');
 const path = require('path');
 const cors = require('cors');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
-const redirect_uri = process.env.REDIRECT_URI;
+const redirect_uri_base = process.env.REDIRECT_URI;
+let redirect_uri;
+const httpPort = process.env.PORT;
+const httpsOn = process.env.HTTPS;
+const certPath = process.env.certPath;
+const keyPath = process.env.keyPath;
 
 /**
  * Generates a random string containing numbers and letters
@@ -34,6 +42,8 @@ app.use(express.static(path.join(__dirname, "public")))
   .use(cookieParser());
 
 app.get("/login", function(req, res) {
+  redirect_uri = redirect_uri_base.replace("{{PROTOCOL}}", req.protocol);
+  redirect_uri = redirect_uri.replace("{{PORT}}", req.socket.address()["port"]);
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
@@ -126,5 +136,17 @@ app.get("/refreshToken", function(req, res) {
   });
 });
 
-console.log("Listening on 8888");
-app.listen(8888);
+// Listen both http & https ports
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer({
+  key: fs.readFileSync(keyPath),
+  cert: fs.readFileSync(certPath),
+}, app);
+
+httpServer.listen(httpPort, () => {
+    console.log(`HTTP server started on port ${httpPort}`);
+});
+
+httpsServer.listen(443, () => {
+    console.log('HTTPS Server running on port 443');
+});
