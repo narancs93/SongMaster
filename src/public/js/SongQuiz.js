@@ -170,7 +170,8 @@ class SongQuiz {
     shuffle(this.choices);
   }
 
-  start() {
+  start(gameMode) {
+    this.gameMode = gameMode;
     this.score = 0;
     this.currentQuestionIndex = 0;
     this.songMaster.stopProgressBar = false;
@@ -276,6 +277,16 @@ class SongQuiz {
     }
   }
 
+  setQuestionTarget() {
+    if (this.gameMode === "guessTitles") {
+      this.target = "trackName";
+    } else if (this.gameMode === "guessArtists") {
+      this.target = "trackArtists";
+    } else if (this.gameMode === "guessRandom"){
+      this.target = ["trackName", "trackArtists"][Math.floor(Math.random() * 2)];
+    }
+  }
+
   countdownBeforeNextSong(trackOffset) {
     this.secondsToWait--;
     if (this.secondsToWait > 0) {
@@ -284,6 +295,7 @@ class SongQuiz {
       clearInterval(this.intervalBetweenQuestions);
       this.secondsToGuess = this.timeToGuess;
 
+      this.setQuestionTarget();
       this.displayChoices();
 
       this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset, () => {
@@ -298,8 +310,8 @@ class SongQuiz {
             this.songMaster.pause();
 
             // Check whether the chosen answer was correct
-            const chosenAnswer = $(".chosen-answer").text().trim();
-            const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackName;
+            const chosenAnswer = $(".chosen-answer").data('track-id');
+            const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackId;
             this.checkAnswer(correctAnswer, chosenAnswer, () => {
               this.displayScore();
             });
@@ -325,7 +337,7 @@ class SongQuiz {
 
     for (let i = 0; i < this.choices.length; i++) {
       templateValues[`track${i+1}Id`] = this.choices[i].trackId;
-      templateValues[`track${i+1}Name`] = this.choices[i].trackName;
+      templateValues[`track${i+1}Name`] = this.choices[i][this.target];
     }
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);

@@ -182,8 +182,11 @@ $(document).ready(function() {
         songMaster.stopGame();
       });
 
-      $(document).on("click", "#play_button", function() {
-        songMaster.startGame();
+      $(document).on("click", ".play-button", function(e) {
+        //songMaster.startGame();
+        let clickedButton = $(this);
+        let gameMode = clickedButton.data('game-mode');
+        songMaster.startGame(gameMode);
       });
 
       $(document).on("click", ".track-choice-button", (evt) => {

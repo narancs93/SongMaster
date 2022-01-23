@@ -218,8 +218,8 @@ class SongMaster {
   };
 
 
-  startGame() {
-    this.songQuiz.start();
+  startGame(gameMode) {
+    this.songQuiz.start(gameMode);
   }
 
   stopGame() {
