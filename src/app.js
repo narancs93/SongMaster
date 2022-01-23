@@ -13,10 +13,21 @@ const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri_base = process.env.REDIRECT_URI;
 let redirect_uri;
-const httpPort = process.env.PORT;
-const httpsOn = process.env.HTTPS;
+const httpPort = process.env.HTTP_PORT || 8080;
+const httpsPort = process.env.HTTPS_PORT;
 const certPath = process.env.certPath;
 const keyPath = process.env.keyPath;
+
+if (typeof(client_id) === 'undefined') {
+  console.error('CLIENT_ID is not specified in .env file. Exiting...');
+  process.exit(1);
+} else if (typeof(client_secret) === 'undefined') {
+  console.error('CLIENT_SECRET is not specified in .env file. Exiting...');
+  process.exit(2);
+} else if (typeof(redirect_uri_base) === 'undefined') {
+  console.error('REDIRECT_URI is not specified in .env file. Exiting...');
+  process.exit(3);
+}
 
 /**
  * Generates a random string containing numbers and letters
@@ -136,17 +147,25 @@ app.get("/refreshToken", function(req, res) {
   });
 });
 
-// Listen both http & https ports
-const httpServer = http.createServer(app);
-const httpsServer = https.createServer({
-  key: fs.readFileSync(keyPath),
-  cert: fs.readFileSync(certPath),
-}, app);
 
+const httpServer = http.createServer(app);
 httpServer.listen(httpPort, () => {
     console.log(`HTTP server started on port ${httpPort}`);
 });
 
-httpsServer.listen(443, () => {
-    console.log('HTTPS Server running on port 443');
-});
+if (typeof(httpsPort) !== 'undefined') {
+  if (typeof(certPath) !== 'undefined' && typeof(keyPath) !== 'undefined') {
+    const httpsServer = https.createServer({
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath),
+    }, app);
+
+    httpsServer.listen(443, () => {
+        console.log('HTTPS Server running on port 443');
+    });
+  } else {
+    console.error('Server is not listening on HTTPS. Reason: HTTPS_PORT is specified in .env file, but certPath and/or keyPath is missing.')
+  }
+} else {
+  console.error('Server is not listening on HTTPS. Reason: HTTPS_PORT is not specified in .env file.')
+}
