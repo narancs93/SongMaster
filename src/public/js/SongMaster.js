@@ -65,7 +65,7 @@ class SongMaster {
 
 
   getUser(callback) {
-    this._spotifyApi.getMe(function(getMeError, getMeResult) {
+    this.spotifyApi.getMe(function(getMeError, getMeResult) {
       if (getMeError) console.error("Error occurred while getting user info", getMeError);
       else {
         if (typeof callback == "function") {
@@ -97,7 +97,7 @@ class SongMaster {
     }
 
     // Get all playlists for user
-    this._spotifyApi.getUserPlaylists(options, (getUserPlaylistsError, getUserPlaylistsResult) => {
+    this.spotifyApi.getUserPlaylists(options, (getUserPlaylistsError, getUserPlaylistsResult) => {
       if (getUserPlaylistsError) console.error("Error occurred while getting playlists.", getUserPlaylistsError);
       else {
         this.user.playlistsData = getUserPlaylistsResult;
@@ -117,7 +117,7 @@ class SongMaster {
 
 
   pause() {
-    this._spotifyApi.pause(function(pauseError, pauseResult) {
+    this.spotifyApi.pause(function(pauseError, pauseResult) {
       if (pauseError) {
         // Ignore "No active device found" error
         if (!pauseError["responseText"].includes("No active device found")) {
@@ -130,7 +130,7 @@ class SongMaster {
 
 
   getDevices(callback) {
-    this._spotifyApi.getMyDevices(function(getMyDevicesError, getMyDevicesResult) {
+    this.spotifyApi.getMyDevices(function(getMyDevicesError, getMyDevicesResult) {
       if (getMyDevicesError) console.error("Error occurred while getting devices.", getMyDevicesError);
       else {
         if (typeof callback == "function") {
@@ -169,7 +169,7 @@ class SongMaster {
     if (args.length > 0) options = args.shift();
     else options = {};
 
-    this._spotifyApi.transferMyPlayback([spotifyPlayerId], options, function(transferMyPlaybackError, transferMyPlaybackResult) {
+    this.spotifyApi.transferMyPlayback([spotifyPlayerId], options, function(transferMyPlaybackError, transferMyPlaybackResult) {
       if (transferMyPlaybackError) console.error(transferMyPlaybackError);
       else {
         if (typeof callback == "function") {
@@ -190,7 +190,7 @@ class SongMaster {
       "position_ms": 0
     };
 
-    this._spotifyApi.play(options, function(playError, playResult) {
+    this.spotifyApi.play(options, function(playError, playResult) {
       if (playError) console.error("Error occurred while starting play.", playError);
       else {
         if (typeof callback == "function") {
@@ -202,7 +202,7 @@ class SongMaster {
 
 
   getPlaylistTracks(playlistId, options, callback) {
-    this._spotifyApi.getPlaylistTracks(playlistId, options, function(getPlaylistTracksError, getPlaylistTracksResult) {
+    this.spotifyApi.getPlaylistTracks(playlistId, options, function(getPlaylistTracksError, getPlaylistTracksResult) {
       if (getPlaylistTracksError) console.error(getPlaylistTracksError);
       else {
         if (typeof callback == "function") {
