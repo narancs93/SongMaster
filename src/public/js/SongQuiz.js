@@ -337,7 +337,7 @@ class SongQuiz {
 
     for (let i = 0; i < this.choices.length; i++) {
       templateValues[`track${i+1}Id`] = this.choices[i].trackId;
-      templateValues[`track${i+1}Name`] = this.choices[i][this.target];
+      templateValues[`track${i+1}Data`] = this.choices[i][this.target];
     }
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
