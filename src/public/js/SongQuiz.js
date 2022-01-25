@@ -259,6 +259,10 @@ class SongQuiz {
     this.secondsToWait = this.timeToWait;
     $("#content").html(this.secondsToWait);
 
+    this.songMaster.mutePlayer(() => {
+      this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
+    });
+
     this.intervalBetweenQuestions = setInterval(() => {
       this.countdownBeforeNextSong(trackOffset);
     }, 1000);
@@ -298,7 +302,7 @@ class SongQuiz {
       this.setQuestionTarget();
       this.displayChoices();
 
-      this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset, () => {
+      this.songMaster.unmutePlayer(() => {
         let progressBar = $("#progressBar");
         progress(this.secondsToGuess, this.secondsToGuess, progressBar, this.songMaster);
 

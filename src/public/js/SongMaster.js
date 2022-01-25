@@ -338,4 +338,37 @@ class SongMaster {
       }
     });
   }
+
+  mutePlayer(callback) {
+    // Save current volume for unmute
+    this.spotifyPlayer.oldVolume = this.spotifyPlayer._options.volume;
+
+    const options = {
+      device_id: this.spotifyPlayer.deviceId
+    }
+
+    this.spotifyApi.setVolume(0, options, (setVolumeError, setVolumeResult) => {
+      if (setVolumeError) console.error("Error occurred while setting volume.", setVolumeError);
+      else {
+        if (typeof callback == "function") {
+          callback();
+        }
+      }
+    });
+  }
+
+  unmutePlayer(callback) {
+    const options = {
+      device_id: this.spotifyPlayerId
+    }
+
+    this.spotifyApi.setVolume(this.spotifyPlayer.oldVolume * 100, options, (setVolumeError, setVolumeResult) => {
+      if (setVolumeError) console.error("Error occurred while setting volume.", setVolumeError);
+      else {
+        if (typeof callback == "function") {
+          callback();
+        }
+      }
+    });
+  }
 }
