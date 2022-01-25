@@ -7,7 +7,7 @@ const http = require('http');
 const fs = require('fs');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();
+require('dotenv').config({path: path.join(__dirname, '.env')});
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
