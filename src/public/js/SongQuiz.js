@@ -340,9 +340,19 @@ class SongQuiz {
       timeLeft: this.secondsToGuess
     };
 
+    let targetText = null;
+    if(this.target === "trackName") {
+      targetText = "title";
+    } else if(this.target === "trackArtists") {
+      targetText = "artist(s)";
+    } else {
+      targetText = "song/artist(s)";
+    }
+
     for (let i = 0; i < this.choices.length; i++) {
       templateValues[`track${i+1}Id`] = this.choices[i].trackId;
       templateValues[`track${i+1}Data`] = this.choices[i][this.target];
+      templateValues[`target`] = targetText;
     }
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
