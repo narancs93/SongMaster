@@ -297,7 +297,8 @@ class SongQuiz {
       $("#content").html(this.secondsToWait);
     } else {
       clearInterval(this.intervalBetweenQuestions);
-      this.secondsToGuess = this.timeToGuess;
+      // Need to subtract 1, because setInterval adds 1 sec delay by default
+      this.secondsToGuess = this.timeToGuess - 1;
 
       this.setQuestionTarget();
       this.displayChoices();
