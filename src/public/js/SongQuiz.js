@@ -6,6 +6,13 @@ class SongQuiz {
       timeToGuess: this._timeToGuess,
       numOfQuestions: this._numOfQuestions
     } = options);
+
+    this.targetTexts = {
+      "trackName": "title",
+      "trackArtists": "artist(s)",
+      "default": "song/artist(s)"
+    };
+
     this._timeToWait = (this._timeToWait === undefined) ? 3 : this._timeToWait;
     this._timeToGuess = (this._timeToGuess === undefined) ? 10 : this._timeToGuess;
     this._numOfQuestions = (this._numOfQuestions === undefined) ? 10 : this._numOfQuestions;
@@ -286,7 +293,7 @@ class SongQuiz {
       this.target = "trackName";
     } else if (this.gameMode === "guessArtists") {
       this.target = "trackArtists";
-    } else if (this.gameMode === "guessRandom"){
+    } else if (this.gameMode === "guessRandom") {
       this.target = ["trackName", "trackArtists"][Math.floor(Math.random() * 2)];
     }
   }
@@ -340,14 +347,7 @@ class SongQuiz {
       timeLeft: this.secondsToGuess
     };
 
-    let targetText = null;
-    if(this.target === "trackName") {
-      targetText = "title";
-    } else if(this.target === "trackArtists") {
-      targetText = "artist(s)";
-    } else {
-      targetText = "song/artist(s)";
-    }
+    let targetText = this.targetTexts[this.target] || this.targetTexts["default"];
 
     for (let i = 0; i < this.choices.length; i++) {
       templateValues[`track${i+1}Id`] = this.choices[i].trackId;
