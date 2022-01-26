@@ -57,3 +57,20 @@ To generate a self-signed certificate
 ```sh
 openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out yourdomain.crt -keyout yourdomain.key
 ```
+
+## Allowing additional users to login
+
+After you create an app in your Spotify Dashboard, it will be in Development mode status by default. What it means:
+> Up to 25 Spotify users can install and use your app. These users must be explicitly added under the section "Users and Access" before they can authenticate with your app. If you’d like to ship your app to a broader audience, let us know by submitting a quota extension request.
+
+For more details you can visit the "Users and Access" page in the [Dashboard](https://developer.spotify.com/dashboard).
+
+## Credits
+
+This app uses:
+- [Tailwind CSS](https://tailwindcss.com/): CSS framework
+- [jQuery](https://jquery.com/): JavaScript library
+- [Node.js](https://nodejs.org/): back-end JavaScript runtime
+- [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
+- [Spotify Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/)
+- [Spotify Web API JS](https://github.com/JMPerez/spotify-web-api-js) by [JMPerez](https://github.com/JMPerez): lightweight wrapper for the Spotify Web API
