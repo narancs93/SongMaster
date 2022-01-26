@@ -75,6 +75,14 @@ class SongQuiz {
 
   set playlist(newPlaylist) {
     this._playlist = newPlaylist;
+
+    // Get name of the playlist
+    this.songMaster.spotifyApi.getPlaylist(this.playlist.id, (getPlaylistError, getPlaylistResult) => {
+      if (getPlaylistError) console.error("Error occurred while getting playlist data.", getPlaylistError);
+      else {
+        this._playlist.name = getPlaylistResult["name"];
+      }
+    });
   }
 
   get playlistOffset() {
@@ -372,16 +380,17 @@ class SongQuiz {
     let htmlContent = `
     <div class="flex flex-col mt-auto mb-auto">
       <div class="text-center p-6">
-        <h1 class="text-2xl">Result</h1>
-        <h2 class="text-lg">Correct answers: ${this.score}/${this.numOfQuestions}</h2>
+        <h1 class="text-3xl m-6">Result</h1>
+        <h2 class="text-xl m-2">Playlist: ${this.playlist.name}</h2>
+        <h2 class="text-xl m-2">Correct answers: ${this.score}/${this.numOfQuestions}</h2>
       </div>
       <div>
           <table class="border-collapse table-auto text-base">
             <thead>
-              <tr>
-                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Artist</th>
-                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Title</th>
-                <th class="border-b font-medium p-4 pt-0 pb-3 text-slate-400">Guess time</th>
+              <tr class="bg-gray-700">
+                <th class="border-b font-medium p-4 text-white">Artist</th>
+                <th class="border-b font-medium p-4 text-white">Title</th>
+                <th class="border-b font-medium p-4 text-white">Guess time</th>
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-slate-800">
@@ -404,9 +413,9 @@ class SongQuiz {
 
       const tableRowHtml = `
         <tr class="${tmp.rowColorClass}">
-          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.artist}</td>
-          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.name}</td>
-          <td class="border-b border-slate-100 p-4 pl-8 text-slate-500 text-left">${tmp.guessTime}</td>
+          <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">${tmp.artist}</td>
+          <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">${tmp.name}</td>
+          <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">${tmp.guessTime}</td>
         </tr>
       `
 
