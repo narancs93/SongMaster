@@ -202,6 +202,11 @@ $(document).ready(function() {
 
         songMaster.songQuiz.setAnswerTime();
       });
+
+      $(document).on("click", "#play-next-song", function() {
+        songMaster.stopProgressBar = true;
+        songMaster.songQuiz.finishQuestion();
+      })
     } else {
       // render login screen
       $("#login").show();

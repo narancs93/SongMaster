@@ -317,6 +317,7 @@ class SongQuiz {
 
       this.setQuestionTarget();
       this.displayChoices();
+      this.songMaster.stopProgressBar = false;
 
       this.songMaster.unmutePlayer(() => {
         let progressBar = $("#progressBar");
@@ -326,21 +327,7 @@ class SongQuiz {
 
         this.intervalDuringQuestion = setInterval(() => {
           if (this.secondsToGuess === 0) {
-            clearInterval(this.intervalDuringQuestion);
-            this.songMaster.pause();
-
-            // Check whether the chosen answer was correct
-            const chosenAnswer = $(".chosen-answer").data("track-id");
-            const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackId;
-            this.checkAnswer(correctAnswer, chosenAnswer, () => {
-              this.displayScore();
-            });
-
-            if (this.currentQuestionIndex < this.answerTracks.length) {
-              this.nextQuestion();
-            } else {
-              this.displayResults();
-            }
+            this.finishQuestion();
           }
           this.secondsToGuess -= 1;
         }, 1000);
@@ -349,6 +336,26 @@ class SongQuiz {
       });
     }
   }
+
+
+  finishQuestion() {
+    clearInterval(this.intervalDuringQuestion);
+    this.songMaster.pause();
+
+    // Check whether the chosen answer was correct
+    const chosenAnswer = $(".chosen-answer").data("track-id");
+    const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackId;
+    this.checkAnswer(correctAnswer, chosenAnswer, () => {
+      this.displayScore();
+    });
+
+    if (this.currentQuestionIndex < this.answerTracks.length) {
+      this.nextQuestion();
+    } else {
+      this.displayResults();
+    }
+  }
+
 
   displayChoices(callback) {
     const templateValues = {
