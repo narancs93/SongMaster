@@ -78,6 +78,12 @@ function progress(timeleft, timetotal, element, songMaster) {
   }
 };
 
+
+function isInt(str) {
+  return !isNaN(str) && Number.isInteger(parseFloat(str));
+}
+
+
 $(document).on("click", "#obtainNewToken", function(e) {
   let params = getHashParams();
   let {
@@ -172,9 +178,7 @@ $(document).ready(function() {
         }
 
         songMaster.songQuiz.playlist = playlist;
-        songMaster.songQuiz.getPlaylistTracks(() => {
-          songMaster.songQuiz.generateAnswers();
-        });
+        songMaster.songQuiz.getPlaylistTracks();
 
         const templateValues = {
           playlistSelected: $(this).text(),
@@ -188,11 +192,44 @@ $(document).ready(function() {
         songMaster.stopGame();
       });
 
-      $(document).on("click", ".play-button", function(e) {
-        //songMaster.startGame();
-        let clickedButton = $(this);
-        let gameMode = clickedButton.data("game-mode");
-        songMaster.startGame(gameMode);
+      // $(document).on("click", ".play-button", function(e) {
+      //   //songMaster.startGame();
+      //   let clickedButton = $(this);
+      //   let gameMode = clickedButton.data("game-mode");
+      //   songMaster.startGame(gameMode);
+      // });
+
+      $(document).on("click", "#play", () => {
+        // Read form data
+        const numberOfSongs = $("#number-of-songs").val();
+        const difficulty = $("input[name='difficulty']:checked").val();
+        const guessTarget = $("input[name='guess']:checked").val();
+
+        // Validate form data
+        const validDifficulties = ["easy", "medium", "hard"];
+        const validGuessTargets = ["title", "artist", "random"];
+        const gameModes = {
+          "title": "guessTitles",
+          "artist": "guessArtists",
+          "random": "guessRandom"
+        }
+        const guessTimes = {
+          "easy": 30,
+          "medium": 15,
+          "hard": 7
+        }
+
+        if (
+          isInt(numberOfSongs) &&
+          validDifficulties.indexOf(difficulty) !== -1 &&
+          validGuessTargets.indexOf(guessTarget) !== -1
+        ) {
+          songMaster.songQuiz.numOfQuestions = numberOfSongs;
+          songMaster.songQuiz.timeToGuess = guessTimes[difficulty];
+
+          songMaster.songQuiz.generateAnswers();
+          songMaster.startGame(gameModes[guessTarget])
+        }
       });
 
       $(document).on("click", ".track-choice-button", (evt) => {
