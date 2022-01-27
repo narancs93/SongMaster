@@ -221,6 +221,7 @@ class SongQuiz {
     $("#playerScoreContainer").show();
     $("#progressBarContainer").show();
     $("#quizDetailsContainer").show();
+    $('#progressBar').find('div').width('100%');
 
     this.nextQuestion();
   }
