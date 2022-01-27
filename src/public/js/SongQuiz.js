@@ -425,17 +425,45 @@ class SongQuiz {
     let htmlContent = `
     <div class="flex flex-col mt-auto mb-auto">
       <div class="text-center p-6">
-        <h1 class="text-3xl m-6">Result</h1>
-        <h2 class="text-xl m-2">Playlist: ${this.playlist.name}</h2>
-        <h2 class="text-xl m-2">Correct answers: ${this.score}/${this.numOfQuestions}</h2>
+        <h1 class="text-2xl m-6">Summary</h1>
+        ${this.generateSummaryTableHtml()}
+
       </div>
       <div>
-      ${this.generateDetailsTableHtml()}
+        <h1 class="text-2xl m-6 text-center">Details</h1>
+        ${this.generateDetailsTableHtml()}
       </div>
     </div>
     `
 
     $("#content").html(htmlContent);
+  }
+
+
+  generateSummaryTableHtml() {
+    let htmlContent = `
+        <table class="border-collapse table-auto text-base m-auto">
+          <tbody>
+            <tr class="bg-gray-100">
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Playlist</td>
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">${this.playlist.name}</td>
+            </tr>
+            <tr class="bg-gray-100">
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Game mode</td>
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Guess the ${this.targetTexts[this.target]}</td>
+            </tr>
+            <tr class="bg-gray-100">
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Number of songs played</td>
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">${this.numOfQuestions}</td>
+            </tr>
+            <tr class="bg-gray-100">
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Correct answers</td>
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">${this.score}</td>
+            </tr>
+          </tbody>
+        </table>
+    `;
+    return htmlContent;
   }
 
 
