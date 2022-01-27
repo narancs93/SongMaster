@@ -166,11 +166,32 @@ class SongQuiz {
     }
   }
 
-  generateChoices() {
+  generateChoices(callback) {
     const track = this.answerTracks[this.currentQuestionIndex];
     this.correctTrackId = track.trackId;
+    const correctArtists = track.trackArtists;
 
-    const wrongAnswerPool = this.playlistTracks.filter(e => e.track.id !== this.correctTrackId);
+    let wrongAnswerPool = this.playlistTracks.filter(e => e.track.id !== this.correctTrackId);
+
+    if (this.target === "trackArtists") {
+      // Make sure correct artist(s) does not appear twice in choices
+      wrongAnswerPool = wrongAnswerPool.filter(e => correctArtists !== this.getTrackArtists(e.track));
+
+      // Also make sure, that incorrect artist(s) cannot appear twice
+      let tracksWithUniqueArtists = [];
+      let uniqueArtists = [];
+
+      for (let i = 0; i < wrongAnswerPool.length; i++) {
+        const artist = this.getTrackArtists(wrongAnswerPool[i].track);
+        if (!uniqueArtists.includes(artist)) {
+          tracksWithUniqueArtists.push(wrongAnswerPool[i]);
+          uniqueArtists.push(artist);
+        }
+      }
+
+      wrongAnswerPool = tracksWithUniqueArtists;
+    }
+
     const wrongAnswers = sampleSize(wrongAnswerPool, 3);
 
     for (let i = 0; i < wrongAnswers.length; i++) {
@@ -181,8 +202,12 @@ class SongQuiz {
     this.choices = [track]
     Array.prototype.push.apply(this.choices, wrongAnswers);
 
-    // Make order random
+    // Put the choices in random order
     shuffle(this.choices);
+
+    if (typeof callback == "function") {
+      callback();
+    }
   }
 
   start(gameMode) {
@@ -234,19 +259,23 @@ class SongQuiz {
 
     let trackId = track.track.id;
     let trackName = track.track.name;
-    let trackArtistArray = track.track.artists;
-
-    let trackArtistNames = [];
-    for (let j = 0; j < trackArtistArray.length; j++) {
-      trackArtistNames.push(trackArtistArray[j].name);
-    }
-    let trackArtists = trackArtistNames.join(" & ");
+    let trackArtists = this.getTrackArtists(track.track)
 
     trackData["trackId"] = trackId;
     trackData["trackName"] = trackName;
     trackData["trackArtists"] = trackArtists;
 
     return trackData;
+  }
+
+  getTrackArtists(track) {
+    let trackArtistArray = track.artists;
+
+    let trackArtistNames = [];
+    for (let j = 0; j < trackArtistArray.length; j++) {
+      trackArtistNames.push(trackArtistArray[j].name);
+    }
+    return trackArtistNames.join(" & ");
   }
 
   stop() {
@@ -262,8 +291,6 @@ class SongQuiz {
   }
 
   nextQuestion(callback) {
-    this.generateChoices();
-
     // Spotify play API is not accepting track URI, only album/playlist
     // To play a specific song, need to pass an album/playlist with correct offset
     // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
@@ -296,13 +323,17 @@ class SongQuiz {
     }
   }
 
-  setQuestionTarget() {
+  setQuestionTarget(callback) {
     if (this.gameMode === "guessTitles") {
       this.target = "trackName";
     } else if (this.gameMode === "guessArtists") {
       this.target = "trackArtists";
     } else if (this.gameMode === "guessRandom") {
       this.target = ["trackName", "trackArtists"][Math.floor(Math.random() * 2)];
+    }
+
+    if (typeof callback == "function") {
+      callback();
     }
   }
 
@@ -315,8 +346,13 @@ class SongQuiz {
       // Need to subtract 1, because setInterval adds 1 sec delay by default
       this.secondsToGuess = this.timeToGuess - 1;
 
-      this.setQuestionTarget();
-      this.displayChoices();
+      this.setQuestionTarget(() => {
+        this.generateChoices(() => {
+          this.displayChoices();
+        });
+      });
+
+
       this.songMaster.stopProgressBar = false;
 
       this.songMaster.unmutePlayer(() => {
