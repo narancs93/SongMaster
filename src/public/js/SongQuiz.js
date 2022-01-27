@@ -523,7 +523,9 @@ class SongQuiz {
       this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = false;
     }
 
-    callback();
+    if (typeof callback == "function") {
+      callback();
+    }
   }
 
   displayScore() {
