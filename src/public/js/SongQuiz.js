@@ -400,9 +400,7 @@ class SongQuiz {
 
 
   displayChoices(callback) {
-    const templateValues = {
-      timeLeft: this.remainingGuessTimeInSeconds
-    };
+    const templateValues = {};
 
     let targetText = this.targetTexts[this.target] || this.targetTexts["default"];
 
