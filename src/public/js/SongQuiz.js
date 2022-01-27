@@ -3,7 +3,7 @@ class SongQuiz {
     ({
       songMaster: this._songMaster,
       timeToWait: this._timeToWait,
-      timeToGuess: this._timeToGuess,
+      guessTimeInSeconds: this._guessTimeInSeconds,
       numOfQuestions: this._numOfQuestions
     } = options);
 
@@ -14,7 +14,7 @@ class SongQuiz {
     };
 
     this._timeToWait = (this._timeToWait === undefined) ? 3 : this._timeToWait;
-    this._timeToGuess = (this._timeToGuess === undefined) ? 10 : this._timeToGuess;
+    this._guessTimeInSeconds = (this._guessTimeInSeconds === undefined) ? 10 : this._guessTimeInSeconds;
     this._numOfQuestions = (this._numOfQuestions === undefined) ? 10 : this._numOfQuestions;
 
     $("#playerScoreContainer").hide();
@@ -37,12 +37,12 @@ class SongQuiz {
     this._timeToWait = newTimeToWait;
   }
 
-  get timeToGuess() {
-    return this._timeToGuess;
+  get guessTimeInSeconds() {
+    return this._guessTimeInSeconds;
   }
 
-  set timeToGuess(newTimeToGuess) {
-    this._timeToGuess = newTimeToGuess;
+  set guessTimeInSeconds(newGuessTimeInSeconds) {
+    this._guessTimeInSeconds = newGuessTimeInSeconds;
   }
 
   get secondsToWait() {
@@ -53,12 +53,12 @@ class SongQuiz {
     this._secondsToWait = newSecondsToWait;
   }
 
-  get secondsToGuess() {
-    return this._secondsToGuess;
+  get remainingGuessTimeInSeconds() {
+    return this._remainingGuessTimeInSeconds;
   }
 
-  set secondsToGuess(newSecondsToGuess) {
-    this._secondsToGuess = newSecondsToGuess;
+  set remainingGuessTimeInSeconds(newRemainingGuessTimeInSeconds) {
+    this._remainingGuessTimeInSeconds = newRemainingGuessTimeInSeconds;
   }
 
   get numOfQuestions() {
@@ -214,7 +214,6 @@ class SongQuiz {
     this.gameMode = gameMode;
     this.score = 0;
     this.currentQuestionIndex = 0;
-    this.songMaster.stopProgressBar = false;
     this.displayScore();
     $("#playerScoreContainer").show();
     $("#progressBarContainer").show();
@@ -285,7 +284,6 @@ class SongQuiz {
     } catch {
       ;
     } finally {
-      this.songMaster.stopProgressBar = true;
       this.songMaster.pause();
     }
   }
@@ -306,6 +304,7 @@ class SongQuiz {
     });
 
     this.intervalBetweenQuestions = setInterval(() => {
+      this.secondsToWait--;
       this.countdownBeforeNextSong(trackOffset);
     }, 1000);
 
@@ -338,13 +337,12 @@ class SongQuiz {
   }
 
   countdownBeforeNextSong(trackOffset) {
-    this.secondsToWait--;
     if (this.secondsToWait > 0) {
       $("#content").html(this.secondsToWait);
     } else {
       clearInterval(this.intervalBetweenQuestions);
       // Need to subtract 1, because setInterval adds 1 sec delay by default
-      this.secondsToGuess = this.timeToGuess - 1;
+      this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
 
       this.setQuestionTarget(() => {
         this.generateChoices(() => {
@@ -352,20 +350,15 @@ class SongQuiz {
         });
       });
 
-
-      this.songMaster.stopProgressBar = false;
-
       this.songMaster.unmutePlayer(() => {
-        let progressBar = $("#progressBar");
-        progress(this.secondsToGuess, this.secondsToGuess, progressBar, this.songMaster);
-
+        this.startTimer();
         this.answerTracks[this.currentQuestionIndex].startTime = new Date();
 
         this.intervalDuringQuestion = setInterval(() => {
-          if (this.secondsToGuess === 0) {
+          if (this.remainingGuessTimeInSeconds === 0) {
             this.finishQuestion();
           }
-          this.secondsToGuess -= 1;
+          this.remainingGuessTimeInSeconds -= 1;
         }, 1000);
 
         this.currentQuestionIndex += 1;
@@ -374,7 +367,16 @@ class SongQuiz {
   }
 
 
+  startTimer() {
+    const progressBarDiv = $('#progressBar').find('div');
+    progressBarDiv.width('100%').animate({
+      width: 0
+    }, this.guessTimeInSeconds * 1000, "linear");
+  }
+
+
   finishQuestion() {
+    $('#progressBar').find('div').stop();
     clearInterval(this.intervalDuringQuestion);
     this.songMaster.pause();
 
@@ -395,7 +397,7 @@ class SongQuiz {
 
   displayChoices(callback) {
     const templateValues = {
-      timeLeft: this.secondsToGuess
+      timeLeft: this.remainingGuessTimeInSeconds
     };
 
     let targetText = this.targetTexts[this.target] || this.targetTexts["default"];

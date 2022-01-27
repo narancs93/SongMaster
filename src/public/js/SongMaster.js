@@ -5,7 +5,7 @@ class SongMaster {
 
     songQuizOptions.songMaster = this;
     songQuizOptions.timeToWait = songQuizOptions.timeToWait || 3;
-    songQuizOptions.timeToGuess = songQuizOptions.timeToGuess || 10;
+    songQuizOptions.guessTimeInSeconds = songQuizOptions.guessTimeInSeconds || 10;
     songQuizOptions.numOfQuestions = songQuizOptions.numOfQuestions || 10;
 
     this.songQuiz = new SongQuiz(songQuizOptions);

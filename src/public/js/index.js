@@ -63,22 +63,6 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
 }
 
 
-// https://stackoverflow.com/questions/34038464/jquery-looping-progress-bar
-function progress(timeleft, timetotal, element, songMaster) {
-  element = $(element.selector);
-  let progressBarWidth = timeleft * element.width() / timetotal;
-  element.find('div').animate({
-    width: progressBarWidth
-  }, timeleft == timetotal ? 0 : 100, "linear");
-
-  if (timeleft > 0 && !songMaster.stopProgressBar) {
-    setTimeout(function() {
-      progress(timeleft - 0.1, timetotal, element, songMaster);
-    }, 100);
-  }
-};
-
-
 function isInt(str) {
   return !isNaN(str) && Number.isInteger(parseFloat(str));
 }
@@ -162,7 +146,7 @@ $(document).ready(function() {
 
       const songQuizOptions = {
         timeToWait: 3,
-        timeToGuess: 10,
+        guessTimeInSeconds: 10,
         numOfQuestions: 10
       };
 
@@ -225,7 +209,7 @@ $(document).ready(function() {
           validGuessTargets.indexOf(guessTarget) !== -1
         ) {
           songMaster.songQuiz.numOfQuestions = numberOfSongs;
-          songMaster.songQuiz.timeToGuess = guessTimes[difficulty];
+          songMaster.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
 
           songMaster.songQuiz.generateAnswers();
           songMaster.startGame(gameModes[guessTarget])
@@ -241,7 +225,6 @@ $(document).ready(function() {
       });
 
       $(document).on("click", "#play-next-song", function() {
-        songMaster.stopProgressBar = true;
         songMaster.songQuiz.finishQuestion();
       })
     } else {
