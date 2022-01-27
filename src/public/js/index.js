@@ -174,6 +174,9 @@ $(document).ready(function() {
           numOfTracks: $(this).data("num-of-tracks")
         };
 
+        $("#playerScoreContainer").hide();
+        $("#progressBarContainer").hide();
+        $("#quizDetailsContainer").hide();
         readHtmlIntoElement("game_modes.html", "#content", templateValues);
 
         // Stop current songQuiz
