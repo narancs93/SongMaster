@@ -245,6 +245,7 @@ class SongMaster {
       }) => {
         this.spotifyPlayer.deviceId = device_id;
         this.onPlayerReady();
+        $("#volume").val(20);
       });
 
       // Not Ready
@@ -339,15 +340,14 @@ class SongMaster {
     });
   }
 
-  mutePlayer(callback) {
-    // Save current volume for unmute
-    this.spotifyPlayer.oldVolume = this.spotifyPlayer._options.volume;
+
+  setVolume(volume, callback) {
 
     const options = {
       device_id: this.spotifyPlayer.deviceId
     }
 
-    this.spotifyApi.setVolume(0, options, (setVolumeError, setVolumeResult) => {
+    this.spotifyApi.setVolume(volume, options, (setVolumeError, setVolumeResult) => {
       if (setVolumeError) console.error("Error occurred while setting volume.", setVolumeError);
       else {
         if (typeof callback == "function") {
@@ -357,18 +357,17 @@ class SongMaster {
     });
   }
 
-  unmutePlayer(callback) {
-    const options = {
-      device_id: this.spotifyPlayerId
-    }
 
-    this.spotifyApi.setVolume(this.spotifyPlayer.oldVolume * 100, options, (setVolumeError, setVolumeResult) => {
-      if (setVolumeError) console.error("Error occurred while setting volume.", setVolumeError);
-      else {
-        if (typeof callback == "function") {
-          callback();
-        }
-      }
+  mutePlayer(callback) {
+    // Save current volume for unmute
+    this.getDevice(this.spotifyPlayer.name, (spotifyPlayer) => {
+      this.spotifyPlayer.oldVolume = spotifyPlayer.volume_percent;
     });
+
+    this.setVolume(0, callback);
+  }
+
+  unmutePlayer(callback) {
+    this.setVolume(this.spotifyPlayer.oldVolume, callback);
   }
 }

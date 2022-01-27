@@ -227,6 +227,11 @@ $(document).ready(function() {
       $(document).on("click", "#play-next-song", function() {
         songMaster.songQuiz.finishQuestion();
       })
+
+      $(document).on("input", "#volume", function() {
+        let volume = $(this).val();
+        songMaster.setVolume(volume);
+      })
     } else {
       // render login screen
       $("#login").show();

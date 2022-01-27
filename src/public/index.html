@@ -42,8 +42,8 @@
               The access token expires in <span id="tokenExpiry"></span> seconds.
             </div>
           </li>
-          <li>
-            <button id="refreshTokenButton" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 bg-gray-200 focus:shadow-outline">
+          <li class="border-b-2 pb-2">
+            <button id="refreshTokenButton" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-300 bg-gray-200 focus:shadow-outline">
               <span class="text-gray-600">
                 <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -51,6 +51,12 @@
               </span>
               <span id="obtainNewToken">Refresh token</span>
             </button>
+          </li>
+          <li>
+            <div class="space-x-3 p-2 rounded-md font-medium">
+              Volume control
+            </div>
+            <input id="volume" type="range" min="0" max="100" value="0" class="slider">
           </li>
         </ul>
 
