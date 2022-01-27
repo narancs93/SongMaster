@@ -430,6 +430,17 @@ class SongQuiz {
         <h2 class="text-xl m-2">Correct answers: ${this.score}/${this.numOfQuestions}</h2>
       </div>
       <div>
+      ${this.generateDetailsTableHtml()}
+      </div>
+    </div>
+    `
+
+    $("#content").html(htmlContent);
+  }
+
+
+  generateDetailsTableHtml() {
+    let htmlContent = `
           <table class="border-collapse table-auto text-base">
             <thead>
               <tr class="bg-gray-700">
@@ -439,7 +450,15 @@ class SongQuiz {
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-slate-800">
-    `
+    `;
+
+    const tableRowHtml = `
+      <tr class="{{rowColorClass}}">
+        <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">{{artist}}</td>
+        <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">{{name}}</td>
+        <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">{{guessTime}}</td>
+      </tr>
+    `;
 
     for (let i = 0; i < this.answerTracks.length; i++) {
       let track = this.answerTracks[i];
@@ -448,33 +467,24 @@ class SongQuiz {
       let guessTimeInSec = (end - start) / 1000;
       guessTimeInSec = isNaN(guessTimeInSec) ? "Not answered" : guessTimeInSec;
 
-
-      let tmp = {
+      let templateValues = {
         "artist": track.trackArtists,
         "name": track.trackName,
         "guessTime": guessTimeInSec,
         "rowColorClass": (track.guessedCorrectly) ? "bg-lime-500" : "bg-red-500"
       }
 
-      const tableRowHtml = `
-        <tr class="${tmp.rowColorClass}">
-          <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">${tmp.artist}</td>
-          <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">${tmp.name}</td>
-          <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">${tmp.guessTime}</td>
-        </tr>
-      `
+      let newTableRow = insertTemplateIntoHtml(templateValues, tableRowHtml);
 
-      htmlContent += tableRowHtml;
+      htmlContent += newTableRow;
     }
 
     htmlContent += `
             </tbody>
           </table>
-        </div>
-      </div>
-    `
-    $("#content").html(htmlContent);
-    //$("#content").text(`${this.score}/${this.numOfQuestions}`);
+    `;
+
+    return htmlContent;
   }
 
   checkAnswer(correctAnswer, chosenAnswer, callback) {
@@ -489,7 +499,7 @@ class SongQuiz {
   }
 
   displayScore() {
-    $("#playerScore").text(`Score: ${this.score}/${this.currentQuestionIndex}`)
+    $("#playerScore").text(`Score: ${this.score}/${this.currentQuestionIndex}`);
   }
 
   setAnswerTime() {

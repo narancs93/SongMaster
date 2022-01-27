@@ -39,6 +39,14 @@ function shuffle(array) {
 }
 
 
+function insertTemplateIntoHtml(template, html) {
+  for (const key in template) {
+    html = html.replace(`{{${key}}}`, `${template[key]}`.trim());
+  }
+  return html;
+}
+
+
 // https://stackoverflow.com/questions/13709482/how-to-read-text-file-in-javascript
 function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   let reader = new XMLHttpRequest() || new ActiveXObject("MSXML2.XMLHTTP");
@@ -47,11 +55,7 @@ function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
   reader.onreadystatechange = function() {
     if (reader.readyState == 4) {
       let htmlText = reader.responseText;
-
-      for (const key in templateValues) {
-        htmlText = htmlText.replace(`{{${key}}}`, `${templateValues[key]}`.trim());
-      }
-
+      htmlText = insertTemplateIntoHtml(templateValues, htmlText);
       $(element).html(htmlText);
     }
   };
