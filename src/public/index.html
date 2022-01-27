@@ -63,12 +63,15 @@
       <!-- content -->
       <div class="flex flex-1 flex-col text-2xl font-bold">
 
-        <!-- score -->
-        <div id="playerScoreContainer" class="flex basis-1/12 bg-white">
-          <div class="flex items-center max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <div class="relative flex items-center justify-between">
-              <div class=" text-3xl justify-center items-center text-center w-full">
-                <div id="playerScore"></div>
+        <!-- quiz info -->
+        <div id="quizDetailsContainer" class="flex basis-1/12 bg-white">
+          <div class="flex items-center mx-auto px-2 sm:px-6 lg:px-8 w-full">
+            <div class="flex flex-row text-2xl justify-center items-center text-center w-full">
+              <div class="flex text-right pr-8">
+                Playlist:&nbsp;<span id="quizPlaylist"></span>
+              </div>
+              <div class="flex text-left pl-8">
+                Number of songs:&nbsp;<span id="numberOfSongs"></span>
               </div>
             </div>
           </div>
@@ -80,6 +83,17 @@
             <div class="relative flex basis-full items-center justify-between h-16">
               <div id="progressBar" class="text-base justify-center items-center text-center w-full border-2 border-teal-700">
                 <div class="bg-teal-500">&nbsp;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- score -->
+        <div id="playerScoreContainer" class="flex basis-1/12 bg-white">
+          <div class="flex items-center max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div class="relative flex items-center justify-between">
+              <div class="text-3xl justify-center items-center text-center w-full">
+                <div id="playerScore"></div>
               </div>
             </div>
           </div>

@@ -19,6 +19,7 @@ class SongQuiz {
 
     $("#playerScoreContainer").hide();
     $("#progressBarContainer").hide();
+    $("#quizDetailsContainer").hide();
   }
 
   get songMaster() {
@@ -215,8 +216,11 @@ class SongQuiz {
     this.score = 0;
     this.currentQuestionIndex = 0;
     this.displayScore();
+    $("#quizPlaylist").text(this.playlist.name);
+    $("#numberOfSongs").text(this.numOfQuestions);
     $("#playerScoreContainer").show();
     $("#progressBarContainer").show();
+    $("#quizDetailsContainer").show();
 
     this.nextQuestion();
   }
@@ -418,6 +422,7 @@ class SongQuiz {
   displayResults() {
     $("#playerScoreContainer").hide();
     $("#progressBarContainer").hide();
+    $("#quizDetailsContainer").hide();
 
     let rowColorSuccessClass = "bg-lime-500";
     let rowColorFailClass = "bg-red-500";
