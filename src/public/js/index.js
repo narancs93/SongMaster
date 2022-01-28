@@ -147,13 +147,7 @@ $(document).ready(function() {
     $("#login_error").show();
   } else {
     if (accessToken) {
-      const songQuizOptions = {
-        timeToWait: 3,
-        guessTimeInSeconds: 10,
-        numOfQuestions: 10
-      };
-
-      let songMaster = new SongMaster(accessToken, refreshToken, songQuizOptions);
+      let songMaster = new SongMaster(accessToken, refreshToken);
 
       $(document).on("click", ".playlist", function(e) {
         const playlistId = $(this).data("playlist-id");

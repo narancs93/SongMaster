@@ -1,14 +1,8 @@
 class SongMaster {
-  constructor(accessToken, refreshToken, songQuizOptions) {
+  constructor(accessToken, refreshToken) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
-
-    songQuizOptions.songMaster = this;
-    songQuizOptions.timeToWait = songQuizOptions.timeToWait || 3;
-    songQuizOptions.guessTimeInSeconds = songQuizOptions.guessTimeInSeconds || 10;
-    songQuizOptions.numOfQuestions = songQuizOptions.numOfQuestions || 10;
-
-    this.songQuiz = new SongQuiz(songQuizOptions);
+    this.songQuiz = new SongQuiz(this);
     this.spotifyApi = new SpotifyWebApi();
     this.spotifyApi.setAccessToken(this.accessToken);
 

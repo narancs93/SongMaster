@@ -1,21 +1,15 @@
 class SongQuiz {
-  constructor(options) {
-    ({
-      songMaster: this._songMaster,
-      timeToWait: this._timeToWait,
-      guessTimeInSeconds: this._guessTimeInSeconds,
-      numOfQuestions: this._numOfQuestions
-    } = options);
-
+  constructor(songMaster) {
+    this._songMaster = songMaster;
+    this._timeToWait = 3;
+    this._guessTimeInSeconds = 15;
+    this._numOfQuestions = 10;
+    
     this.targetTexts = {
       "trackName": "title",
       "trackArtists": "artist(s)",
       "default": "song/artist(s)"
     };
-
-    this._timeToWait = (this._timeToWait === undefined) ? 3 : this._timeToWait;
-    this._guessTimeInSeconds = (this._guessTimeInSeconds === undefined) ? 10 : this._guessTimeInSeconds;
-    this._numOfQuestions = (this._numOfQuestions === undefined) ? 10 : this._numOfQuestions;
 
     $("#playerScoreContainer").hide();
     $("#progressBarContainer").hide();
