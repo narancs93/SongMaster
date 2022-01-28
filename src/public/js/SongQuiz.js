@@ -308,7 +308,7 @@ class SongQuiz {
       this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
     });
 
-    $("#volume").prop( "disabled", true);
+    $("#volume").prop("disabled", true);
     this.intervalBetweenQuestions = setInterval(() => {
       this.secondsToWait--;
       this.countdownBeforeNextSong(trackOffset);
@@ -351,12 +351,13 @@ class SongQuiz {
       this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
 
       this.setQuestionTarget(() => {
+        this.answerTracks[this.currentQuestionIndex]["guessTarget"] = this.targetTexts[this.target];
         this.generateChoices(() => {
           this.displayChoices();
         });
       });
 
-      $("#volume").prop( "disabled", false);
+      $("#volume").prop("disabled", false);
       this.songMaster.unmutePlayer(() => {
         this.startTimer();
         this.answerTracks[this.currentQuestionIndex].startTime = new Date();
@@ -475,22 +476,22 @@ class SongQuiz {
 
   generateDetailsTableHtml() {
     let htmlContent = `
-          <table class="border-collapse table-auto text-base">
+          <table class="border-collapse table-auto text-base m-auto mb-12">
             <thead>
-              <tr class="bg-gray-700">
-                <th class="border-b font-medium p-4 text-white">Artist</th>
-                <th class="border-b font-medium p-4 text-white">Title</th>
-                <th class="border-b font-medium p-4 text-white">Guess time</th>
+              <tr class="text-white bg-gray-700 font-bold">
+                <th class="border-b p-4">Artist</th>
+                <th class="border-b p-4">Title</th>
+                <th class="border-b p-4">Guess time</th>
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-slate-800">
     `;
 
     const tableRowHtml = `
-      <tr class="{{rowColorClass}}">
-        <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">{{artist}}</td>
-        <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">{{name}}</td>
-        <td class="border-b border-slate-100 p-4 pl-8 text-black text-left">{{guessTime}}</td>
+      <tr class="text-white bg-gray-500 font-medium text-left">
+        <td class="border-b border-slate-100 p-4 pl-8">{{artist}}</td>
+        <td class="border-b border-slate-100 p-4 pl-8">{{name}}</td>
+        <td class="border-b border-slate-100 p-4 pl-8">{{guessTime}}</td>
       </tr>
     `;
 
@@ -505,7 +506,22 @@ class SongQuiz {
         "artist": track.trackArtists,
         "name": track.trackName,
         "guessTime": guessTimeInSec,
-        "rowColorClass": (track.guessedCorrectly) ? "bg-lime-500" : "bg-red-500"
+        "guessTarget": track["guessTarget"]
+      }
+
+
+      if (track["guessTarget"] === "title") {
+        if (track["guessedCorrectly"]) {
+          templateValues["name"] = "<i class=\"fas fa-check rounded-full text-center p-2 bg-black text-green-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["name"];
+        } else {
+          templateValues["name"] = "<i class=\"fas fa-times rounded-full text-center p-2 bg-black text-red-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["name"];
+        }
+      } else if (track["guessTarget"] === "artist(s)") {
+        if (track["guessedCorrectly"]) {
+          templateValues["artist"] = "<i class=\"fas fa-check rounded-full text-center p-2 bg-black text-green-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["artist"];
+        } else {
+          templateValues["artist"] = "<i class=\"fas fa-times rounded-full text-center p-2 bg-black text-red-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["artist"];
+        }
       }
 
       let newTableRow = insertTemplateIntoHtml(templateValues, tableRowHtml);
