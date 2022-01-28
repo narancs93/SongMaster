@@ -448,6 +448,16 @@ class SongQuiz {
 
 
   generateSummaryTableHtml() {
+    let game_mode = null;
+
+    if (this.gameMode === "guessTitles") {
+      game_mode = "Guess the title";
+    } else if (this.gameMode === "guessArtists") {
+      game_mode = "Guess the artist(s)";
+    } else if (this.gameMode === "guessRandom") {
+      game_mode = "Mixed";
+    }
+
     let htmlContent = `
         <table class="border-collapse table-auto text-base m-auto">
           <tbody>
@@ -457,7 +467,7 @@ class SongQuiz {
             </tr>
             <tr class="bg-gray-100">
               <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Game mode</td>
-              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Guess the ${this.targetTexts[this.target]}</td>
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">${game_mode}</td>
             </tr>
             <tr class="bg-gray-100">
               <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Number of songs played</td>
