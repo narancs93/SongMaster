@@ -130,6 +130,22 @@ function updateTokenExpiry(validUntil) {
 }
 
 
+function hideElementsBySelectors(selectorList) {
+  const combinedSelector = selectorList.join(",");
+  $(combinedSelector).each(function() {
+    $(this).hide();
+  });
+}
+
+
+function showElementsBySelectors(selectorList) {
+  const combinedSelector = selectorList.join(",");
+  $(combinedSelector).each(function() {
+    $(this).show();
+  });
+}
+
+
 $(document).ready(function() {
   let params = getHashParams();
   let {
@@ -164,9 +180,8 @@ $(document).ready(function() {
           numOfTracks: $(this).data("num-of-tracks")
         };
 
-        $("#playerScoreContainer").hide();
-        $("#progressBarContainer").hide();
-        $("#quizDetailsContainer").hide();
+        hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
+
         readHtmlIntoElement("game_modes.html", "#content", templateValues);
 
         // Stop current songQuiz

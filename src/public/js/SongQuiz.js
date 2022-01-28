@@ -11,9 +11,7 @@ class SongQuiz {
       "default": "song/artist(s)"
     };
 
-    $("#playerScoreContainer").hide();
-    $("#progressBarContainer").hide();
-    $("#quizDetailsContainer").hide();
+    hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
   }
 
   get songMaster() {
@@ -212,9 +210,7 @@ class SongQuiz {
     this.displayScore();
     $("#quizPlaylist").text(this.playlistInfo.name);
     $("#numberOfSongs").text(this.numOfQuestions);
-    $("#playerScoreContainer").show();
-    $("#progressBarContainer").show();
-    $("#quizDetailsContainer").show();
+    showElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
     $('#progressBar').find('div').width('100%');
 
     this.nextQuestion();
@@ -416,9 +412,7 @@ class SongQuiz {
   }
 
   displayResults() {
-    $("#playerScoreContainer").hide();
-    $("#progressBarContainer").hide();
-    $("#quizDetailsContainer").hide();
+    hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
 
     let rowColorSuccessClass = "bg-lime-500";
     let rowColorFailClass = "bg-red-500";
