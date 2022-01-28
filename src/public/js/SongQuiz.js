@@ -308,6 +308,7 @@ class SongQuiz {
       this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
     });
 
+    $("#volume").prop( "disabled", true);
     this.intervalBetweenQuestions = setInterval(() => {
       this.secondsToWait--;
       this.countdownBeforeNextSong(trackOffset);
@@ -355,6 +356,7 @@ class SongQuiz {
         });
       });
 
+      $("#volume").prop( "disabled", false);
       this.songMaster.unmutePlayer(() => {
         this.startTimer();
         this.answerTracks[this.currentQuestionIndex].startTime = new Date();
