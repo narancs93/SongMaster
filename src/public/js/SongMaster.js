@@ -285,7 +285,7 @@ class SongMaster {
       this.spotifyPlayerId = spotifyPlayer["id"];
 
       const options = {
-        play: true
+        play: false
       }
 
       this.transferPlayback(this.spotifyPlayerId, options);

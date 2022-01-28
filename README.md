@@ -1,6 +1,6 @@
 # SongMaster
 ##  Song quiz game powered by Spotify API
-Login with your Spotify account and select one of your playlists to play a quiz game. There are 3 game modes: guess song title, guess artist, and random.
+Login with your Spotify account and select one of your playlists to play a quiz game. There are 3 game modes: guess song title, guess artist, and mixed.
 ## Requirements
 * Node.js and npm installed
 * Spotify Premium subscription
