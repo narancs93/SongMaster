@@ -109,6 +109,7 @@ const sampleSize = ([...arr], n = 1) => {
   return arr.slice(0, n);
 };
 
+
 function updateTokenExpiry(validUntil) {
   let currentTime = new Date().getTime() / 1000;
   let secondsLeft = Math.round(validUntil - currentTime);
@@ -118,7 +119,6 @@ function updateTokenExpiry(validUntil) {
   } else {
     $("#tokenExpiry").parent('div').html("The access token has expired.");
   }
-
 
   if (secondsLeft < 300) {
     $("#tokenExpiry").parent('div').addClass("bg-red-300");
@@ -144,10 +144,9 @@ $(document).ready(function() {
   }, 1000)
 
   if (error) {
-    alert("There was an error during the authentication");
+    $("#login_error").show();
   } else {
     if (accessToken) {
-
       const songQuizOptions = {
         timeToWait: 3,
         guessTimeInSeconds: 10,

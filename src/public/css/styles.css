@@ -4,6 +4,10 @@
   display: none;
 }
 
+#login_error {
+  display: none;
+}
+
 #login_spotify_logo {
   display: inline;
   width: 28px;
