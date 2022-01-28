@@ -359,15 +359,11 @@ class SongMaster {
 
 
   mutePlayer(callback) {
-    // Save current volume for unmute
-    this.getDevice(this.spotifyPlayer.name, (spotifyPlayer) => {
-      this.spotifyPlayer.oldVolume = spotifyPlayer.volume_percent;
-    });
-
     this.setVolume(0, callback);
   }
 
   unmutePlayer(callback) {
-    this.setVolume(this.spotifyPlayer.oldVolume, callback);
+    let volume = $("#volume").val();
+    this.setVolume(volume, callback);
   }
 }
