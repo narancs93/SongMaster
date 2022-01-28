@@ -150,15 +150,12 @@ $(document).ready(function() {
       let songMaster = new SongMaster(accessToken, refreshToken);
 
       $(document).on("click", ".playlist", function(e) {
-        const playlistId = $(this).data("playlist-id");
-        const numOfTracks = $(this).data("num-of-tracks");
-
-        const playlist = {
-          id: playlistId,
-          numOfTracks: numOfTracks
+        const playlistInfo = {
+          id: $(this).data("playlist-id"),
+          numOfTracks: $(this).data("num-of-tracks")
         }
 
-        songMaster.songQuiz.playlist = playlist;
+        songMaster.songQuiz.playlistInfo = playlistInfo;
         songMaster.songQuiz.getPlaylistTracks();
 
         const templateValues = {

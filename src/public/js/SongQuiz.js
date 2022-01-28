@@ -4,7 +4,7 @@ class SongQuiz {
     this._timeToWait = 3;
     this._guessTimeInSeconds = 15;
     this._numOfQuestions = 10;
-    
+
     this.targetTexts = {
       "trackName": "title",
       "trackArtists": "artist(s)",
@@ -64,18 +64,18 @@ class SongQuiz {
     this._numOfQuestions = newNumOfQuestions;
   }
 
-  get playlist() {
-    return this._playlist;
+  get playlistInfo() {
+    return this._playlistInfo;
   }
 
-  set playlist(newPlaylist) {
-    this._playlist = newPlaylist;
+  set playlistInfo(newPlaylistInfo) {
+    this._playlistInfo = newPlaylistInfo;
 
     // Get name of the playlist
-    this.songMaster.spotifyApi.getPlaylist(this.playlist.id, (getPlaylistError, getPlaylistResult) => {
+    this.songMaster.spotifyApi.getPlaylist(this.playlistInfo.id, (getPlaylistError, getPlaylistResult) => {
       if (getPlaylistError) console.error("Error occurred while getting playlist data.", getPlaylistError);
       else {
-        this._playlist.name = getPlaylistResult["name"];
+        this._playlistInfo.name = getPlaylistResult["name"];
       }
     });
   }
@@ -156,8 +156,8 @@ class SongQuiz {
     // Set random offset based on number of tracks in playlist
     // Maximum of 100 tracks are returned by the API
     this.playlistOffset = 0;
-    if (this.playlist.numOfTracks > 100) {
-      this.playlistOffset = Math.floor(Math.random() * (this.playlist.numOfTracks - 100));
+    if (this.playlistInfo.numOfTracks > 100) {
+      this.playlistOffset = Math.floor(Math.random() * (this.playlistInfo.numOfTracks - 100));
     }
   }
 
@@ -210,7 +210,7 @@ class SongQuiz {
     this.score = 0;
     this.currentQuestionIndex = 0;
     this.displayScore();
-    $("#quizPlaylist").text(this.playlist.name);
+    $("#quizPlaylist").text(this.playlistInfo.name);
     $("#numberOfSongs").text(this.numOfQuestions);
     $("#playerScoreContainer").show();
     $("#progressBarContainer").show();
@@ -227,7 +227,7 @@ class SongQuiz {
       offset: this.playlistOffset
     }
 
-    this.songMaster.getPlaylistTracks(this.playlist.id, options, (getPlaylistTracksResult) => {
+    this.songMaster.getPlaylistTracks(this.playlistInfo.id, options, (getPlaylistTracksResult) => {
       this.playlistTracks = getPlaylistTracksResult["items"];
 
       if (typeof callback == "function") {
@@ -299,7 +299,7 @@ class SongQuiz {
     $("#content").html(this.secondsToWait);
 
     this.songMaster.mutePlayer(() => {
-      this.songMaster.startPlaylistOnWebPlayer(this.playlist.id, trackOffset);
+      this.songMaster.startPlaylistOnWebPlayer(this.playlistInfo.id, trackOffset);
     });
 
     $("#volume").prop("disabled", true);
@@ -457,7 +457,7 @@ class SongQuiz {
           <tbody>
             <tr class="bg-gray-100">
               <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Playlist</td>
-              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">${this.playlist.name}</td>
+              <td class="border-b border-black-900 p-4 pl-8 text-black text-left">${this.playlistInfo.name}</td>
             </tr>
             <tr class="bg-gray-100">
               <td class="border-b border-black-900 p-4 pl-8 text-black text-left">Game mode</td>
