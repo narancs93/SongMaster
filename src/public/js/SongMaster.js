@@ -149,13 +149,10 @@ class SongMaster {
   }
 
 
-  playSong(spotifyPlayerId, playlistId, offset, callback) {
+  playSong(spotifyPlayerId, trackId, callback) {
     let options = {
       "device_id": spotifyPlayerId,
-      "context_uri": `spotify:playlist:${playlistId}`,
-      "offset": {
-        "position": offset
-      },
+      "uris": [`spotify:track:${trackId}`],
       "position_ms": 0
     };
 
@@ -182,8 +179,8 @@ class SongMaster {
   }
 
 
-  startPlaylistOnWebPlayer(playlistId, offset, callback) {
-    this.playSong(this.spotifyPlayer.deviceId, playlistId, offset, callback);
+  startPlaylistOnWebPlayer(trackId, callback) {
+    this.playSong(this.spotifyPlayer.deviceId, trackId, callback);
   };
 
 

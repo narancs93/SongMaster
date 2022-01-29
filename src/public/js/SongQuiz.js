@@ -285,32 +285,18 @@ class SongQuiz {
   }
 
   nextQuestion(callback) {
-    // Spotify play API is not accepting track URI, only album/playlist
-    // To play a specific song, need to pass an album/playlist with correct offset
-    // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
-    const trackIndex = this.getTrackIndex();
-    const trackOffset = this.playlistOffset + trackIndex;
-
     $("#content").html(this.timeToWait);
     $("#volume").prop("disabled", true);
 
+    const trackId = this.answerTracks[this.currentQuestionIndex].trackId;
     this.songMaster.mutePlayer(() => {
-      this.songMaster.startPlaylistOnWebPlayer(this.playlistInfo.id, trackOffset);
+      this.songMaster.startPlaylistOnWebPlayer(trackId);
     });
 
-    this.countdownBeforeNextSong(trackOffset);
+    this.countdownBeforeNextSong();
 
     if (typeof callback == "function") {
       callback();
-    }
-  }
-
-  getTrackIndex() {
-    let index = null;
-    for (let i = 0; i < this.playlistTracks.length; i++) {
-      if (this.playlistTracks[i].track.id === this.answerTracks[this.currentQuestionIndex].trackId) {
-        return i;
-      }
     }
   }
 
@@ -328,7 +314,7 @@ class SongQuiz {
     }
   }
 
-  countdownBeforeNextSong(trackOffset) {
+  countdownBeforeNextSong() {
     this.secondsToWait = this.timeToWait;
     this.intervalBetweenQuestions = setInterval(() => {
       this.secondsToWait--;
@@ -336,35 +322,39 @@ class SongQuiz {
       if (this.secondsToWait > 0) {
         $("#content").html(this.secondsToWait);
       } else {
-        clearInterval(this.intervalBetweenQuestions);
-        // Need to subtract 1, because setInterval adds 1 sec delay by default
-        this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
-
-        this.setQuestionTarget(() => {
-          this.answerTracks[this.currentQuestionIndex]["guessTarget"] = this.targetTexts[this.target];
-          this.generateChoices(() => {
-            this.displayChoices();
-          });
-        });
-
-        $("#volume").prop("disabled", false);
-        this.songMaster.unmutePlayer(() => {
-          this.startTimer();
-          this.answerTracks[this.currentQuestionIndex].startTime = new Date();
-
-          this.intervalDuringQuestion = setInterval(() => {
-            if (this.remainingGuessTimeInSeconds === 0) {
-              this.finishQuestion();
-            }
-            this.remainingGuessTimeInSeconds -= 1;
-          }, 1000);
-
-          this.currentQuestionIndex += 1;
-        });
+        this.playNextSong();
       }
     }, 1000);
+  }
 
 
+  playNextSong() {
+    clearInterval(this.intervalBetweenQuestions);
+    $("#volume").prop("disabled", false);
+
+    // Need to subtract 1, because setInterval adds 1 sec delay by default
+    this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
+
+    this.setQuestionTarget(() => {
+      this.answerTracks[this.currentQuestionIndex]["guessTarget"] = this.targetTexts[this.target];
+      this.generateChoices(() => {
+        this.displayChoices();
+      });
+    });
+
+    this.songMaster.unmutePlayer(() => {
+      this.startTimer();
+      this.answerTracks[this.currentQuestionIndex].startTime = new Date();
+
+      this.intervalDuringQuestion = setInterval(() => {
+        if (this.remainingGuessTimeInSeconds === 0) {
+          this.finishQuestion();
+        }
+        this.remainingGuessTimeInSeconds -= 1;
+      }, 1000);
+
+      this.currentQuestionIndex += 1;
+    });
   }
 
 
