@@ -1,4 +1,21 @@
 {
+  "name": "song-master",
+  "version": "1.0.0",
+  "description": "Song quiz game powered by Spotify API",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/narancs93/SongMaster.git"
+  },
+  "author": "Lajos Seyler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/narancs93/SongMaster/issues"
+  },
+  "homepage": "https://github.com/narancs93/SongMaster#readme",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
