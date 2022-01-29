@@ -216,7 +216,8 @@ class SongQuiz {
     this.nextQuestion();
   }
 
-  getPlaylistTracks(callback) {
+  getPlaylistTracks(playlistInfo, callback) {
+    this.playlistInfo = playlistInfo;
     this.setRandomPlaylistOffset();
 
     const options = {

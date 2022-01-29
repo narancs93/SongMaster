@@ -165,14 +165,16 @@ $(document).ready(function() {
     if (accessToken) {
       let songMaster = new SongMaster(accessToken, refreshToken);
 
+
       $(document).on("click", ".playlist", function(e) {
         const playlistInfo = {
           id: $(this).data("playlist-id"),
           numOfTracks: $(this).data("num-of-tracks")
         }
 
-        songMaster.songQuiz.playlistInfo = playlistInfo;
-        songMaster.songQuiz.getPlaylistTracks();
+        songMaster.songQuiz.getPlaylistTracks(playlistInfo);
+
+        hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
 
         const templateValues = {
           playlistSelected: $(this).text(),
@@ -180,13 +182,12 @@ $(document).ready(function() {
           numOfTracks: $(this).data("num-of-tracks")
         };
 
-        hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
-
         readHtmlIntoElement("game_modes.html", "#content", templateValues);
 
         // Stop current songQuiz
         songMaster.stopGame();
       });
+
 
       $(document).on("click", "#play", () => {
         // Read form data
@@ -221,6 +222,7 @@ $(document).ready(function() {
         }
       });
 
+
       $(document).on("click", ".track-choice-button", (evt) => {
         // Add class 'chosen-answer' to the selected answer and change its color
         // Set the other 3 answers back to default
@@ -230,14 +232,17 @@ $(document).ready(function() {
         songMaster.songQuiz.setAnswerTime();
       });
 
+
       $(document).on("click", "#play-next-song", function() {
         songMaster.songQuiz.finishQuestion();
-      })
+      });
+
 
       $(document).on("input", "#volume", function() {
         let volume = $(this).val();
         songMaster.setVolume(volume);
-      })
+      });
+
     } else {
       // render login screen
       $("#login").show();
