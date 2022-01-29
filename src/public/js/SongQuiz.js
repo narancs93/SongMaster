@@ -291,18 +291,14 @@ class SongQuiz {
     const trackIndex = this.getTrackIndex();
     const trackOffset = this.playlistOffset + trackIndex;
 
-    this.secondsToWait = this.timeToWait;
-    $("#content").html(this.secondsToWait);
+    $("#content").html(this.timeToWait);
+    $("#volume").prop("disabled", true);
 
     this.songMaster.mutePlayer(() => {
       this.songMaster.startPlaylistOnWebPlayer(this.playlistInfo.id, trackOffset);
     });
 
-    $("#volume").prop("disabled", true);
-    this.intervalBetweenQuestions = setInterval(() => {
-      this.secondsToWait--;
-      this.countdownBeforeNextSong(trackOffset);
-    }, 1000);
+    this.countdownBeforeNextSong(trackOffset);
 
     if (typeof callback == "function") {
       callback();
@@ -333,35 +329,42 @@ class SongQuiz {
   }
 
   countdownBeforeNextSong(trackOffset) {
-    if (this.secondsToWait > 0) {
-      $("#content").html(this.secondsToWait);
-    } else {
-      clearInterval(this.intervalBetweenQuestions);
-      // Need to subtract 1, because setInterval adds 1 sec delay by default
-      this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
+    this.secondsToWait = this.timeToWait;
+    this.intervalBetweenQuestions = setInterval(() => {
+      this.secondsToWait--;
 
-      this.setQuestionTarget(() => {
-        this.answerTracks[this.currentQuestionIndex]["guessTarget"] = this.targetTexts[this.target];
-        this.generateChoices(() => {
-          this.displayChoices();
+      if (this.secondsToWait > 0) {
+        $("#content").html(this.secondsToWait);
+      } else {
+        clearInterval(this.intervalBetweenQuestions);
+        // Need to subtract 1, because setInterval adds 1 sec delay by default
+        this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
+
+        this.setQuestionTarget(() => {
+          this.answerTracks[this.currentQuestionIndex]["guessTarget"] = this.targetTexts[this.target];
+          this.generateChoices(() => {
+            this.displayChoices();
+          });
         });
-      });
 
-      $("#volume").prop("disabled", false);
-      this.songMaster.unmutePlayer(() => {
-        this.startTimer();
-        this.answerTracks[this.currentQuestionIndex].startTime = new Date();
+        $("#volume").prop("disabled", false);
+        this.songMaster.unmutePlayer(() => {
+          this.startTimer();
+          this.answerTracks[this.currentQuestionIndex].startTime = new Date();
 
-        this.intervalDuringQuestion = setInterval(() => {
-          if (this.remainingGuessTimeInSeconds === 0) {
-            this.finishQuestion();
-          }
-          this.remainingGuessTimeInSeconds -= 1;
-        }, 1000);
+          this.intervalDuringQuestion = setInterval(() => {
+            if (this.remainingGuessTimeInSeconds === 0) {
+              this.finishQuestion();
+            }
+            this.remainingGuessTimeInSeconds -= 1;
+          }, 1000);
 
-        this.currentQuestionIndex += 1;
-      });
-    }
+          this.currentQuestionIndex += 1;
+        });
+      }
+    }, 1000);
+
+
   }
 
 
