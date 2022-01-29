@@ -287,7 +287,6 @@ class SongQuiz {
     // Spotify play API is not accepting track URI, only album/playlist
     // To play a specific song, need to pass an album/playlist with correct offset
     // Offset = offset passed to Playlist tracks API + index of track in the result of 100 tracks
-    //const trackIndexInResults = this.playlistTracks.indexOf(this.answerTracks[this.currentQuestionIndex]);
     const trackIndex = this.getTrackIndex();
     const trackOffset = this.playlistOffset + trackIndex;
 

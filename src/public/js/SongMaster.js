@@ -123,31 +123,6 @@ class SongMaster {
   }
 
 
-  getDevices(callback) {
-    this.spotifyApi.getMyDevices(function(getMyDevicesError, getMyDevicesResult) {
-      if (getMyDevicesError) console.error("Error occurred while getting devices.", getMyDevicesError);
-      else {
-        if (typeof callback == "function") {
-          callback(getMyDevicesResult["devices"]);
-        }
-      }
-    });
-  }
-
-
-  getDevice(deviceName, callback) {
-    this.getDevices(function(devices) {
-      for (let i = 0; i < devices.length; i++) {
-        if (devices[i]["name"] === deviceName) {
-          if (typeof callback == "function") {
-            callback(devices[i]);
-          }
-        }
-      }
-    });
-  }
-
-
   transferPlayback(spotifyPlayerId, options, callback) {
     let args = new Array(arguments.length);
     for (let i = 0; i < args.length; ++i) {
@@ -208,7 +183,7 @@ class SongMaster {
 
 
   startPlaylistOnWebPlayer(playlistId, offset, callback) {
-    this.playSong(this.spotifyPlayerId, playlistId, offset, callback);
+    this.playSong(this.spotifyPlayer.deviceId, playlistId, offset, callback);
   };
 
 
@@ -230,8 +205,6 @@ class SongMaster {
         },
         volume: 0.2
       });
-
-      this.spotifyPlayer.name = playerName;
 
       // Ready
       this.spotifyPlayer.addListener("ready", ({
@@ -275,19 +248,15 @@ class SongMaster {
   onPlayerReady() {
     console.log("Ready with Device ID", this.spotifyPlayer.deviceId);
 
-    this.getDevice(this.spotifyPlayer.name, (spotifyPlayer) => {
-      this.spotifyPlayerId = spotifyPlayer["id"];
+    const options = {
+      play: false
+    }
 
-      const options = {
-        play: false
-      }
+    this.transferPlayback(this.spotifyPlayer.deviceId, options);
 
-      this.transferPlayback(this.spotifyPlayerId, options);
-
-      this.getUser((user) => {
-        this.user = user;
-        this.showUserDetails();
-      });
+    this.getUser((user) => {
+      this.user = user;
+      this.showUserDetails();
     });
   }
 
@@ -356,8 +325,10 @@ class SongMaster {
     this.setVolume(0, callback);
   }
 
+
   unmutePlayer(callback) {
     let volume = $("#volume").val();
     this.setVolume(volume, callback);
   }
+
 }
