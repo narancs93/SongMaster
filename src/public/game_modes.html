@@ -1,20 +1,18 @@
-<div class="flex flex-col justify-center items-center text-center h-screen">
-  <div class="mt-12 p-3 mb-auto">
+<div class="flex flex-col mt-auto mb-auto text-center">
+  <div class="py-6 mt-auto">
     <h1>Playlist selected: {{playlistSelected}}</h1>
   </div>
-  <div class="mb-auto">
 
+  <div>
     <div class="flex flex-col">
-      <div class="text-left">
-        <label for="number-of-songs">
-          <h2 class="text-2xl mb-4 text-sky-500">Number of songs to play</h2>
-        </label>
-        <input id="number-of-songs" type="number" name="number-of-songs" value="10" min="0" class="form-input rounded p-2 border-2 border-black text-lg">
-      </div>
-      <div class="text-left">
+      <label for="number-of-songs">
+        <h2 class="text-2xl mb-4 text-sky-500">Number of songs to play</h2>
+      </label>
+      <input id="number-of-songs" type="number" name="number-of-songs" value="10" min="0" class="form-input rounded p-2 border-2 border-black text-lg text-left">
 
-        <h2 class="text-2xl mt-6 mb-2 text-sky-500">Difficulty</h2>
+      <h2 class="text-2xl mt-6 mb-2 text-sky-500">Difficulty</h2>
 
+      <div class="text-left">
         <input type="radio" id="easy" name="difficulty" value="easy">
         <label for="easy" class="text-lg p-2">Easy: <span class="text-base font-normal">you will have 30 seconds to take a guess</span></label><br>
         <input type="radio" id="medium" name="difficulty" value="medium" checked="checked">
@@ -22,9 +20,10 @@
         <input type="radio" id="hard" name="difficulty" value="hard">
         <label for="hard" class="text-lg p-2">Hard: <span class="text-base font-normal">you will have 7 seconds to take a guess</span></label>
       </div>
-      <div class="text-left">
-        <h2 class="text-2xl mt-6 mb-2 text-sky-500">Game mode</h2>
 
+      <h2 class="text-2xl mt-6 mb-2 text-sky-500">Game mode</h2>
+
+      <div class="text-left">
         <input type="radio" id="guess-title" name="guess" value="title">
         <label for="guess-title" class="text-lg p-2">Guess the title</label><br>
         <input type="radio" id="guess-artist" name="guess" value="artist" checked="checked">
@@ -32,8 +31,9 @@
         <input type="radio" id="guess-random" name="guess" value="random">
         <label for="guess-random" class="text-lg p-2">Mixed</label>
       </div>
+      
       <div>
-        <button id="play" type="button" class="bg-yellow-500 hover:bg-yellow-700 border-yellow-500 hover:border-yellow-700 text-2xl border-4 text-black py-4 px-12 m-2 rounded">Play</button>
+        <button id="play" type="button" class="bg-yellow-500 hover:bg-yellow-700 border-yellow-500 hover:border-yellow-700 text-2xl border-4 text-black py-6 px-12 m-2 rounded">Play</button>
       </div>
     </div>
 
