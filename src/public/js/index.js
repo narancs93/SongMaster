@@ -172,7 +172,7 @@ $(document).ready(function() {
 
         songMaster.songQuiz.getPlaylistTracks(playlistInfo);
 
-        hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
+        hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
 
         const templateValues = {
           playlistSelected: $(this).text(),

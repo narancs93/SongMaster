@@ -11,7 +11,7 @@ class SongQuiz {
       default: "song/artist(s)"
     };
 
-    hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
+    hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
   }
 
   get songMaster() {
@@ -210,10 +210,9 @@ class SongQuiz {
     this.gameMode = gameMode;
     this.score = 0;
     this.currentQuestionIndex = 0;
-    this.displayScore();
     $("#quizPlaylist").text(this.playlistInfo.name);
     $("#numberOfSongs").text(this.numOfQuestions);
-    showElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
+    showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
     $('#progressBar div').width('100%');
 
     this.nextQuestion();
@@ -393,14 +392,46 @@ class SongQuiz {
     // Check whether the chosen answer was correct
     const chosenAnswer = $(".chosen-answer").data("track-id");
     const correctAnswer = this.answerTracks[this.currentQuestionIndex - 1].trackId;
-    this.checkAnswer(correctAnswer, chosenAnswer, () => {
-      this.displayScore();
-    });
+    this.checkAnswer(correctAnswer, chosenAnswer);
 
     if (this.currentQuestionIndex < this.answerTracks.length) {
-      this.nextQuestion();
+      setTimeout(() => {
+        this.nextQuestion();
+      }, 4000);
     } else {
-      this.displayResults();
+      setTimeout(() => {
+        this.displayResults();
+      }, 4000);
+    }
+  }
+
+
+  checkAnswer(correctAnswer, chosenAnswer, callback) {
+    const chosenAnswerElement = $(".chosen-answer");
+    const correctAnswerElement = $(`button[data-track-id=${correctAnswer}]`);
+
+    // Set back all choices to default before animation
+    $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("text-black bg-orange-500 hover:bg-orange-700");
+
+    if (correctAnswer === chosenAnswer) {
+      this.score += 1;
+      this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = true;
+      chosenAnswerElement.removeClass("border-teal-500 hover:border-teal-700").addClass("border-black");
+    } else {
+      this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = false;
+      chosenAnswerElement.removeClass("bg-orange-500 hover:bg-orange-700 text-white border-teal-500 hover:border-teal-700").addClass("text-black bg-red-500 hover:bg-red-700 border-black")
+    }
+
+    // Animate correct answer
+    setInterval(function(){
+       correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
+       setTimeout(function(){
+         correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
+       },500)
+    },1000);
+
+    if (typeof callback == "function") {
+      callback();
     }
   }
 
@@ -425,7 +456,7 @@ class SongQuiz {
 
 
   displayResults() {
-    hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
+    hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
 
     let rowColorSuccessClass = "bg-lime-500";
     let rowColorFailClass = "bg-red-500";
@@ -546,25 +577,6 @@ class SongQuiz {
     `;
 
     return htmlContent;
-  }
-
-
-  checkAnswer(correctAnswer, chosenAnswer, callback) {
-    if (correctAnswer === chosenAnswer) {
-      this.score += 1;
-      this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = true;
-    } else {
-      this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = false;
-    }
-
-    if (typeof callback == "function") {
-      callback();
-    }
-  }
-
-
-  displayScore() {
-    $("#playerScore").text(`Score: ${this.score}/${this.currentQuestionIndex}`);
   }
 
 
