@@ -175,7 +175,7 @@ $(document).ready(function() {
         hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
 
         const templateValues = {
-          playlistSelected: $(this).text(),
+          playlistSelected: $($(this).html().replace(/&nbsp;/g, ' ')).text(),
           playlistId: $(this).data("playlist-id"),
           numOfTracks: $(this).data("num-of-tracks")
         };

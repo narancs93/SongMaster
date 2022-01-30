@@ -294,7 +294,7 @@ class SongMaster {
         let element = `
         <li>
           <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
-            <span>${playlist.name}</span>
+            <span>${playlist.name.replace(/\s/g, "&nbsp;")}</span>
           </a>
         </li>`;
 
