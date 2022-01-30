@@ -117,15 +117,13 @@ function updateTokenExpiry(validUntil) {
   if (secondsLeft > 0) {
     $("#tokenExpiry").text(secondsLeft);
   } else {
-    $("#tokenExpiry").parent('div').html("The access token has expired.");
+    $("#tokenExpiry").parent('span').text("The access token has expired.");
   }
 
   if (secondsLeft < 300) {
-    $("#tokenExpiry").parent('div').addClass("bg-red-300");
-    $("#refreshTokenButton").removeClass("bg-gray-200 hover:bg-gray-200").addClass("bg-blue-300 hover:bg-blue-200");
+    $("#refreshTokenButton").removeClass("bg-gray-200 hover:bg-gray-200").addClass("bg-red-300 hover:bg-red-400");
   } else if (secondsLeft < 900) {
-    $("#tokenExpiry").parent("div").addClass("bg-yellow-300");
-    $("#refreshTokenButton").removeClass("bg-gray-200 hover:bg-gray-200").addClass("bg-blue-300 hover:bg-blue-200");
+    $("#refreshTokenButton").removeClass("bg-gray-200 hover:bg-gray-200").addClass("bg-yellow-300 hover:bg-yellow-400");
   }
 }
 
