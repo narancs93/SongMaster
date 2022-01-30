@@ -211,8 +211,8 @@ $(document).ready(function() {
 
         if (
           isInt(numberOfSongs) &&
-          validDifficulties.indexOf(difficulty) !== -1 &&
-          validGuessTargets.indexOf(guessTarget) !== -1
+          validDifficulties.includes(difficulty) &&
+          validGuessTargets.includes(guessTarget)
         ) {
           songMaster.songQuiz.numOfQuestions = numberOfSongs;
           songMaster.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
