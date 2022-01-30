@@ -25,33 +25,9 @@
   <div id="loggedin">
     <div class="fixed flex w-full h-full">
       <!-- sidebar -->
-      <div class="sidebar resize-x bg-gray-100 w-64 space-y-2 py-7 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
-        <div class="flex items-center space-x-4 p-2 mb-5">
-          <img class="h-12 rounded-full" src="images/user_avatar_placeholder.png" alt="User avatar">
-          <div>
-            <h4 class="font-semibold text-lg text-gray-700 capitalize font-poppins tracking-wide"><span id="displayName"></span></h4>
-            <span class="text-sm tracking-wide flex items-center space-x-1">
-              <span class="text-gray-600">ID: <span id="userId"></span></span>
-            </span>
-          </div>
-        </div>
+      <div class="sidebar resize-x bg-gray-100 w-64 space-y-2 py-3 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
 
         <ul class="space-y-2 text-sm p-2">
-          <li>
-            <div class="space-x-3 p-2 rounded-md font-medium">
-              The access token expires in <span id="tokenExpiry"></span> seconds.
-            </div>
-          </li>
-          <li class="border-b-2 pb-2">
-            <button id="refreshTokenButton" class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-300 bg-gray-200 focus:shadow-outline">
-              <span class="text-gray-600">
-                <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </span>
-              <span id="obtainNewToken">Refresh token</span>
-            </button>
-          </li>
           <li>
             <div class="space-x-3 p-2 rounded-md font-medium">
               Volume control
@@ -68,6 +44,35 @@
 
       <!-- content -->
       <div class="flex flex-1 flex-col text-2xl font-bold">
+
+        <nav class="bg-gray-100 text-gray-700">
+          <div class="max-w-screen-xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div class="relative flex items-center justify-between h-16">
+              <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+                SongMaster
+                <div class="hidden sm:block sm:ml-6">
+                  <div class="flex space-x-4">
+                    <a id="home" href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Home</a>
+                  </div>
+                </div>
+              </div>
+
+              <button id="refreshTokenButton" class="flex text-sm font-medium items-center space-x-3 px-3 py-2 mx-2 text-gray-700 rounded-md bg-gray-200 hover:bg-gray-300 focus:shadow-outline">
+                <span class="text-gray-600">
+                  <i class="fas fa-key"></i>
+                </span>
+                <span id="obtainNewToken">Refresh&nbsp;token&nbsp;(<span id="tokenExpiry"></span>)</span>
+              </button>
+
+              <div class="flex items-center justify-center space-x-4 p-2 ml-4">
+                <img class="h-12 rounded-full" src="images/user_avatar_placeholder.png" alt="User avatar">
+                <div>
+                  <h4 class="font-semibold text-lg text-gray-700 capitalize font-poppins tracking-wide"><span id="displayName"></span></h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
 
         <!-- quiz info -->
         <div id="quizDetailsContainer" class="flex basis-1/12 bg-white">
@@ -106,7 +111,7 @@
         </div>
 
         <div id="content" class="flex flex-auto justify-center items-center h-screen overflow-auto">
-          Select a playlist from the list to start playing
+          Choose a playlist to play
         </div>
 
       </div>
@@ -129,6 +134,20 @@
   <script src="js/SongQuiz.js" charset="utf-8"></script>
   <script src="js/SongMaster.js" charset="utf-8"></script>
   <script src="js/index.js" charset="utf-8"></script>
+
+  <script type="text/javascript">
+    let hashParams = getHashParams();
+
+    const params = new URLSearchParams({
+      accessToken: hashParams.accessToken,
+      refreshToken: hashParams.refreshToken,
+      validUntil: hashParams.validUntil
+    });
+
+    const queryString = params.toString();
+
+    $("#home").prop("href", `#${queryString}`);
+  </script>
 </body>
 
 </html>

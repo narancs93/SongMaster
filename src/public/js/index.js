@@ -163,8 +163,8 @@ $(document).ready(function() {
     $("#login_error").show();
   } else {
     if (accessToken) {
-      let songMaster = new SongMaster(accessToken, refreshToken);
 
+      let songMaster = new SongMaster(accessToken, refreshToken);
 
       $(document).on("click", ".playlist", function(e) {
         const playlistInfo = {
