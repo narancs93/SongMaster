@@ -223,18 +223,21 @@ class SongMaster {
         message
       }) => {
         console.error(message);
+        new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
       });
 
       this.spotifyPlayer.addListener("authentication_error", ({
         message
       }) => {
         console.error(message);
+        new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
       });
 
       this.spotifyPlayer.addListener("account_error", ({
         message
       }) => {
         console.error(message);
+        new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
       });
 
       this.spotifyPlayer.connect();

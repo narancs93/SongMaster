@@ -158,7 +158,7 @@ $(document).ready(function() {
   }, 1000)
 
   if (error) {
-    $("#login_error").show();
+    new ErrorHandler('An error occurred during the authentication.', true);
   } else {
     if (accessToken) {
 
