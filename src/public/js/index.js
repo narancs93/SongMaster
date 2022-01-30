@@ -210,7 +210,7 @@ $(document).ready(function() {
         }
 
         if (
-          isInt(numberOfSongs) &&
+          isInt(numberOfSongs) && numberOfSongs > 0 &&
           validDifficulties.includes(difficulty) &&
           validGuessTargets.includes(guessTarget)
         ) {
