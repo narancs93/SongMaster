@@ -150,6 +150,7 @@ class SongQuiz {
     this._intervalDuringQuestion = newIntervalDuringQuestions;
   }
 
+
   setRandomPlaylistOffset() {
     // Set random offset based on number of tracks in playlist
     // Maximum of 100 tracks are returned by the API
@@ -159,23 +160,24 @@ class SongQuiz {
     }
   }
 
+
   generateChoices(callback) {
     const track = this.answerTracks[this.currentQuestionIndex];
     this.correctTrackId = track.trackId;
     const correctArtists = track.trackArtists;
 
-    let wrongAnswerPool = this.playlistTracks.filter(e => e.track.id !== this.correctTrackId);
+    let wrongAnswerPool = this.playlistTracks.filter(e => e.id !== this.correctTrackId);
 
     if (this.target === "trackArtists") {
       // Make sure correct artist(s) does not appear twice in choices
-      wrongAnswerPool = wrongAnswerPool.filter(e => correctArtists !== this.getTrackArtists(e.track));
+      wrongAnswerPool = wrongAnswerPool.filter(e => correctArtists !== this.getTrackArtists(e));
 
       // Also make sure, that incorrect artist(s) cannot appear twice
       let tracksWithUniqueArtists = [];
       let uniqueArtists = [];
 
       for (let i = 0; i < wrongAnswerPool.length; i++) {
-        const artist = this.getTrackArtists(wrongAnswerPool[i].track);
+        const artist = this.getTrackArtists(wrongAnswerPool[i]);
         if (!uniqueArtists.includes(artist)) {
           tracksWithUniqueArtists.push(wrongAnswerPool[i]);
           uniqueArtists.push(artist);
@@ -203,6 +205,7 @@ class SongQuiz {
     }
   }
 
+
   start(gameMode) {
     this.gameMode = gameMode;
     this.score = 0;
@@ -216,6 +219,7 @@ class SongQuiz {
     this.nextQuestion();
   }
 
+
   getPlaylistTracks(playlistInfo, callback) {
     this.playlistInfo = playlistInfo;
     this.setRandomPlaylistOffset();
@@ -227,11 +231,16 @@ class SongQuiz {
     this.songMaster.getPlaylistTracks(this.playlistInfo.id, options, (getPlaylistTracksResult) => {
       this.playlistTracks = getPlaylistTracksResult["items"];
 
+      for(let i = 0; i < this.playlistTracks.length; i++) {
+        this.playlistTracks[i] = this.playlistTracks[i].track;
+      }
+
       if (typeof callback == "function") {
         callback();
       }
     });
   }
+
 
   generateAnswers(callback) {
     const tracks = sampleSize(this.playlistTracks, this.numOfQuestions);
@@ -249,29 +258,27 @@ class SongQuiz {
     }
   }
 
+
   extractTrackData(track) {
-    let trackData = {};
-
-    let trackId = track.track.id;
-    let trackName = track.track.name;
-    let trackArtists = this.getTrackArtists(track.track)
-
-    trackData["trackId"] = trackId;
-    trackData["trackName"] = trackName;
-    trackData["trackArtists"] = trackArtists;
-
-    return trackData;
+    return {
+      "trackId": track.id,
+      "trackName": track.name,
+      "trackArtists": this.getTrackArtists(track)
+    };
   }
+
 
   getTrackArtists(track) {
     let trackArtistArray = track.artists;
-
     let trackArtistNames = [];
+
     for (let j = 0; j < trackArtistArray.length; j++) {
       trackArtistNames.push(trackArtistArray[j].name);
     }
+
     return trackArtistNames.join(" & ");
   }
+
 
   stop() {
     try {
@@ -283,6 +290,7 @@ class SongQuiz {
       this.songMaster.pause();
     }
   }
+
 
   nextQuestion(callback) {
     $("#content").html(this.timeToWait);
@@ -300,6 +308,7 @@ class SongQuiz {
     }
   }
 
+
   setQuestionTarget(callback) {
     if (this.gameMode === "guessTitles") {
       this.target = "trackName";
@@ -313,6 +322,7 @@ class SongQuiz {
       callback();
     }
   }
+
 
   countdownBeforeNextSong() {
     this.secondsToWait = this.timeToWait;
@@ -403,6 +413,7 @@ class SongQuiz {
       callback();
     }
   }
+
 
   displayResults() {
     hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
@@ -528,6 +539,7 @@ class SongQuiz {
     return htmlContent;
   }
 
+
   checkAnswer(correctAnswer, chosenAnswer, callback) {
     if (correctAnswer === chosenAnswer) {
       this.score += 1;
@@ -541,9 +553,11 @@ class SongQuiz {
     }
   }
 
+
   displayScore() {
     $("#playerScore").text(`Score: ${this.score}/${this.currentQuestionIndex}`);
   }
+
 
   setAnswerTime() {
     this.answerTracks[this.currentQuestionIndex - 1].answerTime = new Date();
