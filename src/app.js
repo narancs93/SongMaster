@@ -149,9 +149,14 @@ app.get("/refreshToken", function(req, res) {
 
 
 const httpServer = http.createServer(app);
-httpServer.listen(httpPort, () => {
-    console.log(`HTTP server started on port ${httpPort}`);
-});
+try {
+  httpServer.listen(httpPort, () => {
+      console.log(`HTTP server started on port ${httpPort}`);
+  }).on('error', console.log);
+} catch(e) {
+  console.log(e)
+}
+
 
 if (typeof(httpsPort) !== 'undefined') {
   if (typeof(certPath) !== 'undefined' && typeof(keyPath) !== 'undefined') {
@@ -160,9 +165,14 @@ if (typeof(httpsPort) !== 'undefined') {
       cert: fs.readFileSync(certPath),
     }, app);
 
-    httpsServer.listen(443, () => {
-        console.log('HTTPS Server running on port 443');
-    });
+    try {
+      httpsServer.listen(httpsPort, () => {
+          console.log(`HTTPS Server running on port ${httpsPort}`);
+      }).on('error', console.log);
+    } catch(e) {
+      console.log(e);
+    }
+
   } else {
     console.error('Server is not listening on HTTPS. Reason: HTTPS_PORT is specified in .env file, but certPath and/or keyPath is missing.')
   }
