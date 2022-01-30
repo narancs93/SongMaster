@@ -149,11 +149,11 @@ class SongMaster {
   }
 
 
-  playSong(spotifyPlayerId, trackId, callback) {
+  playSong(spotifyPlayerId, trackId, positionMs, callback) {
     let options = {
       "device_id": spotifyPlayerId,
       "uris": [`spotify:track:${trackId}`],
-      "position_ms": 0
+      "position_ms": positionMs
     };
 
     this.spotifyApi.play(options, function(playError, playResult) {
@@ -179,8 +179,8 @@ class SongMaster {
   }
 
 
-  startPlaylistOnWebPlayer(trackId, callback) {
-    this.playSong(this.spotifyPlayer.deviceId, trackId, callback);
+  startPlaylistOnWebPlayer(trackId, positionMs, callback) {
+    this.playSong(this.spotifyPlayer.deviceId, trackId, positionMs, callback);
   };
 
 
