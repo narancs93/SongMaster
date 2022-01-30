@@ -83,7 +83,7 @@ $(document).on("click", "#obtainNewToken", function(e) {
     $.ajax({
       url: "/refreshToken",
       data: {
-        "refreshToken": refreshToken
+        refreshToken: refreshToken
       }
     }).done(function(data) {
       var params = new URLSearchParams({
@@ -197,14 +197,14 @@ $(document).ready(function() {
         const validDifficulties = ["easy", "medium", "hard"];
         const validGuessTargets = ["title", "artist", "random"];
         const gameModes = {
-          "title": "guessTitles",
-          "artist": "guessArtists",
-          "random": "guessRandom"
+          title: "guessTitles",
+          artist: "guessArtists",
+          random: "guessRandom"
         }
         const guessTimes = {
-          "easy": 30,
-          "medium": 15,
-          "hard": 7
+          easy: 30,
+          medium: 15,
+          hard: 7
         }
 
         if (

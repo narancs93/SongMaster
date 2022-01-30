@@ -114,7 +114,7 @@ class SongMaster {
     this.spotifyApi.pause(function(pauseError, pauseResult) {
       if (pauseError) {
         // Ignore "No active device found" error
-        if (!pauseError["responseText"].includes("No active device found")) {
+        if (!pauseError.responseText.includes("No active device found")) {
           console.error("Error occurred during pause.", pauseError);
         }
       }
@@ -151,9 +151,9 @@ class SongMaster {
 
   playSong(spotifyPlayerId, trackId, positionMs, callback) {
     let options = {
-      "device_id": spotifyPlayerId,
-      "uris": [`spotify:track:${trackId}`],
-      "position_ms": positionMs
+      device_id: spotifyPlayerId,
+      uris: [`spotify:track:${trackId}`],
+      position_ms: positionMs
     };
 
     this.spotifyApi.play(options, function(playError, playResult) {

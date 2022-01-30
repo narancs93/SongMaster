@@ -54,7 +54,7 @@ app.use(express.static(path.join(__dirname, "public")))
 
 app.get("/login", function(req, res) {
   redirect_uri = redirect_uri_base.replace("{{PROTOCOL}}", req.protocol);
-  redirect_uri = redirect_uri.replace("{{PORT}}", req.socket.address()["port"]);
+  redirect_uri = redirect_uri.replace("{{PORT}}", req.socket.address().port);
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
@@ -139,9 +139,9 @@ app.get("/refreshToken", function(req, res) {
         validUntil = new Date().getTime() / 1000 + body.expires_in;
 
         res.send({
-        "accessToken": accessToken,
-        "refreshToken": refreshToken,
-        "validUntil": validUntil
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        validUntil: validUntil
       });
     }
   });

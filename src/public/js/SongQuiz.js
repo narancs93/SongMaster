@@ -6,9 +6,9 @@ class SongQuiz {
     this._numOfQuestions = 10;
 
     this.targetTexts = {
-      "trackName": "title",
-      "trackArtists": "artist(s)",
-      "default": "song/artist(s)"
+      trackName: "title",
+      trackArtists: "artist(s)",
+      default: "song/artist(s)"
     };
 
     hideElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
@@ -73,7 +73,7 @@ class SongQuiz {
     this.songMaster.spotifyApi.getPlaylist(this.playlistInfo.id, (getPlaylistError, getPlaylistResult) => {
       if (getPlaylistError) console.error("Error occurred while getting playlist data.", getPlaylistError);
       else {
-        this._playlistInfo.name = getPlaylistResult["name"];
+        this._playlistInfo.name = getPlaylistResult.name;
       }
     });
   }
@@ -214,7 +214,7 @@ class SongQuiz {
     $("#quizPlaylist").text(this.playlistInfo.name);
     $("#numberOfSongs").text(this.numOfQuestions);
     showElementsBySelectors(["#playerScoreContainer", "#progressBarContainer", "#quizDetailsContainer"]);
-    $('#progressBar').find('div').width('100%');
+    $('#progressBar div').width('100%');
 
     this.nextQuestion();
   }
@@ -229,7 +229,7 @@ class SongQuiz {
     }
 
     this.songMaster.getPlaylistTracks(this.playlistInfo.id, options, (getPlaylistTracksResult) => {
-      this.playlistTracks = getPlaylistTracksResult["items"];
+      this.playlistTracks = getPlaylistTracksResult.items;
 
       for(let i = 0; i < this.playlistTracks.length; i++) {
         this.playlistTracks[i] = this.playlistTracks[i].track;
@@ -261,10 +261,10 @@ class SongQuiz {
 
   extractTrackData(track) {
     return {
-      "trackId": track.id,
-      "trackName": track.name,
-      "trackDuration": track.duration_ms,
-      "trackArtists": this.getTrackArtists(track)
+      trackId: track.id,
+      trackName: track.name,
+      trackDuration: track.duration_ms,
+      trackArtists: this.getTrackArtists(track)
     };
   }
 
@@ -355,7 +355,7 @@ class SongQuiz {
     this.remainingGuessTimeInSeconds = this.guessTimeInSeconds - 1;
 
     this.setQuestionTarget(() => {
-      this.answerTracks[this.currentQuestionIndex]["guessTarget"] = this.targetTexts[this.target];
+      this.answerTracks[this.currentQuestionIndex].guessTarget = this.targetTexts[this.target];
       this.generateChoices(() => {
         this.displayChoices();
       });
@@ -386,7 +386,7 @@ class SongQuiz {
 
 
   finishQuestion() {
-    $('#progressBar').find('div').stop();
+    $('#progressBar div').stop();
     clearInterval(this.intervalDuringQuestion);
     this.songMaster.pause();
 
@@ -408,12 +408,12 @@ class SongQuiz {
   displayChoices(callback) {
     const templateValues = {};
 
-    let targetText = this.targetTexts[this.target] || this.targetTexts["default"];
+    let targetText = this.targetTexts[this.target] || this.targetTexts.default;
 
     for (let i = 0; i < this.choices.length; i++) {
       templateValues[`track${i+1}Id`] = this.choices[i].trackId;
       templateValues[`track${i+1}Data`] = this.choices[i][this.target];
-      templateValues[`target`] = targetText;
+      templateValues.target = targetText;
     }
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
@@ -514,24 +514,24 @@ class SongQuiz {
       guessTimeInSec = isNaN(guessTimeInSec) ? "Not answered" : guessTimeInSec;
 
       let templateValues = {
-        "artist": track.trackArtists,
-        "name": track.trackName,
-        "guessTime": guessTimeInSec,
-        "guessTarget": track["guessTarget"]
+        artist: track.trackArtists,
+        name: track.trackName,
+        guessTime: guessTimeInSec,
+        guessTarget: track.guessTarget
       }
 
 
-      if (track["guessTarget"] === "title") {
-        if (track["guessedCorrectly"]) {
-          templateValues["name"] = "<i class=\"fas fa-check rounded-full text-center p-2 bg-black text-green-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["name"];
+      if (track.guessTarget === "title") {
+        if (track.guessedCorrectly) {
+          templateValues.name = "<i class=\"fas fa-check rounded-full text-center p-2 bg-black text-green-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues.name;
         } else {
-          templateValues["name"] = "<i class=\"fas fa-times rounded-full text-center p-2 bg-black text-red-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["name"];
+          templateValues.name = "<i class=\"fas fa-times rounded-full text-center p-2 bg-black text-red-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues.name;
         }
-      } else if (track["guessTarget"] === "artist(s)") {
-        if (track["guessedCorrectly"]) {
-          templateValues["artist"] = "<i class=\"fas fa-check rounded-full text-center p-2 bg-black text-green-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["artist"];
+      } else if (track.guessTarget === "artist(s)") {
+        if (track.guessedCorrectly) {
+          templateValues.artist = "<i class=\"fas fa-check rounded-full text-center p-2 bg-black text-green-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues.artist;
         } else {
-          templateValues["artist"] = "<i class=\"fas fa-times rounded-full text-center p-2 bg-black text-red-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues["artist"];
+          templateValues.artist = "<i class=\"fas fa-times rounded-full text-center p-2 bg-black text-red-500\" style=\"width: 32px; height: 32px;\"></i> " + templateValues.artist;
         }
       }
 
