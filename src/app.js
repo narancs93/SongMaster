@@ -167,7 +167,7 @@ if (typeof(httpsPort) !== 'undefined') {
 
     try {
       httpsServer.listen(httpsPort, () => {
-          console.log(`HTTPS Server running on port ${httpsPort}`);
+          console.log(`HTTPS server started on port ${httpsPort}`);
       }).on('error', console.log);
     } catch(e) {
       console.log(e);
