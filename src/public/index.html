@@ -25,21 +25,23 @@
   <div id="loggedin">
     <div class="fixed flex w-full h-full">
       <!-- sidebar -->
-      <div class="sidebar resize-x bg-gray-100 w-64 space-y-2 py-3 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
+      <div class="sidebar resize-x bg-gray-100 w-64 py-3 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
 
-        <ul class="space-y-2 text-sm p-2">
-          <li>
-            <div class="space-x-3 p-2 rounded-md font-medium">
-              Volume control
+        <ul class="text-sm">
+          <li class="align-middle">
+            <div class="flex">
+              <i class="fas fa-volume-mute px-2"></i>
+              <input id="volume" type="range" min="0" max="100" value="0" step="5" class="slider">
+              <i class="fas fa-volume-up pl-2"></i>
             </div>
-            <input id="volume" type="range" min="0" max="100" value="0" class="slider">
           </li>
         </ul>
 
-        <span class="flex text-black text-bold text-xl p-2 border-b-2">Playlists</span>
+        <span class="flex text-black text-bold text-xl p-2 border-b-2 space-y-2">Playlists</span>
 
         <ul id="playlists" class="space-y-2 text-sm p-2">
         </ul>
+
       </div>
 
       <!-- content -->

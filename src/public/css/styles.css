@@ -22,7 +22,8 @@
   height: 100%;
   text-align: right;
   padding: 0 0;
-  line-height: 40px; /* same as #progressBar height if we want text middle aligned */
+  line-height: 40px;
+  /* same as #progressBar height if we want text middle aligned */
   width: 100%;
   box-sizing: border-box;
 }
@@ -48,4 +49,8 @@
 .track-choice-button {
   width: 90%;
   height: 90%;
+}
+
+.fa-volume-up, .fa-volume-mute {
+  line-height: 42px !important;
 }
