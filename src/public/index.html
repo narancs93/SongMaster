@@ -25,9 +25,9 @@
   <div id="loggedin">
     <div class="fixed flex w-full h-full">
       <!-- sidebar -->
-      <div class="sidebar resize-x bg-gray-100 w-64 py-3 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
+      <div class="sidebar bg-gray-100 w-64 py-3 px-2 relative inset-y-0 left-0 transition duration-200 ease-in-out overflow-auto">
 
-        <ul class="text-sm">
+        <ul class="text-sm pb-2 border-b-2">
           <li class="align-middle">
             <div class="flex">
               <i class="fas fa-volume-mute px-2"></i>
@@ -37,8 +37,15 @@
           </li>
         </ul>
 
-        <span class="flex text-black text-bold text-xl p-2 border-b-2 space-y-2">Playlists</span>
+        <span class="flex justify-center text-black text-bold text-2xl p-2 border-b-2 space-y-2">Playlists</span>
 
+        <div class="text-center border-b-2">
+          <span class="flex justify-center text-black text-bold text-base p-2 border-b-2 space-y-2">Search&nbsp;on&nbsp;Spotify</span>
+          <input id="playlist-query" type="text" name="playlist-query" class="form-input rounded p-1 border-2 border-black text-md text-left">
+          <button id="playlist-search" type="button" class="bg-gray-200 hover:bg-gray-400 border-gray-200 hover:border-gray-400 text-base border-4 text-black px-4 m-2 rounded">Search</button>
+        </div>
+
+        <span class="flex justify-center text-black text-bold text-base p-2 border-b-2 space-y-2">Your&nbsp;playlists</span>
         <ul id="playlists" class="space-y-2 text-sm p-2">
         </ul>
 
