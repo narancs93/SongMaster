@@ -182,7 +182,7 @@ class SongMaster {
     this.songQuiz.start(gameMode);
   }
 
-  stopGame() {
+  stopQuiz() {
     this.songQuiz.stop();
   }
 

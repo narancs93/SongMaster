@@ -272,6 +272,7 @@ class SongQuiz {
     } catch {
       ;
     } finally {
+      $('#progressBar div').stop();
       this.songMaster.pause();
     }
   }

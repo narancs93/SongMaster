@@ -182,8 +182,7 @@ $(document).ready(function() {
 
         readHtmlIntoElement("game_modes.html", "#content", templateValues);
 
-        // Stop current songQuiz
-        songMaster.stopGame();
+        songMaster.stopQuiz();
       });
 
 
@@ -244,6 +243,9 @@ $(document).ready(function() {
 
 
       $(document).on("click", "#playlist-search", () => {
+        hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
+        songMaster.stopQuiz();
+
         const playlistQuery = $("#playlist-query").val();
         songMaster.spotifyApi.searchPlaylists(playlistQuery, (searchPlaylistsError, searchPlaylistsResult) => {
           if (searchPlaylistsError) console.error("Error occurred while searching for playlists.", searchPlaylistsError);
@@ -266,7 +268,6 @@ $(document).ready(function() {
 
             $("#content").html(contentHtml);
             console.log(contentHtml)
-
           }
         });
       });
