@@ -40,6 +40,10 @@
   width: 500px;
 }
 
+.sidebar {
+  min-width: 265px;
+}
+
 .track-choice {
   width: 50%;
   height: 50%;
