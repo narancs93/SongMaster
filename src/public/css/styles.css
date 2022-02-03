@@ -58,3 +58,7 @@
 .fa-volume-up, .fa-volume-mute {
   line-height: 42px !important;
 }
+
+.playlist-image {
+  max-height: 200px;
+}
