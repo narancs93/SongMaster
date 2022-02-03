@@ -145,6 +145,8 @@ function showElementsBySelectors(selectorList) {
 
 
 $(document).ready(function() {
+  $("#playlist-query").val('');
+
   let params = getHashParams();
   let {
     accessToken,
@@ -242,34 +244,48 @@ $(document).ready(function() {
       });
 
 
-      $(document).on("click", "#playlist-search", () => {
+      function displaySearchResults() {
         hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
         songMaster.stopQuiz();
 
         const playlistQuery = $("#playlist-query").val();
-        songMaster.spotifyApi.searchPlaylists(playlistQuery, (searchPlaylistsError, searchPlaylistsResult) => {
-          if (searchPlaylistsError) console.error("Error occurred while searching for playlists.", searchPlaylistsError);
-          else {
-            const playlists = searchPlaylistsResult.playlists.items;
+        if (playlistQuery) {
+          songMaster.spotifyApi.searchPlaylists(playlistQuery, (searchPlaylistsError, searchPlaylistsResult) => {
+            if (searchPlaylistsError) console.error("Error occurred while searching for playlists.", searchPlaylistsError);
+            else {
+              const playlists = searchPlaylistsResult.playlists.items;
 
-            let playlistsHtml = playlists.map(playlist => {
-              return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
-                <img class="playlist-image m-auto" src="${playlist.images[0].url}">
-                <div class="text-base">${playlist.name}</div>
-                <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
-              </div>`
-            }).join('');
+              let playlistsHtml = playlists.map(playlist => {
+                const imageUrl = (playlist.images[0]) ? playlist.images[0].url : './images/musical-note.png';
+                const imageClass = playlist.images[0] ? '' : 'py-12'
 
-            let contentHtml = `
-            <div class="flex flex-col mt-auto mb-auto text-center m-8">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">${playlistsHtml}</div>
-            <div>
-            `
+                return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
+                  <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
+                  <div class="text-base">${playlist.name}</div>
+                  <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
+                </div>`
+              }).join('');
 
-            $("#content").html(contentHtml);
-            console.log(contentHtml)
-          }
-        });
+              let contentHtml = `
+              <div class="flex flex-col mt-auto mb-auto text-center m-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">${playlistsHtml}</div>
+              <div>
+              `
+
+              $("#content").html(contentHtml);
+            }
+          });
+        }
+      }
+
+      $(document).on("click", "#playlist-search", () => {
+        displaySearchResults();
+      });
+
+      $(document).on("keydown", "#playlist-query", (e) => {
+        if (e.keyCode === 13) {
+          displaySearchResults();
+        }
       });
 
     } else {
