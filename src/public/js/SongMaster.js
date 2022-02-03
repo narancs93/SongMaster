@@ -71,10 +71,7 @@ class SongMaster {
 
 
   getPlaylists(options, callback) {
-    let args = new Array(arguments.length);
-    for (let i = 0; i < args.length; ++i) {
-      args[i] = arguments[i];
-    };
+    const args = [...arguments];
 
     if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
@@ -124,10 +121,7 @@ class SongMaster {
 
 
   transferPlayback(spotifyPlayerId, options, callback) {
-    let args = new Array(arguments.length);
-    for (let i = 0; i < args.length; ++i) {
-      args[i] = arguments[i];
-    };
+    const args = [...arguments];
 
     spotifyPlayerId = args.shift();
 
@@ -305,7 +299,6 @@ class SongMaster {
 
 
   setVolume(volume, callback) {
-
     const options = {
       device_id: this.spotifyPlayer.deviceId
     }

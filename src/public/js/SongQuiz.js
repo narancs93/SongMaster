@@ -228,11 +228,7 @@ class SongQuiz {
     }
 
     this.songMaster.getPlaylistTracks(this.playlistInfo.id, options, (getPlaylistTracksResult) => {
-      this.playlistTracks = getPlaylistTracksResult.items;
-
-      for(let i = 0; i < this.playlistTracks.length; i++) {
-        this.playlistTracks[i] = this.playlistTracks[i].track;
-      }
+      this.playlistTracks = getPlaylistTracksResult.items.map(item => item.track);
 
       if (typeof callback == "function") {
         callback();
@@ -244,13 +240,7 @@ class SongQuiz {
   generateAnswers(callback) {
     const tracks = sampleSize(this.playlistTracks, this.numOfQuestions);
 
-    this.answerTracks = [];
-
-    for (let i = 0; i < tracks.length; i++) {
-      let newAnswer = this.extractTrackData(tracks[i]);
-
-      this.answerTracks.push(newAnswer);
-    }
+    this.answerTracks = tracks.map(track => this.extractTrackData(track));
 
     if (typeof callback == "function") {
       callback();
@@ -269,12 +259,7 @@ class SongQuiz {
 
 
   getTrackArtists(track) {
-    let trackArtistArray = track.artists;
-    let trackArtistNames = [];
-
-    for (let j = 0; j < trackArtistArray.length; j++) {
-      trackArtistNames.push(trackArtistArray[j].name);
-    }
+    const trackArtistNames = track.artists.map(artist => artist.name);
 
     return trackArtistNames.join(" & ");
   }
@@ -444,8 +429,8 @@ class SongQuiz {
     for (let i = 0; i < this.choices.length; i++) {
       templateValues[`track${i+1}Id`] = this.choices[i].trackId;
       templateValues[`track${i+1}Data`] = this.choices[i][this.target];
-      templateValues.target = targetText;
     }
+    templateValues.target = targetText;
 
     readHtmlIntoElement("guess_the_song.html", "#content", templateValues);
 
