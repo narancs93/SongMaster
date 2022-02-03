@@ -232,6 +232,7 @@ $(document).ready(function() {
 
 
       $(document).on("click", "#play-next-song", function() {
+        $("#play-next-song").css('visibility', 'hidden');
         songMaster.songQuiz.finishQuestion();
       });
 
