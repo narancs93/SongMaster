@@ -58,6 +58,24 @@ To generate a self-signed certificate
 openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out yourdomain.crt -keyout yourdomain.key
 ```
 
+## Deploy with docker
+
+.env file has to be created and filled as mentioned above in Setup environment section.
+
+Build image and tag it
+
+```sh
+docker build . -t <your username>/song-master
+```
+
+Run the image
+
+```sh
+docker run -p 8080:8080 -d <your username>/song-master
+```
+
+
+
 ## Allowing additional users to login
 
 After you create an app in your Spotify Dashboard, it will be in Development mode status by default. What it means:
@@ -71,6 +89,7 @@ This app uses:
 - [Tailwind CSS](https://tailwindcss.com/): CSS framework
 - [jQuery](https://jquery.com/): JavaScript library
 - [Node.js](https://nodejs.org/): back-end JavaScript runtime
+- [Font Awesome](https://fontawesome.com/): Icons
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
 - [Spotify Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk/)
 - [Spotify Web API JS](https://github.com/JMPerez/spotify-web-api-js) by [JMPerez](https://github.com/JMPerez): lightweight wrapper for the Spotify Web API

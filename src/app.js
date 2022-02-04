@@ -160,12 +160,12 @@ try {
 
 if (typeof(httpsPort) !== 'undefined') {
   if (typeof(certPath) !== 'undefined' && typeof(keyPath) !== 'undefined') {
-    const httpsServer = https.createServer({
-      key: fs.readFileSync(keyPath),
-      cert: fs.readFileSync(certPath),
-    }, app);
-
     try {
+      const httpsServer = https.createServer({
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath),
+      }, app);
+
       httpsServer.listen(httpsPort, () => {
           console.log(`HTTPS server started on port ${httpsPort}`);
       }).on('error', console.log);
