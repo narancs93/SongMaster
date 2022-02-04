@@ -16,7 +16,7 @@ $ npm install
 For this step you need to have an App created in [Spotify Dashboard](https://developer.spotify.com/dashboard). From there you can get the Client ID and Client secret for authentication. You will also need to configure a Redirect URI, so the Spotify authentication service automatically invokes your app every time a user logs in. These steps are described in the [Spotify Web API Documentation](https://developer.spotify.com/documentation/general/guides/authorization/app-settings/).
 
 Once you have the Client ID, Client Secret and Redirect URI:
-* Create a ```.env``` file in the ```src``` directory with the following contents:
+* Create a ```.env``` file inside SongMaster directory with the following contents:
 
 ```sh
 HTTP_PORT=http_port_to_listen_on
