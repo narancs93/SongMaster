@@ -70,8 +70,8 @@ class SongMaster {
   }
 
 
-  getPlaylists(options, callback) {
-    const args = [...arguments];
+  getPlaylists(...args) {
+    let options = null, callback = null;
 
     if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
@@ -120,17 +120,15 @@ class SongMaster {
   }
 
 
-  transferPlayback(spotifyPlayerId, options, callback) {
-    const args = [...arguments];
-
-    spotifyPlayerId = args.shift();
+  transferPlayback(...args) {
+    let spotifyPlayerId = args.shift();
+    let options = {}, callback = null;
 
     if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
     }
 
     if (args.length > 0) options = args.shift();
-    else options = {};
 
     this.spotifyApi.transferMyPlayback([spotifyPlayerId], options, function(transferMyPlaybackError, transferMyPlaybackResult) {
       if (transferMyPlaybackError) console.error(transferMyPlaybackError);
