@@ -36,8 +36,8 @@ class ErrorHandler {
       </div>
     `);
 
-    $('#error').fadeIn('slow', function() {
-      $('#error').delay(5000).fadeOut();
+    $("#error").fadeIn("slow", function() {
+      $("#error").delay(5000).fadeOut();
     });
   }
 

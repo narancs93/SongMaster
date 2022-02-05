@@ -117,7 +117,7 @@ function updateTokenExpiry(validUntil) {
   if (secondsLeft > 0) {
     $("#tokenExpiry").text(secondsLeft);
   } else {
-    $("#tokenExpiry").parent('span').text("The access token has expired.");
+    $("#tokenExpiry").parent("span").text("The access token has expired.");
   }
 
   if (secondsLeft < 300) {
@@ -145,7 +145,7 @@ function showElementsBySelectors(selectorList) {
 
 
 $(document).ready(function() {
-  $("#playlist-query").val('');
+  $("#playlist-query").val("");
 
   let params = getHashParams();
   let {
@@ -160,7 +160,7 @@ $(document).ready(function() {
   }, 1000)
 
   if (error) {
-    new ErrorHandler('An error occurred during the authentication.', true);
+    new ErrorHandler("An error occurred during the authentication.", true);
   } else {
     if (accessToken) {
 
@@ -177,7 +177,7 @@ $(document).ready(function() {
         hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
 
         const templateValues = {
-          playlistSelected: $($(this).html().replace(/&nbsp;/g, ' ')).text(),
+          playlistSelected: $($(this).html().replace(/&nbsp;/g, " ")).text(),
           playlistId: $(this).data("playlist-id"),
           numOfTracks: $(this).data("num-of-tracks")
         };
@@ -223,7 +223,7 @@ $(document).ready(function() {
 
 
       $(document).on("click", ".track-choice-button", (evt) => {
-        // Add class 'chosen-answer' to the selected answer and change its color
+        // Add class "chosen-answer" to the selected answer and change its color
         // Set the other 3 answers back to default
         $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
         $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
@@ -233,7 +233,7 @@ $(document).ready(function() {
 
 
       $(document).on("click", "#play-next-song", function() {
-        $("#play-next-song").css('visibility', 'hidden');
+        $("#play-next-song").css("visibility", "hidden");
         songMaster.songQuiz.finishQuestion();
       });
 
@@ -256,15 +256,15 @@ $(document).ready(function() {
               const playlists = searchPlaylistsResult.playlists.items;
 
               let playlistsHtml = playlists.map(playlist => {
-                const imageUrl = (playlist.images[0]) ? playlist.images[0].url : './images/musical-note.png';
-                const imageClass = playlist.images[0] ? '' : 'py-12'
+                const imageUrl = (playlist.images[0]) ? playlist.images[0].url : "./images/musical-note.png";
+                const imageClass = playlist.images[0] ? "" : "py-12"
 
                 return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
                   <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
                   <div class="text-base">${playlist.name}</div>
                   <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
                 </div>`
-              }).join('');
+              }).join("");
 
               let contentHtml = `
               <div class="flex flex-col mt-auto mb-auto text-center m-8">

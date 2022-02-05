@@ -274,7 +274,7 @@ class SongMaster {
     } = hashParams;
 
     this.user.playlists.map((playlist) => {
-      if (playlist.name !== '') {
+      if (playlist.name !== "") {
         const params = new URLSearchParams({
           accessToken: accessToken,
           refreshToken: refreshToken,

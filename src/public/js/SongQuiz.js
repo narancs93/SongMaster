@@ -213,7 +213,7 @@ class SongQuiz {
     $("#quizPlaylist").text(this.playlistInfo.name);
     $("#numberOfSongs").text(this.numOfQuestions);
     showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
-    $('#progressBar div').width('100%');
+    $("#progressBar div").width("100%");
 
     this.nextQuestion();
   }
@@ -272,14 +272,14 @@ class SongQuiz {
     } catch {
       ;
     } finally {
-      $('#progressBar div').stop();
+      $("#progressBar div").stop();
       this.songMaster.pause();
     }
   }
 
 
   nextQuestion(callback) {
-    $("#content").html(`<div id='counter'></div>`);
+    $("#content").html(`<div id="counter"></div>`);
     $("#volume").prop("disabled", true);
 
     const trackId = this.answerTracks[this.currentQuestionIndex].trackId;
@@ -383,15 +383,15 @@ class SongQuiz {
 
 
   startTimer() {
-    const progressBarDiv = $('#progressBar').find('div');
-    progressBarDiv.width('100%').animate({
+    const progressBarDiv = $("#progressBar").find("div");
+    progressBarDiv.width("100%").animate({
       width: 0
     }, this.guessTimeInSeconds * 1000, "linear");
   }
 
 
   finishQuestion() {
-    $('#progressBar div').stop();
+    $("#progressBar div").stop();
     clearInterval(this.intervalDuringQuestion);
     this.songMaster.pause();
 
@@ -430,9 +430,9 @@ class SongQuiz {
 
     // Animate correct answer
     setInterval(function() {
-      correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
+      correctAnswerElement.toggleClass("bg-teal-500 text-white text-black");
       setTimeout(function() {
-        correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
+        correctAnswerElement.toggleClass("bg-teal-500 text-white text-black");
       }, 500)
     }, 1000);
 
