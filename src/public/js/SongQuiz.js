@@ -269,6 +269,7 @@ class SongQuiz {
     try {
       clearInterval(this.intervalBetweenQuestions);
       clearInterval(this.intervalDuringQuestion);
+      clearInterval(this.displayTimeout);
     } catch {
       ;
     } finally {
@@ -300,7 +301,6 @@ class SongQuiz {
           }
         });
       }
-
 
     });
 
@@ -413,11 +413,11 @@ class SongQuiz {
     this.checkAnswer(correctAnswer, chosenAnswer);
 
     if (this.currentQuestionIndex < this.answerTracks.length) {
-      setTimeout(() => {
+      this.displayTimeout = setTimeout(() => {
         this.nextQuestion();
       }, 4000);
     } else {
-      setTimeout(() => {
+      this.displayTimeout = setTimeout(() => {
         this.displayResults();
       }, 4000);
     }
