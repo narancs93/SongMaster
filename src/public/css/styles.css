@@ -28,6 +28,13 @@
   box-sizing: border-box;
 }
 
+#error {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 /* Class selectors */
 .bg-spotify {
   background-color: rgb(30 215 96);

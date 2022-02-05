@@ -279,17 +279,23 @@ class SongQuiz {
 
 
   nextQuestion(callback) {
-    $("#content").html(this.timeToWait);
+    $("#content").html(`<div id='counter'></div>`);
     $("#volume").prop("disabled", true);
 
     const trackId = this.answerTracks[this.currentQuestionIndex].trackId;
     const positionMs = this.getRandomPosition();
 
     this.songMaster.mutePlayer(() => {
-      this.songMaster.startPlaylistOnWebPlayer(trackId, positionMs);
+      this.songMaster.startPlaylistOnWebPlayer(trackId, positionMs, (playError) => {
+        if (playError) {
+          new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying with new song...")
+          this.switchAnswerTrack(this.currentQuestionIndex);
+          this.nextQuestion();
+        } else {
+          this.countdownBeforeNextSong();
+        }
+      });
     });
-
-    this.countdownBeforeNextSong();
 
     if (typeof callback == "function") {
       callback();
@@ -300,6 +306,20 @@ class SongQuiz {
   getRandomPosition() {
     const trackDuration = this.answerTracks[this.currentQuestionIndex].trackDuration;
     return Math.floor(Math.random() * (trackDuration - 1000 * (this.guessTimeInSeconds + this.timeToWait + 1)));
+  }
+
+
+  switchAnswerTrack(index) {
+    const newTrack = this.getAnotherUniqueTrack();
+    this.answerTracks[index] = newTrack;
+  }
+
+
+  getAnotherUniqueTrack() {
+    const currentAnswerTrackIds = this.answerTracks.map(track => track.trackId);
+    const possibleNewTracks = this.playlistTracks.filter(item => !currentAnswerTrackIds.includes(item.id));
+
+    return this.extractTrackData(sampleSize(possibleNewTracks)[0]);
   }
 
 
@@ -319,12 +339,12 @@ class SongQuiz {
 
 
   countdownBeforeNextSong() {
-    this.secondsToWait = this.timeToWait;
+    this.secondsToWait = this.timeToWait + 1;
     this.intervalBetweenQuestions = setInterval(() => {
       this.secondsToWait--;
 
       if (this.secondsToWait > 0) {
-        $("#content").html(this.secondsToWait);
+        $("#counter").text(this.secondsToWait);
       } else {
         this.playNextSong();
       }
@@ -409,12 +429,12 @@ class SongQuiz {
     }
 
     // Animate correct answer
-    setInterval(function(){
-       correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
-       setTimeout(function(){
-         correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
-       },500)
-    },1000);
+    setInterval(function() {
+      correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
+      setTimeout(function() {
+        correctAnswerElement.toggleClass('bg-teal-500 text-white text-black');
+      }, 500)
+    }, 1000);
 
     if (typeof callback == "function") {
       callback();

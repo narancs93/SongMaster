@@ -28,4 +28,17 @@ class ErrorHandler {
     $("#login_error").show();
   }
 
+  handleError() {
+    $("#error").html(`
+      <div class="flex flex-col">
+        <div class="text-xl">${this.error}</div>
+        <div class="text-sm">${this.additionalInfo}</div>
+      </div>
+    `);
+
+    $('#error').fadeIn('slow', function() {
+      $('#error').delay(5000).fadeOut();
+    });
+  }
+
 }

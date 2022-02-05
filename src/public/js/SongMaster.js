@@ -151,11 +151,8 @@ class SongMaster {
     };
 
     this.spotifyApi.play(options, function(playError, playResult) {
-      if (playError) console.error("Error occurred while starting play.", playError);
-      else {
-        if (typeof callback == "function") {
-          callback();
-        }
+      if (typeof callback == "function") {
+        callback(playError);
       }
     });
   }
