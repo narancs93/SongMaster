@@ -37,7 +37,7 @@ class ErrorHandler {
     `);
 
     $("#error").fadeIn("slow", function() {
-      $("#error").delay(5000).fadeOut();
+      $("#error").delay(3000).fadeOut();
     });
   }
 

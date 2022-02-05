@@ -285,16 +285,23 @@ class SongQuiz {
     const trackId = this.answerTracks[this.currentQuestionIndex].trackId;
     const positionMs = this.getRandomPosition();
 
-    this.songMaster.mutePlayer(() => {
-      this.songMaster.startPlaylistOnWebPlayer(trackId, positionMs, (playError) => {
-        if (playError) {
-          new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying with new song...")
-          this.switchAnswerTrack(this.currentQuestionIndex);
-          this.nextQuestion();
-        } else {
-          this.countdownBeforeNextSong();
-        }
-      });
+    this.songMaster.mutePlayer((mutePlayerError) => {
+      if (mutePlayerError) {
+        new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying...");
+        this.nextQuestion();
+      } else {
+        this.songMaster.startPlaylistOnWebPlayer(trackId, positionMs, (playError) => {
+          if (playError) {
+            new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying with new song...");
+            this.switchAnswerTrack(this.currentQuestionIndex);
+            this.nextQuestion();
+          } else {
+            this.countdownBeforeNextSong();
+          }
+        });
+      }
+
+
     });
 
     if (typeof callback == "function") {
@@ -361,23 +368,28 @@ class SongQuiz {
 
     this.setQuestionTarget(() => {
       this.answerTracks[this.currentQuestionIndex].guessTarget = this.targetTexts[this.target];
-      this.generateChoices(() => {
-        this.displayChoices();
-      });
+      this.generateChoices();
     });
 
-    this.songMaster.unmutePlayer(() => {
-      this.startTimer();
-      this.answerTracks[this.currentQuestionIndex].startTime = new Date();
+    this.songMaster.unmutePlayer((unmutePlayerError) => {
+      if (unmutePlayerError) {
+        new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying...");
+        this.nextQuestion();
+      } else {
 
-      this.intervalDuringQuestion = setInterval(() => {
-        if (this.remainingGuessTimeInSeconds === 0) {
-          this.finishQuestion();
-        }
-        this.remainingGuessTimeInSeconds -= 1;
-      }, 1000);
+        this.displayChoices();
+        this.startTimer();
+        this.answerTracks[this.currentQuestionIndex].startTime = new Date();
 
-      this.currentQuestionIndex += 1;
+        this.intervalDuringQuestion = setInterval(() => {
+          if (this.remainingGuessTimeInSeconds === 0) {
+            this.finishQuestion();
+          }
+          this.remainingGuessTimeInSeconds -= 1;
+        }, 1000);
+
+        this.currentQuestionIndex += 1;
+      }
     });
   }
 

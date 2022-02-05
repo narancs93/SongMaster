@@ -301,11 +301,8 @@ class SongMaster {
     }
 
     this.spotifyApi.setVolume(volume, options, (setVolumeError, setVolumeResult) => {
-      if (setVolumeError) console.error("Error occurred while setting volume.", setVolumeError);
-      else {
-        if (typeof callback == "function") {
-          callback();
-        }
+      if (typeof callback == "function") {
+        callback(setVolumeError);
       }
     });
   }
