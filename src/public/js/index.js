@@ -144,154 +144,156 @@ function showElementsBySelectors(selectorList) {
 }
 
 
-$(document).ready(function() {
-  $("#playlist-query").val("");
+window.onSpotifyWebPlaybackSDKReady = () => {
+  $(document).ready(function() {
+    $("#playlist-query").val("");
 
-  let params = getHashParams();
-  let {
-    accessToken,
-    refreshToken,
-    validUntil,
-    error
-  } = params;
+    let params = getHashParams();
+    let {
+      accessToken,
+      refreshToken,
+      validUntil,
+      error
+    } = params;
 
-  setInterval(function() {
-    updateTokenExpiry(validUntil);
-  }, 1000)
+    setInterval(function() {
+      updateTokenExpiry(validUntil);
+    }, 1000)
 
-  if (error) {
-    new ErrorHandler("An error occurred during the authentication.", true);
-  } else {
-    if (accessToken) {
-
-      let songMaster = new SongMaster(accessToken, refreshToken);
-
-      $(document).on("click", ".playlist", function(e) {
-        const playlistInfo = {
-          id: $(this).data("playlist-id"),
-          numOfTracks: $(this).data("num-of-tracks")
-        }
-
-        songMaster.songQuiz.getPlaylistTracks(playlistInfo);
-
-        hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
-
-        const templateValues = {
-          playlistSelected: $($(this).html().replace(/&nbsp;/g, " ")).text(),
-          playlistId: $(this).data("playlist-id"),
-          numOfTracks: $(this).data("num-of-tracks")
-        };
-
-        readHtmlIntoElement("game_modes.html", "#content", templateValues);
-
-        songMaster.stopQuiz();
-      });
-
-
-      $(document).on("click", "#play", () => {
-        // Read form data
-        const numberOfSongs = $("#number-of-songs").val();
-        const difficulty = $("input[name='difficulty']:checked").val();
-        const guessTarget = $("input[name='guess']:checked").val();
-
-        // Validate form data
-        const validDifficulties = ["easy", "medium", "hard"];
-        const validGuessTargets = ["title", "artist", "random"];
-        const gameModes = {
-          title: "guessTitles",
-          artist: "guessArtists",
-          random: "guessRandom"
-        }
-        const guessTimes = {
-          easy: 30,
-          medium: 15,
-          hard: 7
-        }
-
-        if (
-          isInt(numberOfSongs) && numberOfSongs > 0 &&
-          validDifficulties.includes(difficulty) &&
-          validGuessTargets.includes(guessTarget)
-        ) {
-          songMaster.songQuiz.numOfQuestions = numberOfSongs;
-          songMaster.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
-
-          songMaster.songQuiz.generateAnswers();
-          songMaster.startGame(gameModes[guessTarget])
-        }
-      });
-
-
-      $(document).on("click", ".track-choice-button", (evt) => {
-        // Add class "chosen-answer" to the selected answer and change its color
-        // Set the other 3 answers back to default
-        $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
-        $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
-
-        songMaster.songQuiz.setAnswerTime();
-      });
-
-
-      $(document).on("click", "#play-next-song", function() {
-        $("#play-next-song").css("visibility", "hidden");
-        songMaster.songQuiz.finishQuestion();
-      });
-
-
-      $(document).on("input", "#volume", function() {
-        let volume = $(this).val();
-        songMaster.setVolume(volume);
-      });
-
-
-      function displaySearchResults() {
-        hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
-        songMaster.stopQuiz();
-
-        const playlistQuery = $("#playlist-query").val();
-        if (playlistQuery) {
-          songMaster.spotifyApi.searchPlaylists(playlistQuery, (searchPlaylistsError, searchPlaylistsResult) => {
-            if (searchPlaylistsError) console.error("Error occurred while searching for playlists.", searchPlaylistsError);
-            else {
-              const playlists = searchPlaylistsResult.playlists.items;
-
-              let playlistsHtml = playlists.map(playlist => {
-                const imageUrl = (playlist.images[0]) ? playlist.images[0].url : "./images/musical-note.png";
-                const imageClass = playlist.images[0] ? "" : "py-12"
-
-                return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
-                  <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
-                  <div class="text-base">${playlist.name}</div>
-                  <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
-                </div>`
-              }).join("");
-
-              let contentHtml = `
-              <div class="flex flex-col mt-auto mb-auto text-center m-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">${playlistsHtml}</div>
-              <div>
-              `
-
-              $("#content").html(contentHtml);
-            }
-          });
-        }
-      }
-
-      $(document).on("click", "#playlist-search", () => {
-        displaySearchResults();
-      });
-
-      $(document).on("keydown", "#playlist-query", (e) => {
-        if (e.keyCode === 13) {
-          displaySearchResults();
-        }
-      });
-
+    if (error) {
+      new ErrorHandler("An error occurred during the authentication.", true);
     } else {
-      // render login screen
-      $("#login").show();
-      $("#loggedin").hide();
+      if (accessToken) {
+
+        let songMaster = new SongMaster(accessToken, refreshToken);
+
+        $(document).on("click", ".playlist", function(e) {
+          const playlistInfo = {
+            id: $(this).data("playlist-id"),
+            numOfTracks: $(this).data("num-of-tracks")
+          }
+
+          songMaster.songQuiz.getPlaylistTracks(playlistInfo);
+
+          hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
+
+          const templateValues = {
+            playlistSelected: $($(this).html().replace(/&nbsp;/g, " ")).text(),
+            playlistId: $(this).data("playlist-id"),
+            numOfTracks: $(this).data("num-of-tracks")
+          };
+
+          readHtmlIntoElement("game_modes.html", "#content", templateValues);
+
+          songMaster.stopQuiz();
+        });
+
+
+        $(document).on("click", "#play", () => {
+          // Read form data
+          const numberOfSongs = $("#number-of-songs").val();
+          const difficulty = $("input[name='difficulty']:checked").val();
+          const guessTarget = $("input[name='guess']:checked").val();
+
+          // Validate form data
+          const validDifficulties = ["easy", "medium", "hard"];
+          const validGuessTargets = ["title", "artist", "random"];
+          const gameModes = {
+            title: "guessTitles",
+            artist: "guessArtists",
+            random: "guessRandom"
+          }
+          const guessTimes = {
+            easy: 30,
+            medium: 15,
+            hard: 7
+          }
+
+          if (
+            isInt(numberOfSongs) && numberOfSongs > 0 &&
+            validDifficulties.includes(difficulty) &&
+            validGuessTargets.includes(guessTarget)
+          ) {
+            songMaster.songQuiz.numOfQuestions = numberOfSongs;
+            songMaster.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
+
+            songMaster.songQuiz.generateAnswers();
+            songMaster.startGame(gameModes[guessTarget])
+          }
+        });
+
+
+        $(document).on("click", ".track-choice-button", (evt) => {
+          // Add class "chosen-answer" to the selected answer and change its color
+          // Set the other 3 answers back to default
+          $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
+          $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
+
+          songMaster.songQuiz.setAnswerTime();
+        });
+
+
+        $(document).on("click", "#play-next-song", function() {
+          $("#play-next-song").css("visibility", "hidden");
+          songMaster.songQuiz.finishQuestion();
+        });
+
+
+        $(document).on("input", "#volume", function() {
+          let volume = $(this).val();
+          songMaster.setVolume(volume);
+        });
+
+
+        function displaySearchResults() {
+          hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
+          songMaster.stopQuiz();
+
+          const playlistQuery = $("#playlist-query").val();
+          if (playlistQuery) {
+            songMaster.spotifyApi.searchPlaylists(playlistQuery, (searchPlaylistsError, searchPlaylistsResult) => {
+              if (searchPlaylistsError) console.error("Error occurred while searching for playlists.", searchPlaylistsError);
+              else {
+                const playlists = searchPlaylistsResult.playlists.items;
+
+                let playlistsHtml = playlists.map(playlist => {
+                  const imageUrl = (playlist.images[0]) ? playlist.images[0].url : "./images/musical-note.png";
+                  const imageClass = playlist.images[0] ? "" : "py-12"
+
+                  return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
+                    <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
+                    <div class="text-base">${playlist.name}</div>
+                    <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
+                  </div>`
+                }).join("");
+
+                let contentHtml = `
+                <div class="flex flex-col mt-auto mb-auto text-center m-8">
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">${playlistsHtml}</div>
+                <div>
+                `
+
+                $("#content").html(contentHtml);
+              }
+            });
+          }
+        }
+
+        $(document).on("click", "#playlist-search", () => {
+          displaySearchResults();
+        });
+
+        $(document).on("keydown", "#playlist-query", (e) => {
+          if (e.keyCode === 13) {
+            displaySearchResults();
+          }
+        });
+
+      } else {
+        // render login screen
+        $("#login").show();
+        $("#loggedin").hide();
+      }
     }
-  }
-});
+  });
+};

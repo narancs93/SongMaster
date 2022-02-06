@@ -18,12 +18,11 @@ class ErrorHandler {
       <p>${this.additionalInfo}</p>
       <a href="/">
         <button class="bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-base border-4 text-white p-2 m-4 rounded" type="button">
-          Back to login page
+          Go to login page
         </button>
       </a>
       `;
     $("#login_error div").append(infoElement);
-
 
     $("#login_error").show();
   }

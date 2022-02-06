@@ -6,7 +6,7 @@ class SongMaster {
     this.spotifyApi = new SpotifyWebApi();
     this.spotifyApi.setAccessToken(this.accessToken);
 
-    this.initSpotifyPlayer("Web player");
+    this.validateAccessToken();
   }
 
   get accessToken() {
@@ -58,20 +58,33 @@ class SongMaster {
   }
 
 
+  validateAccessToken() {
+    this.getUser((error, result) => {
+      if (error) {
+        if (error.status === 401) {
+          new ErrorHandler("Your access token is invalid. Please login again.", true)
+        } else {
+          new ErrorHandler("Something went wrong", true, error.responseText);
+        }
+      } else {
+        this.initSpotifyPlayer("Web player");
+      }
+    });
+  }
+
+
   getUser(callback) {
     this.spotifyApi.getMe(function(getMeError, getMeResult) {
-      if (getMeError) console.error("Error occurred while getting user info", getMeError);
-      else {
-        if (typeof callback == "function") {
-          callback(getMeResult);
-        }
+      if (typeof callback == "function") {
+        callback(getMeError, getMeResult);
       }
     });
   }
 
 
   getPlaylists(...args) {
-    let options = null, callback = null;
+    let options = null,
+      callback = null;
 
     if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
@@ -122,7 +135,8 @@ class SongMaster {
 
   transferPlayback(...args) {
     let spotifyPlayerId = args.shift();
-    let options = {}, callback = null;
+    let options = {},
+      callback = null;
 
     if (typeof args[args.length - 1] === "function") {
       callback = args.pop();
@@ -183,54 +197,52 @@ class SongMaster {
 
 
   initSpotifyPlayer(playerName) {
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      this.spotifyPlayer = new Spotify.Player({
-        name: playerName,
-        getOAuthToken: cb => {
-          cb(this.accessToken);
-        },
-        volume: 0.2
-      });
+    this.spotifyPlayer = new Spotify.Player({
+      name: playerName,
+      getOAuthToken: cb => {
+        cb(this.accessToken);
+      },
+      volume: 0.2
+    });
 
-      // Ready
-      this.spotifyPlayer.addListener("ready", ({
-        device_id
-      }) => {
-        this.spotifyPlayer.deviceId = device_id;
-        this.onPlayerReady();
-        $("#volume").val(20);
-      });
+    // Ready
+    this.spotifyPlayer.addListener("ready", ({
+      device_id
+    }) => {
+      this.spotifyPlayer.deviceId = device_id;
+      this.onPlayerReady();
+      $("#volume").val(20);
+    });
 
-      // Not Ready
-      this.spotifyPlayer.addListener("not_ready", ({
-        device_id
-      }) => {
-        console.log("Device ID has gone offline", device_id);
-      });
+    // Not Ready
+    this.spotifyPlayer.addListener("not_ready", ({
+      device_id
+    }) => {
+      console.log("Device ID has gone offline", device_id);
+    });
 
-      this.spotifyPlayer.addListener("initialization_error", ({
-        message
-      }) => {
-        console.error(message);
-        new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
-      });
+    this.spotifyPlayer.addListener("initialization_error", ({
+      message
+    }) => {
+      console.error(message);
+      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
+    });
 
-      this.spotifyPlayer.addListener("authentication_error", ({
-        message
-      }) => {
-        console.error(message);
-        new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
-      });
+    this.spotifyPlayer.addListener("authentication_error", ({
+      message
+    }) => {
+      console.error(message);
+      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
+    });
 
-      this.spotifyPlayer.addListener("account_error", ({
-        message
-      }) => {
-        console.error(message);
-        new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
-      });
+    this.spotifyPlayer.addListener("account_error", ({
+      message
+    }) => {
+      console.error(message);
+      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
+    });
 
-      this.spotifyPlayer.connect();
-    }
+    this.spotifyPlayer.connect();
   }
 
 
@@ -243,7 +255,7 @@ class SongMaster {
 
     this.transferPlayback(this.spotifyPlayer.deviceId, options);
 
-    this.getUser((user) => {
+    this.getUser((error, user) => {
       this.user = user;
       this.showUserDetails();
     });
