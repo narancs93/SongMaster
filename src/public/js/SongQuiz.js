@@ -166,15 +166,15 @@ class SongQuiz {
     this.correctTrackId = track.trackId;
     const correctArtists = track.trackArtists;
 
-    let wrongAnswerPool = this.playlistTracks.filter(e => e.id !== this.correctTrackId);
+    const wrongAnswerPool = this.playlistTracks.filter(e => e.id !== this.correctTrackId);
 
     if (this.target === "trackArtists") {
       // Make sure correct artist(s) does not appear twice in choices
       wrongAnswerPool = wrongAnswerPool.filter(e => correctArtists !== this.getTrackArtists(e));
 
       // Also make sure, that incorrect artist(s) cannot appear twice
-      let tracksWithUniqueArtists = [];
-      let uniqueArtists = [];
+      const tracksWithUniqueArtists = [];
+      const uniqueArtists = [];
 
       for (let i = 0; i < wrongAnswerPool.length; i++) {
         const artist = this.getTrackArtists(wrongAnswerPool[i]);
@@ -562,7 +562,7 @@ class SongQuiz {
       let guessTimeInSec = (end - start) / 1000;
       guessTimeInSec = isNaN(guessTimeInSec) ? "Not answered" : guessTimeInSec;
 
-      let templateValues = {
+      const templateValues = {
         artist: track.trackArtists,
         name: track.trackName,
         guessTime: guessTimeInSec,

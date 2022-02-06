@@ -34,19 +34,19 @@ if (typeof(client_id) === 'undefined') {
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-var generateRandomString = function(length) {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+let generateRandomString = function(length) {
+  let text = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
 };
 
-var stateKey = "spotify_auth_state";
+let stateKey = "spotify_auth_state";
 
-var app = express();
+let app = express();
 
 app.use(express.static(path.join(__dirname, "public")))
   .use(cors())
@@ -56,10 +56,10 @@ app.get("/login", function(req, res) {
   redirect_uri = redirect_uri_base.replace("{{PROTOCOL}}", req.protocol);
   redirect_uri = redirect_uri.replace("{{PORT}}", req.socket.address().port);
 
-  var state = generateRandomString(16);
+  let state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  var scope = "user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private";
+  let scope = "user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email user-library-read streaming app-remote-control user-read-playback-position user-top-read user-read-recently-played playlist-read-collaborative playlist-read-private";
   res.redirect("https://accounts.spotify.com/authorize?" +
     querystring.stringify({
       response_type: "code",
@@ -71,9 +71,9 @@ app.get("/login", function(req, res) {
 });
 
 app.get("/callback", function(req, res) {
-  var code = req.query.code || null;
-  var state = req.query.state || null;
-  var storedState = req.cookies ? req.cookies[stateKey] : null;
+  let code = req.query.code || null;
+  let state = req.query.state || null;
+  let storedState = req.cookies ? req.cookies[stateKey] : null;
 
   if (state === null || state !== storedState) {
     res.redirect("/#" +
@@ -82,7 +82,7 @@ app.get("/callback", function(req, res) {
       }));
   } else {
     res.clearCookie(stateKey);
-    var authOptions = {
+    let authOptions = {
       url: "https://accounts.spotify.com/api/token",
       form: {
         code: code,
@@ -98,7 +98,7 @@ app.get("/callback", function(req, res) {
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
-        var accessToken = body.access_token,
+        let accessToken = body.access_token,
           refreshToken = body.refresh_token,
           validUntil = new Date().getTime() / 1000 + body.expires_in;
 
@@ -120,8 +120,8 @@ app.get("/callback", function(req, res) {
 
 app.get("/refreshToken", function(req, res) {
   // requesting access token from refresh token
-  var refreshToken = req.query.refreshToken;
-  var authOptions = {
+  let refreshToken = req.query.refreshToken;
+  let authOptions = {
     url: "https://accounts.spotify.com/api/token",
     headers: {
       "Authorization": "Basic " + Buffer.from(client_id + ":" + client_secret, "utf-8").toString("base64")
@@ -135,7 +135,7 @@ app.get("/refreshToken", function(req, res) {
 
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      var accessToken = body.access_token,
+      let accessToken = body.access_token,
         validUntil = new Date().getTime() / 1000 + body.expires_in;
 
         res.send({

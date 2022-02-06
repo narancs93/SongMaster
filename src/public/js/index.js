@@ -4,7 +4,7 @@
  * @return Object
  */
 function getHashParams() {
-  let hashParams = {};
+  const hashParams = {};
   let keyValuePair,
     regex = /([^&;=]+)=?([^&;]*)/g,
     queryString = window.location.hash.substring(1);
@@ -49,7 +49,7 @@ function insertTemplateIntoHtml(template, html) {
 
 // https://stackoverflow.com/questions/13709482/how-to-read-text-file-in-javascript
 function readHtmlIntoElement(htmlFile, element, templateValues, callback) {
-  let reader = new XMLHttpRequest() || new ActiveXObject("MSXML2.XMLHTTP");
+  const reader = new XMLHttpRequest() || new ActiveXObject("MSXML2.XMLHTTP");
 
   reader.open("get", htmlFile, true);
   reader.onreadystatechange = function() {
@@ -86,7 +86,7 @@ $(document).on("click", "#obtainNewToken", function(e) {
         refreshToken: refreshToken
       }
     }).done(function(data) {
-      var params = new URLSearchParams({
+      let params = new URLSearchParams({
         accessToken: data.accessToken,
         refreshToken: refreshToken,
         validUntil: data.validUntil
@@ -165,7 +165,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     } else {
       if (accessToken) {
 
-        let songMaster = new SongMaster(accessToken, refreshToken);
+        const songMaster = new SongMaster(accessToken, refreshToken);
 
         $(document).on("click", ".playlist", function(e) {
           const playlistInfo = {

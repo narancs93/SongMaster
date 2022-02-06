@@ -156,7 +156,7 @@ class SongMaster {
 
 
   playSong(spotifyPlayerId, trackId, positionMs, callback) {
-    let options = {
+    const options = {
       device_id: spotifyPlayerId,
       uris: [`spotify:track:${trackId}`],
       position_ms: positionMs
