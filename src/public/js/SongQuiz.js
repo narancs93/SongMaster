@@ -166,7 +166,7 @@ class SongQuiz {
     this.correctTrackId = track.trackId;
     const correctArtists = track.trackArtists;
 
-    const wrongAnswerPool = this.playlistTracks.filter(e => e.id !== this.correctTrackId);
+    let wrongAnswerPool = this.playlistTracks.filter(e => e.id !== this.correctTrackId);
 
     if (this.target === "trackArtists") {
       // Make sure correct artist(s) does not appear twice in choices
@@ -430,6 +430,7 @@ class SongQuiz {
 
     // Set back all choices to default before animation
     $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("text-black bg-orange-500 hover:bg-orange-700");
+    $(".track-choice-button").data('preventChosing', true)
 
     if (correctAnswer === chosenAnswer) {
       this.score += 1;

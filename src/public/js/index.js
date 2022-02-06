@@ -224,12 +224,14 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 
         $(document).on("click", ".track-choice-button", (evt) => {
-          // Add class "chosen-answer" to the selected answer and change its color
-          // Set the other 3 answers back to default
-          $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
-          $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
+          if(!$(evt.target).data("preventChosing")) {
+            // Add class "chosen-answer" to the selected answer and change its color
+            // Set the other 3 answers back to default
+            $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700");
+            $(evt.target).addClass("chosen-answer text-black bg-orange-500 hover:bg-orange-700").removeClass("text-white bg-teal-500 hover:bg-teal-700");
 
-          songMaster.songQuiz.setAnswerTime();
+            songMaster.songQuiz.setAnswerTime();
+          }
         });
 
 
