@@ -429,7 +429,7 @@ class SongQuiz {
     const correctAnswerElement = $(`button[data-track-id=${correctAnswer}]`);
 
     // Set back all choices to default before animation
-    $(".track-choice-button").addClass("text-white bg-teal-500 hover:bg-teal-700").removeClass("text-black bg-orange-500 hover:bg-orange-700");
+    $(".track-choice-button").addClass("text-white bg-teal-500 cursor-default").removeClass("text-black bg-orange-500 hover:bg-teal-700 hover:border-teal-700 hover:bg-orange-700");
     $(".track-choice-button").data('preventChosing', true)
 
     if (correctAnswer === chosenAnswer) {
@@ -438,7 +438,7 @@ class SongQuiz {
       chosenAnswerElement.removeClass("border-teal-500 hover:border-teal-700").addClass("border-black");
     } else {
       this.answerTracks[this.currentQuestionIndex - 1].guessedCorrectly = false;
-      chosenAnswerElement.removeClass("bg-orange-500 hover:bg-orange-700 text-white border-teal-500 hover:border-teal-700").addClass("text-black bg-red-500 hover:bg-red-700 border-black")
+      chosenAnswerElement.removeClass("bg-orange-500 hover:bg-orange-700 text-white border-teal-500 hover:border-teal-700").addClass("text-black bg-red-500 border-black")
     }
 
     // Animate correct answer
