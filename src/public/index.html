@@ -130,20 +130,6 @@
   <script src="js/SongQuiz.js" charset="utf-8"></script>
   <script src="js/SongMaster.js" charset="utf-8"></script>
   <script src="js/index.js" charset="utf-8"></script>
-
-  <script type="text/javascript">
-    let hashParams = getHashParams();
-
-    const params = new URLSearchParams({
-      accessToken: hashParams.accessToken,
-      refreshToken: hashParams.refreshToken,
-      validUntil: hashParams.validUntil
-    });
-
-    const queryString = params.toString();
-
-    $("#home").prop("href", `#${queryString}`);
-  </script>
 </body>
 
 </html>

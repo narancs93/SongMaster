@@ -1,13 +1,13 @@
 // https://github.com/spotify/web-api-auth-examples/blob/master/authorization_code/public/index.html
 /**
- * Obtains parameters from the hash of the URL
- * @return Object
- */
+* Obtains parameters from the hash of the URL
+* @return Object
+*/
 function getHashParams() {
   const hashParams = {};
   let keyValuePair,
-    regex = /([^&;=]+)=?([^&;]*)/g,
-    queryString = window.location.hash.substring(1);
+  regex = /([^&;=]+)=?([^&;]*)/g,
+  queryString = window.location.hash.substring(1);
   while (keyValuePair = regex.exec(queryString)) {
     let key = keyValuePair[1];
     let value = keyValuePair[2];
@@ -20,7 +20,7 @@ function getHashParams() {
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 function shuffle(array) {
   let currentIndex = array.length,
-    randomIndex;
+  randomIndex;
 
   // While there remain elements to shuffle...
   while (currentIndex != 0) {
@@ -164,6 +164,12 @@ window.onSpotifyWebPlaybackSDKReady = () => {
       new ErrorHandler("An error occurred during the authentication.", true);
     } else {
       if (accessToken) {
+        const queryString = new URLSearchParams({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          validUntil: validUntil
+        }).toString();
+        $("#home").prop("href", `#${queryString}`);
 
         const songMaster = new SongMaster(accessToken, refreshToken);
 
@@ -263,15 +269,15 @@ window.onSpotifyWebPlaybackSDKReady = () => {
                   const imageClass = playlist.images[0] ? "" : "py-12"
 
                   return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
-                    <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
-                    <div class="text-base">${playlist.name}</div>
-                    <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
+                  <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
+                  <div class="text-base">${playlist.name}</div>
+                  <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
                   </div>`
                 }).join("");
 
                 let contentHtml = `
                 <div class="flex flex-col mt-auto mb-auto text-center m-8">
-                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">${playlistsHtml}</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">${playlistsHtml}</div>
                 <div>
                 `
 
