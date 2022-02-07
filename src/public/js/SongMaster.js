@@ -381,4 +381,9 @@ class SongMaster {
     this.stopQuiz();
   }
 
+
+  displayHomePage() {
+    readHtmlIntoElement("home.html", "#content");
+  }
+
 }

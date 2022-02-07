@@ -172,8 +172,15 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         $("#home").prop("href", `#${queryString}`);
 
         const songMaster = new SongMaster(accessToken, refreshToken);
+        songMaster.displayHomePage();
 
-        $(document).on("click", ".playlist", function(e) {
+
+        $(document).on("click", "#home", () => {
+          songMaster.displayHomePage();
+        });
+
+
+        $(document).on("click", ".playlist", (e) => {
           songMaster.showGamesModes(e);
         });
 
