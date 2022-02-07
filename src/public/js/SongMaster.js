@@ -187,8 +187,38 @@ class SongMaster {
   };
 
 
-  startGame(gameMode) {
-    this.songQuiz.start(gameMode);
+  startGame() {
+    // Read form data
+    const numberOfSongs = $("#number-of-songs").val();
+    const difficulty = $("input[name='difficulty']:checked").val();
+    const guessTarget = $("input[name='guess']:checked").val();
+
+    // Validate form data
+    const validDifficulties = ["easy", "medium", "hard"];
+    const validGuessTargets = ["title", "artist", "random"];
+    const gameModes = {
+      title: "guessTitles",
+      artist: "guessArtists",
+      random: "guessRandom"
+    }
+    const guessTimes = {
+      easy: 30,
+      medium: 15,
+      hard: 7
+    }
+
+    if (
+      isInt(numberOfSongs) && numberOfSongs > 0 &&
+      validDifficulties.includes(difficulty) &&
+      validGuessTargets.includes(guessTarget)
+    ) {
+      this.songQuiz.numOfQuestions = numberOfSongs;
+      this.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
+
+      this.songQuiz.generateAnswers(() => {
+        this.songQuiz.start(gameModes[guessTarget]);
+      });
+    }
   }
 
   stopQuiz() {

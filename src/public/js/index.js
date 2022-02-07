@@ -179,36 +179,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 
         $(document).on("click", "#play", () => {
-          // Read form data
-          const numberOfSongs = $("#number-of-songs").val();
-          const difficulty = $("input[name='difficulty']:checked").val();
-          const guessTarget = $("input[name='guess']:checked").val();
-
-          // Validate form data
-          const validDifficulties = ["easy", "medium", "hard"];
-          const validGuessTargets = ["title", "artist", "random"];
-          const gameModes = {
-            title: "guessTitles",
-            artist: "guessArtists",
-            random: "guessRandom"
-          }
-          const guessTimes = {
-            easy: 30,
-            medium: 15,
-            hard: 7
-          }
-
-          if (
-            isInt(numberOfSongs) && numberOfSongs > 0 &&
-            validDifficulties.includes(difficulty) &&
-            validGuessTargets.includes(guessTarget)
-          ) {
-            songMaster.songQuiz.numOfQuestions = numberOfSongs;
-            songMaster.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
-
-            songMaster.songQuiz.generateAnswers();
-            songMaster.startGame(gameModes[guessTarget])
-          }
+            songMaster.startGame()
         });
 
 
