@@ -229,9 +229,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
                   const imageUrl = (playlist.images[0]) ? playlist.images[0].url : "./images/musical-note.png";
                   const imageClass = playlist.images[0] ? "" : "py-12"
 
-                  return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
+                  return `<div class="playlist rounded-2xl p-4 m-4 cursor-pointer bg-gray-200 hover:bg-gray-400"
+                  data-playlist-name="${playlist.name}"
+                  data-playlist-id="${playlist.id}"
+                  data-num-of-tracks="${playlist.tracks.total}">
                   <img class="playlist-image m-auto ${imageClass}" src="${imageUrl}">
                   <div class="text-base">${playlist.name}</div>
+                  <div class="text-sm">(${playlist.tracks.total} songs)</div>
                   <div class="text-sm text-gray-600">By ${playlist.owner.display_name}</div>
                   </div>`
                 }).join("");

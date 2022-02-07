@@ -324,7 +324,10 @@ class SongMaster {
 
         let element = `
         <li>
-          <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline" data-playlist-id="${playlist.id}" data-num-of-tracks="${playlist.tracks.total}">
+          <a href="#${queryString}" class="playlist flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline"
+          data-playlist-name="${playlist.name}"
+          data-playlist-id="${playlist.id}"
+          data-num-of-tracks="${playlist.tracks.total}">
             <span class="truncate">${playlist.name.replace(/\s/g, "&nbsp;")}</span>
           </a>
         </li>`;
@@ -371,7 +374,7 @@ class SongMaster {
     hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
 
     const templateValues = {
-      playlistSelected: $($(playlistButton).html().replace(/&nbsp;/g, " ")).text(),
+      playlistSelected: $(playlistButton).data("playlist-name"),
       playlistId: $(playlistButton).data("playlist-id"),
       numOfTracks: $(playlistButton).data("num-of-tracks")
     };
