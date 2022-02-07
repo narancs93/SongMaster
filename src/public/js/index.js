@@ -174,24 +174,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         const songMaster = new SongMaster(accessToken, refreshToken);
 
         $(document).on("click", ".playlist", function(e) {
-          const playlistInfo = {
-            id: $(this).data("playlist-id"),
-            numOfTracks: $(this).data("num-of-tracks")
-          }
-
-          songMaster.songQuiz.getPlaylistTracks(playlistInfo);
-
-          hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
-
-          const templateValues = {
-            playlistSelected: $($(this).html().replace(/&nbsp;/g, " ")).text(),
-            playlistId: $(this).data("playlist-id"),
-            numOfTracks: $(this).data("num-of-tracks")
-          };
-
-          readHtmlIntoElement("game_modes.html", "#content", templateValues);
-
-          songMaster.stopQuiz();
+          songMaster.showGamesModes(e);
         });
 
 

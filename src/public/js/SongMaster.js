@@ -328,4 +328,27 @@ class SongMaster {
     this.setVolume(volume, callback);
   }
 
+
+  showGamesModes(e) {
+    const playlistButton = $(e.target).closest('.playlist');
+    const playlistInfo = {
+      id: playlistButton.data("playlist-id"),
+      numOfTracks: playlistButton.data("num-of-tracks")
+    }
+
+    this.songQuiz.getPlaylistTracks(playlistInfo);
+
+    hideElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
+
+    const templateValues = {
+      playlistSelected: $($(playlistButton).html().replace(/&nbsp;/g, " ")).text(),
+      playlistId: $(playlistButton).data("playlist-id"),
+      numOfTracks: $(playlistButton).data("num-of-tracks")
+    };
+
+    readHtmlIntoElement("game_modes.html", "#content", templateValues);
+
+    this.stopQuiz();
+  }
+
 }
