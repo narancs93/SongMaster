@@ -310,7 +310,6 @@ class SongMaster {
 
   showUserDetails() {
     $("#displayName").text(this.user.display_name);
-    $("#userId").text(this.user.id);
 
     $("#login").hide();
     $("#loggedin").show();
