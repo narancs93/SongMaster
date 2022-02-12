@@ -209,13 +209,14 @@ class SongQuiz {
   start(gameMode) {
     $("#content").text("Loading songs from playlist...");
 
+    this.gameMode = gameMode;
+    this.score = 0;
+    this.currentQuestionIndex = 0;
+
     this.getPlaylistTracks(() => {
       $("#content").text("");
       this.checkArtistUniqueness(() => {
         this.generateAnswers(() => {
-          this.gameMode = gameMode;
-          this.score = 0;
-          this.currentQuestionIndex = 0;
           $("#quizPlaylist").text(this.playlistInfo.name);
           $("#numberOfSongs").text(this.numOfQuestions);
           showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
@@ -268,8 +269,12 @@ class SongQuiz {
     let uniqueArtists = new Set(artists);
     let numOfUniqueArtists = uniqueArtists.size;
 
-    if (numOfUniqueArtists < 3 * this.numOfQuestions) {
-      console.log("There are not enough unique artists on the playlist to play 'Guess the artist(s)' mode.");
+    if (
+      (this.gameMode === "guessArtists" || this.gameMode === "guessRandom") &&
+      numOfUniqueArtists < 3 * this.numOfQuestions) {
+      new ErrorHandler("Could not start the quiz.", "criticalError",
+        `There is not enough unique artists on the playlist to be able to play 'Guess the artist(s)' or 'Mixed' mode.
+    Please select a different mode for this playlist.`);
     } else {
       if (typeof callback == "function") {
         callback();
@@ -329,12 +334,12 @@ class SongQuiz {
 
     this.songMaster.mutePlayer((mutePlayerError) => {
       if (mutePlayerError) {
-        new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying...");
+        new ErrorHandler("Error occurred while starting the song on Spotify.", "nonCriticalError", "Re-trying...");
         this.nextQuestion();
       } else {
         this.songMaster.startPlaylistOnWebPlayer(trackId, positionMs, (playError) => {
           if (playError) {
-            new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying with new song...");
+            new ErrorHandler("Error occurred while starting the song on Spotify.", "nonCriticalError", "Re-trying with new song...");
             this.switchAnswerTrack(this.currentQuestionIndex);
             this.nextQuestion();
           } else {
@@ -413,7 +418,7 @@ class SongQuiz {
 
     this.songMaster.unmutePlayer((unmutePlayerError) => {
       if (unmutePlayerError) {
-        new ErrorHandler("Error occurred while starting the song on Spotify.", false, "Re-trying...");
+        new ErrorHandler("Error occurred while starting the song on Spotify.", "nonCriticalError", "Re-trying...");
         this.nextQuestion();
       } else {
 

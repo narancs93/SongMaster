@@ -161,7 +161,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     }, 1000)
 
     if (error) {
-      new ErrorHandler("An error occurred during the authentication.", true);
+      new ErrorHandler("An error occurred during the authentication.", "loginError");
     } else {
       if (accessToken) {
         const queryString = new URLSearchParams({

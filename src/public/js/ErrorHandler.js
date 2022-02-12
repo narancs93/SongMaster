@@ -1,12 +1,14 @@
 class ErrorHandler {
-  constructor(errorMessage, isLoginError = false, additionalInfo = null) {
+  constructor(errorMessage, errorType, additionalInfo = null) {
     this.error = errorMessage;
     this.additionalInfo = additionalInfo ? `<p>${additionalInfo}</p>` : "";
 
-    if (isLoginError) {
+    if (errorType === "loginError") {
       this.handleLoginError();
-    } else {
+    } else if (errorType === "nonCriticalError") {
       this.handleError();
+    } else if (errorType === "criticalError") {
+      this.displayError();
     }
   }
 
@@ -38,6 +40,15 @@ class ErrorHandler {
     $("#error").fadeIn("slow", function() {
       $("#error").delay(3000).fadeOut();
     });
+  }
+
+  displayError() {
+    $("#content").html(`
+      <div class="flex flex-col text-center">
+        <div class="text-2xl text-red-600 p-6">${this.error}</div>
+        <div class="text-base text-black p-4">${this.additionalInfo}</div>
+      </div>
+    `)
   }
 
 }

@@ -62,9 +62,9 @@ class SongMaster {
     this.getUser((error, result) => {
       if (error) {
         if (error.status === 401) {
-          new ErrorHandler("Your access token is invalid. Please login again.", true)
+          new ErrorHandler("Your access token is invalid. Please login again.", "loginError")
         } else {
-          new ErrorHandler("Something went wrong", true, error.responseText);
+          new ErrorHandler("Something went wrong", "loginError", error.responseText);
         }
       } else {
         this.initSpotifyPlayer("Web player");
@@ -271,21 +271,21 @@ class SongMaster {
       message
     }) => {
       console.error(message);
-      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
+      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", "loginError", message);
     });
 
     this.spotifyPlayer.addListener("authentication_error", ({
       message
     }) => {
       console.error(message);
-      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
+      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", "loginError", message);
     });
 
     this.spotifyPlayer.addListener("account_error", ({
       message
     }) => {
       console.error(message);
-      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", true, message);
+      new ErrorHandler("Failed to initialize the Spotify Web Playback SDK.", "loginError", message);
     });
 
     this.spotifyPlayer.connect();
