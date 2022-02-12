@@ -207,11 +207,28 @@ class SongMaster {
       hard: 7
     }
 
-    if (
-      isInt(numberOfSongs) && numberOfSongs > 0 &&
-      validDifficulties.includes(difficulty) &&
-      validGuessTargets.includes(guessTarget)
-    ) {
+    const inputErrors = [];
+
+    if(!isInt(numberOfSongs)) {
+      inputErrors.push("Invalid input. Please enter a number into the 'Number of songs to play' field.")
+    } else {
+      if(numberOfSongs <= 0) {
+        inputErrors.push("Invalid input. Number of songs to play has to be a positive number.");
+      }
+    }
+
+    if(!validDifficulties.includes(difficulty)) {
+      inputErrors.push(`Invalid input. The selected difficulty '${difficulty}' is not allowed.`);
+    }
+
+    if(!validGuessTargets.includes(guessTarget)) {
+      inputErrors.push(`Invalid input. The selected game mode '${guessTarget}' is not allowed.`);
+    }
+
+    if(inputErrors.length > 0) {
+      $("#gameModeError").show();
+      $("#gameModeError").text(inputErrors[0]);
+    } else {
       this.songQuiz.numOfQuestions = numberOfSongs;
       this.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
 

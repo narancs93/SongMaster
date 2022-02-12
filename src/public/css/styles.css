@@ -28,6 +28,10 @@
   box-sizing: border-box;
 }
 
+#gameModeError {
+  display: none;
+}
+
 #error {
   display: none;
   position: absolute;
