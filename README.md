@@ -2,7 +2,7 @@
 ##  Song quiz game powered by Spotify API
 Login with your Spotify account and select one of your playlists to play a quiz game. There are 3 game modes: guess song title, guess artist, and mixed.
 ## Requirements
-* Node.js and npm installed
+* Node.js and npm installed (or docker installed)
 * Spotify Premium subscription
 
 ## Deployment
@@ -60,7 +60,7 @@ openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out yourdomain.crt 
 
 ## Deploy with docker
 
-.env file has to be created and filled as mentioned above in Setup environment section.
+```.env``` file has to be created and filled as mentioned above in Setup environment section.
 
 Build image and tag it
 
@@ -71,7 +71,15 @@ docker build . -t <your username>/song-master
 Run the image
 
 ```sh
-docker run -p 8080:8080 -d <your username>/song-master
+docker run -p 8080:8080 -v /path/to/.env:/usr/src/app/.env -d <your username>/song-master
+```
+
+Or use docker-compose
+
+Adjust ```/path/to/.env``` in ```docker-compose.yml``` to the full path of your .env file, then run:
+
+```sh
+docker-compose up -d
 ```
 
 

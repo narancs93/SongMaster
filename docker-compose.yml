@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  song-master:
+    container_name: song-master
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /path/to/.env:/usr/src/app/.env
