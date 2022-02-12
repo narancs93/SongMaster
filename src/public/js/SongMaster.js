@@ -232,6 +232,7 @@ class SongMaster {
       this.songQuiz.numOfQuestions = numberOfSongs;
       this.songQuiz.guessTimeInSeconds = guessTimes[difficulty];
 
+      this.songQuiz.playlistTracks = [];
       this.songQuiz.start(gameModes[guessTarget]);
     }
   }

@@ -210,16 +210,19 @@ class SongQuiz {
     $("#content").text("Loading songs from playlist...");
 
     this.getPlaylistTracks(() => {
-      this.generateAnswers(() => {
-        this.gameMode = gameMode;
-        this.score = 0;
-        this.currentQuestionIndex = 0;
-        $("#quizPlaylist").text(this.playlistInfo.name);
-        $("#numberOfSongs").text(this.numOfQuestions);
-        showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
-        $("#progressBar div").width("100%");
+      $("#content").text("");
+      this.checkArtistUniqueness(() => {
+        this.generateAnswers(() => {
+          this.gameMode = gameMode;
+          this.score = 0;
+          this.currentQuestionIndex = 0;
+          $("#quizPlaylist").text(this.playlistInfo.name);
+          $("#numberOfSongs").text(this.numOfQuestions);
+          showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
+          $("#progressBar div").width("100%");
 
-        this.nextQuestion();
+          this.nextQuestion();
+        });
       });
     });
   }
@@ -256,6 +259,22 @@ class SongQuiz {
         }
       }
     });
+  }
+
+
+  checkArtistUniqueness(callback) {
+    let artists = this.playlistTracks.map(track => this.getTrackArtists(track));
+
+    let uniqueArtists = new Set(artists);
+    let numOfUniqueArtists = uniqueArtists.size;
+
+    if (numOfUniqueArtists < 3 * this.numOfQuestions) {
+      console.log("There are not enough unique artists on the playlist to play 'Guess the artist(s)' mode.");
+    } else {
+      if (typeof callback == "function") {
+        callback();
+      }
+    }
   }
 
 
@@ -323,7 +342,6 @@ class SongQuiz {
           }
         });
       }
-
     });
 
     if (typeof callback == "function") {
