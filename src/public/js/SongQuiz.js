@@ -207,31 +207,53 @@ class SongQuiz {
 
 
   start(gameMode) {
-    this.gameMode = gameMode;
-    this.score = 0;
-    this.currentQuestionIndex = 0;
-    $("#quizPlaylist").text(this.playlistInfo.name);
-    $("#numberOfSongs").text(this.numOfQuestions);
-    showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
-    $("#progressBar div").width("100%");
+    $("#content").text("Loading songs from playlist...");
 
-    this.nextQuestion();
+    this.getPlaylistTracks(() => {
+      this.generateAnswers(() => {
+        this.gameMode = gameMode;
+        this.score = 0;
+        this.currentQuestionIndex = 0;
+        $("#quizPlaylist").text(this.playlistInfo.name);
+        $("#numberOfSongs").text(this.numOfQuestions);
+        showElementsBySelectors(["#progressBarContainer", "#quizDetailsContainer"]);
+        $("#progressBar div").width("100%");
+
+        this.nextQuestion();
+      });
+    });
   }
 
 
-  getPlaylistTracks(playlistInfo, callback) {
-    this.playlistInfo = playlistInfo;
-    this.setRandomPlaylistOffset();
+  getPlaylistTracks(...args) {
+    let options = null,
+      callback = null;
 
-    const options = {
-      offset: this.playlistOffset
+    if (typeof args[args.length - 1] === "function") {
+      callback = args.pop();
+    }
+
+    if (args.length > 0) options = args.shift();
+    else options = {
+      limit: 100,
+      offset: 0
+    };
+
+    if (!this.playlistTracks) {
+      this.playlistTracks = [];
     }
 
     this.songMaster.getPlaylistTracks(this.playlistInfo.id, options, (getPlaylistTracksResult) => {
-      this.playlistTracks = getPlaylistTracksResult.items.map(item => item.track);
+      let playlistTracks = getPlaylistTracksResult.items.map(item => item.track);
+      Array.prototype.push.apply(this.playlistTracks, playlistTracks);
 
-      if (typeof callback == "function") {
-        callback();
+      if (getPlaylistTracksResult.next) {
+        options.offset += options.limit;
+        this.getPlaylistTracks(options, callback);
+      } else {
+        if (typeof callback == "function") {
+          callback();
+        }
       }
     });
   }
